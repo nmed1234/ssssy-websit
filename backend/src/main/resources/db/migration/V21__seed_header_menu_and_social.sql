@@ -4,8 +4,7 @@ VALUES ('00000000-0000-0000-0000-000000000001', 'Main Navigation', 'header', tru
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
   location = EXCLUDED.location,
-  is_active = EXCLUDED.is_active,
-  updated_at = NOW();
+  is_active = EXCLUDED.is_active;
 
 -- First, delete existing menu_items for header menu to avoid duplicates
 DELETE FROM menu_items WHERE menu_id = '00000000-0000-0000-0000-000000000001';
