@@ -41,8 +41,7 @@ INSERT INTO menus (id, name, location, is_active) VALUES
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
   location = EXCLUDED.location,
-  is_active = EXCLUDED.is_active,
-  updated_at = NOW();
+  is_active = EXCLUDED.is_active;
 
 -- First, clear any existing menu_items for this menu to avoid duplicates
 DELETE FROM menu_items WHERE menu_id = '00000000-0000-0000-0000-000000000002';
