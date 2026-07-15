@@ -139,7 +139,8 @@ export default function PublicLayoutContent({ children }: { children: React.Reac
   const footerAddress = settings.get("contact.address") || t("footer.address", "Damascus, Syria");
   const footerEmail = settings.get("contact.email") || t("contact.email", "info@ssss.org");
   const footerPhone = settings.get("contact.phone") || t("contact.phone", "+963112345678");
-  const siteLogoUrl = settings.get("site.logo_url") || `/logo.svg`;
+  const rawLogoUrl = settings.get("site.logo_url") || "";
+  const siteLogoUrl = (rawLogoUrl && !rawLogoUrl.includes("localhost")) ? rawLogoUrl : `/logo.svg`;
 
   const jsonLd = {
     "@context": "https://schema.org",
