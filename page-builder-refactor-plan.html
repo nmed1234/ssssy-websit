@@ -1,0 +1,388 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Page Builder Refactor Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: #1f2328; background: #ffffff; padding: 2rem; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 0.25rem; color: #1f2328; }
+  .subtitle { font-size: 13px; color: #57606a; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb; }
+  h2 { font-size: 15px; font-weight: 700; margin: 2rem 0 0.75rem; color: #1f2328; padding-left: 0.75rem; border-left: 3px solid #3b82d4; }
+  h3 { font-size: 13px; font-weight: 700; margin: 1.25rem 0 0.5rem; color: #1f2328; }
+  p { margin-bottom: 0.75rem; color: #1f2328; font-size: 13.5px; }
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.75rem; }
+  li { margin-bottom: 0.3rem; font-size: 13.5px; color: #1f2328; }
+  .card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .card-red   { border-left: 4px solid #ef4444; }
+  .card-blue  { border-left: 4px solid #3b82d4; }
+  .card-green { border-left: 4px solid #22c55e; }
+  .card-amber { border-left: 4px solid #f59e0b; }
+  .card-purple{ border-left: 4px solid #7c5cd8; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+  .tag-red    { background: #fee2e2; color: #b91c1c; }
+  .tag-blue   { background: #dbeafe; color: #1d4ed8; }
+  .tag-green  { background: #dcfce7; color: #15803d; }
+  .tag-amber  { background: #fef3c7; color: #92400e; }
+  .tag-purple { background: #ede9fe; color: #6d28d9; }
+  .tag-gray   { background: #f1f5f9; color: #475569; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 12.5px; }
+  th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; font-weight: 600; color: #57606a; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { border: 1px solid #e5e7eb; padding: 6px 10px; vertical-align: top; }
+  .phase-row td:first-child { font-weight: 700; white-space: nowrap; }
+  code { font-family: "SF Mono", Consolas, monospace; font-size: 11.5px; background: #f1f5f9; padding: 1px 5px; border-radius: 3px; color: #374151; }
+  .tree { font-family: "SF Mono", Consolas, monospace; font-size: 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; line-height: 1.8; white-space: pre; overflow-x: auto; margin-bottom: 1rem; }
+  .arch-box { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .arch-col { flex: 1; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.75rem; }
+  .arch-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #57606a; letter-spacing: 0.06em; margin-bottom: 0.5rem; text-align: center; }
+  .arch-col ul { padding-left: 0; list-style: none; margin: 0; }
+  .arch-col li { font-size: 12px; padding: 3px 0; border-bottom: 1px solid #e5e7eb; color: #374151; }
+  .arch-col li:last-child { border-bottom: none; }
+  .badge { display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: #3b82d4; color: white; font-size: 10px; font-weight: 700; text-align: center; line-height: 18px; margin-right: 4px; }
+  .divider { border: none; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; text-align: center; font-size: 11px; color: #57606a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Page Builder — Full Refactor Plan</h1>
+<p class="subtitle">Architectural redesign: flat sections → nested tree with true layout containers, live editing, and data-driven rendering.</p>
+
+
+<h2>1. Current Problems (Audit)</h2>
+
+<div class="card card-red">
+  <h3>Architecture — Flat list, no nesting</h3>
+  <p>The DB stores a list of <code>PageSection</code> rows, each with a flat <code>data</code> JSON blob. There is no parent/child relationship. Adding a component "inside" a section is impossible at the data level.</p>
+</div>
+
+<div class="card card-red">
+  <h3>Two disconnected property editors</h3>
+  <p>The admin page (<code>admin/pages/[id]/page.tsx</code>) uses <code>AdvancedPropertyEditor</code>. The standalone <code>PageBuilder</code> component uses a completely different <code>PropertyEditor</code>. They are not in sync — changes to schemas or features in one don't exist in the other.</p>
+</div>
+
+<div class="card card-red">
+  <h3>Added component not shown / not editable</h3>
+  <p>When you drag a component from the palette, <code>createDefaultSection</code> creates a shell with <code>data: { title:"", content:"" }</code>. The <code>BuilderCanvas</code> renders it via <code>PageSectionRenderer</code> which routes to a hardcoded React component (like <code>AboutVisionMissionSection</code>) that ignores the empty data entirely — so nothing visible appears. The <code>AdvancedPropertyEditor</code> panel has generic tabs (Content / Layout / Style / BG / Events) but no field-schema awareness for most component types, so fields don't map to the actual <code>data</code> structure.</p>
+</div>
+
+<div class="card card-red">
+  <h3>Hardcoded page sections</h3>
+  <p>Components like <code>AboutVisionMissionSection</code>, <code>AboutHeroBanner</code>, etc. are static React components with hardcoded text. The builder cannot edit them because their data is not driven by <code>section.data</code>.</p>
+</div>
+
+<div class="card card-red">
+  <h3>Pick-item overlay is a heuristic hack</h3>
+  <p>The canvas overlay divides the section into N equal columns and guesses which "item" the user clicked. It has no relation to actual DOM positions of rendered children.</p>
+</div>
+
+<div class="card card-red">
+  <h3>No layout engine</h3>
+  <p>There is no concept of a Row containing Columns, or a Grid with children. All components sit in a linear list at the page level only.</p>
+</div>
+
+<hr class="divider" />
+
+
+<h2>2. Proposed Architecture</h2>
+
+<h3>2.1 Data Model — Nested Tree</h3>
+<p>Every node in the page is a <strong>block</strong>. Blocks can have children. This replaces the flat <code>PageSection[]</code> list with a recursive tree stored as a single JSON document per page.</p>
+
+<div class="tree">Page (stored in DB as pages.layout_json)
+└── Block[]  (the root children)
+    ├── Block  { id, type:"section", props:{}, children:[] }
+    │   ├── Block  { id, type:"row", props:{gap:"1rem"}, children:[] }
+    │   │   ├── Block  { id, type:"column", props:{width:"1/3"}, children:[] }
+    │   │   │   └── Block  { id, type:"heading", props:{text:"Our Vision"} }
+    │   │   └── Block  { id, type:"column", props:{width:"2/3"}, children:[] }
+    │   │       └── Block  { id, type:"paragraph", props:{text:"..."} }
+    │   └── Block  { id, type:"card-group", props:{columns:3}, children:[] }
+    │       ├── Block  { id, type:"card", props:{title:"Vision",...} }
+    │       ├── Block  { id, type:"card", props:{title:"Mission",...} }
+    │       └── Block  { id, type:"card", props:{title:"Objectives",...} }
+    └── Block  { id, type:"divider", props:{} }
+</div>
+
+<table>
+  <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>id</code></td><td>string</td><td>UUID, stable across edits</td></tr>
+    <tr><td><code>type</code></td><td>string</td><td>Component type key (e.g. <code>"section"</code>, <code>"heading"</code>)</td></tr>
+    <tr><td><code>props</code></td><td>object</td><td>All editable properties (text, urls, colors, layout) in one flat object per block</td></tr>
+    <tr><td><code>children</code></td><td>Block[]</td><td>Nested child blocks; undefined/[] for leaf nodes</td></tr>
+    <tr><td><code>visibility</code></td><td>string</td><td>ALWAYS / HIDDEN / LOGGED_IN / etc.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>DB strategy:</strong> Add a <code>layout_json TEXT</code> column to the <code>pages</code> table. Keep <code>page_sections</code> for backwards compatibility. The new builder writes/reads only <code>layout_json</code>.</p>
+
+<h3>2.2 Component Type Taxonomy</h3>
+
+<div class="arch-box">
+  <div class="arch-col">
+    <h4>Containers (have children)</h4>
+    <ul>
+      <li>section</li>
+      <li>row</li>
+      <li>column</li>
+      <li>grid</li>
+      <li>flexbox</li>
+      <li>tabs (children = tab panels)</li>
+      <li>accordion (children = items)</li>
+      <li>card-group (children = cards)</li>
+    </ul>
+  </div>
+  <div class="arch-col">
+    <h4>Leaf Blocks (no children)</h4>
+    <ul>
+      <li>heading</li>
+      <li>paragraph</li>
+      <li>image</li>
+      <li>video</li>
+      <li>button</li>
+      <li>card</li>
+      <li>divider / spacer</li>
+      <li>rich-text</li>
+      <li>stat-item, team-member, etc.</li>
+    </ul>
+  </div>
+  <div class="arch-col">
+    <h4>Dynamic Blocks</h4>
+    <ul>
+      <li>news-feed</li>
+      <li>events-feed</li>
+      <li>jobs-feed</li>
+      <li>members-feed</li>
+      <li>contact-form</li>
+      <li>newsletter-form</li>
+      <li>map</li>
+    </ul>
+  </div>
+</div>
+
+<h3>2.3 Props Schema Registry</h3>
+<p>A single <code>BLOCK_SCHEMA</code> registry maps every block type to its editable props. Each prop has a <code>type</code> (text, textarea, number, color, select, toggle, url, richtext), a <code>label</code>, and an optional <code>group</code> (Content / Layout / Style). The property panel is auto-generated from this schema — no hardcoding needed.</p>
+
+<h3>2.4 Renderer — Props-Driven, No Hardcoded Sections</h3>
+<p>A single <code>BlockRenderer</code> recursively renders any block tree. Container blocks render their children. Leaf blocks render from their <code>props</code> directly. <strong>No more <code>AboutVisionMissionSection.tsx</code>, <code>AboutHeroBanner.tsx</code>, etc.</strong> — all replaced by generic blocks with specific default props.</p>
+
+<hr class="divider" />
+
+
+<h2>3. New Builder UI Layout</h2>
+
+<div class="tree">┌──────────────┬────────────────────────────────────────────┬──────────────────┐
+│ LEFT PANEL   │           CANVAS (center)                  │  RIGHT PANEL     │
+│ 240px        │           flex-1                           │  320px           │
+│              │                                            │                  │
+│ [Components] │  ┌── Page Root ─────────────────────────┐ │  PROPERTIES      │
+│ [Layers]     │  │  ┌─ section (selected, blue border) ─┐│ │  ─────────────── │
+│              │  │  │  ┌─ row ──────────────────────────┐││ │  Block: heading  │
+│ Search...    │  │  │  │  [col 1/3] [col 2/3]           │││ │                  │
+│              │  │  │  └────────────────────────────────┘││ │  Content tab:    │
+│ ▼ Layout     │  │  │  ┌─ card-group ───────────────────┐││ │   Text (EN)      │
+│   Section    │  │  │  │  [card][card][card]    [+ Add] │││ │   Text (AR)      │
+│   Row        │  │  │  └────────────────────────────────┘││ │                  │
+│   Column     │  │  └───────────────────────────────────┘│ │  Style tab:      │
+│   Grid       │  │  ─ drop zone ─                        │ │   Color / Size   │
+│   Flexbox    │  └──────────────────────────────────────┘ │   Spacing        │
+│              │                                            │                  │
+│ ▼ Content    │  Breadcrumb: Page › section › row › col   │  [+ Add child]   │
+│   Heading    │                                            │  [Delete block]  │
+│   Paragraph  │                                            │                  │
+│   Image      │                                            │                  │
+└──────────────┴────────────────────────────────────────────┴──────────────────┘
+</div>
+
+<h3>Key canvas interactions</h3>
+<ul>
+  <li><strong>Click any block</strong> → selects it, shows blue outline, loads its props in right panel</li>
+  <li><strong>Double-click a container</strong> → enters the container (breadcrumb updates), can select children</li>
+  <li><strong>Drag from palette into a container</strong> → adds new child at drop position</li>
+  <li><strong>Drag handle on block</strong> → reorder within same parent</li>
+  <li><strong>Escape</strong> → navigate up one level in breadcrumb</li>
+  <li><strong>Inline text editing</strong> → click on a heading/paragraph to edit text in-place</li>
+</ul>
+
+<hr class="divider" />
+
+
+<h2>4. Property Panel Design</h2>
+
+<p>The right panel shows tabs driven by the selected block's schema:</p>
+
+<table>
+  <thead><tr><th>Tab</th><th>What it shows</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Content</strong></td><td>Text fields, textareas, rich-text, URLs, select — the semantic content of the block (title, body, href, etc.)</td></tr>
+    <tr><td><strong>Layout</strong></td><td>Width, padding, margin, alignment, columns, gap — only for container blocks</td></tr>
+    <tr><td><strong>Style</strong></td><td>Background color/image/gradient, text color, font-size, border, shadow, border-radius</td></tr>
+    <tr><td><strong>Advanced</strong></td><td>Visibility rule, animation, custom CSS class, HTML ID, conditions</td></tr>
+  </tbody>
+</table>
+
+<p>Each field type has a dedicated input widget: color fields use a combined hex + color-picker input; select fields use a styled dropdown; toggle fields use a switch; URL fields validate and offer media-library picker.</p>
+
+<hr class="divider" />
+
+
+<h2>5. Layers Panel (Tree View)</h2>
+<p>The left "Layers" tab shows the full block tree, indented. Each node shows its type icon + label (or first text prop). You can:</p>
+<ul>
+  <li>Click to select</li>
+  <li>Drag-and-drop to reparent or reorder</li>
+  <li>Toggle visibility eye</li>
+  <li>Duplicate / delete via context menu (right-click or hover icons)</li>
+</ul>
+
+<hr class="divider" />
+
+
+<h2>6. New File Structure</h2>
+
+<div class="tree">frontend/src/
+  components/page-builder/
+    builder/
+      PageBuilderRoot.tsx          ← top-level orchestrator (replaces PageBuilder.tsx + admin page.tsx builder section)
+      BuilderCanvas.tsx            ← REWRITE: renders BlockRenderer in editing mode, handles selection
+      BlockRenderer.tsx            ← NEW: recursive, renders any block tree (used in builder AND public pages)
+      BlockToolbar.tsx             ← NEW: per-block hover toolbar (select, move, add child, delete)
+      DropZone.tsx                 ← NEW: visual drop target between/inside blocks
+      BreadcrumbNav.tsx            ← NEW: shows current drill-down path
+    panels/
+      ComponentPalette.tsx         ← KEEP + update categories
+      LayersPanel.tsx              ← REWRITE ComponentTreePanel.tsx
+      PropertyPanel.tsx            ← REWRITE: auto-generated from BLOCK_SCHEMA
+    schema/
+      block-schema.ts              ← NEW: BLOCK_SCHEMA registry (all field defs per type)
+      default-props.ts             ← NEW: default props for each block type
+    types.ts                       ← NEW: Block, BlockTree, PropDef types
+  
+  lib/
+    page-layout.ts                 ← NEW: helpers to serialize/deserialize Block tree to/from DB JSON
+</div>
+
+<hr class="divider" />
+
+
+<h2>7. Implementation Phases</h2>
+
+<table>
+  <thead><tr><th style="width:80px">Phase</th><th>Scope</th><th>Deliverable</th><th style="width:90px">Effort</th></tr></thead>
+  <tbody>
+    <tr class="phase-row">
+      <td>Phase 1</td>
+      <td><strong>Data model + types</strong><br />Define <code>Block</code> type, <code>BLOCK_SCHEMA</code> for all existing component types, <code>defaultProps</code>, tree helpers (findById, updateById, insertChild, removeById, moveNode)</td>
+      <td><code>types.ts</code>, <code>block-schema.ts</code>, <code>default-props.ts</code>, <code>page-layout.ts</code></td>
+      <td><span class="tag tag-blue">Medium</span></td>
+    </tr>
+    <tr class="phase-row">
+      <td>Phase 2</td>
+      <td><strong>BlockRenderer</strong><br />Single recursive component that renders any block tree. Replaces all hardcoded page-sections. Container blocks render their children. Leaf blocks render from props directly. Used on public pages too.</td>
+      <td><code>BlockRenderer.tsx</code></td>
+      <td><span class="tag tag-amber">Large</span></td>
+    </tr>
+    <tr class="phase-row">
+      <td>Phase 3</td>
+      <td><strong>New PropertyPanel</strong><br />Auto-generated form from BLOCK_SCHEMA. Content / Layout / Style / Advanced tabs. Color picker, inline fields, no hardcoded forms. Works for any block type.</td>
+      <td><code>PropertyPanel.tsx</code></td>
+      <td><span class="tag tag-blue">Medium</span></td>
+    </tr>
+    <tr class="phase-row">
+      <td>Phase 4</td>
+      <td><strong>New BuilderCanvas</strong><br />Renders BlockRenderer with editing overlays. Click to select, hover toolbar, drag-and-drop reorder + reparent, drop zones. Breadcrumb drill-down for containers. Inline text edit on heading/paragraph.</td>
+      <td><code>BuilderCanvas.tsx</code>, <code>BlockToolbar.tsx</code>, <code>DropZone.tsx</code>, <code>BreadcrumbNav.tsx</code></td>
+      <td><span class="tag tag-amber">Large</span></td>
+    </tr>
+    <tr class="phase-row">
+      <td>Phase 5</td>
+      <td><strong>LayersPanel rewrite</strong><br />Tree view with drag-to-reorder, collapse/expand, context menu. Synced with canvas selection.</td>
+      <td><code>LayersPanel.tsx</code></td>
+      <td><span class="tag tag-green">Small</span></td>
+    </tr>
+    <tr class="phase-row">
+      <td>Phase 6</td>
+      <td><strong>PageBuilderRoot + admin integration</strong><br />Wire all panels together. Save/load from DB as <code>layout_json</code>. Migrate existing pages from flat <code>page_sections</code> to new tree format on load. Backend: add <code>layout_json</code> column, update <code>updatePage</code> API.</td>
+      <td><code>PageBuilderRoot.tsx</code>, backend migration, admin page update</td>
+      <td><span class="tag tag-blue">Medium</span></td>
+    </tr>
+    <tr class="phase-row">
+      <td>Phase 7</td>
+      <td><strong>Public page rendering</strong><br />Replace <code>PageSectionRenderer</code> and all <code>*Section.tsx</code> files with a single <code>BlockRenderer</code> call on public pages. Existing hardcoded pages (About, Board, etc.) migrated to stored block trees.</td>
+      <td>Updated public <code>[slug]/page.tsx</code>, remove old section files</td>
+      <td><span class="tag tag-blue">Medium</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="divider" />
+
+
+<h2>8. Key Design Decisions</h2>
+
+<div class="card card-blue">
+  <h3>Decision 1 — Single source of truth for props</h3>
+  <p>Each block has one <code>props</code> object. No split between <code>data</code>, <code>config</code>, <code>styling</code>. The schema groups them into tabs visually, but storage is flat. This eliminates the current confusion about which JSON blob holds which field.</p>
+</div>
+
+<div class="card card-blue">
+  <h3>Decision 2 — BlockRenderer replaces PageSectionRenderer + all hardcoded sections</h3>
+  <p>There will be no more <code>AboutVisionMissionSection.tsx</code>. The "Vision, Mission, Objectives" section becomes a <code>section</code> block containing a <code>card-group</code> block with 3 <code>card</code> children — all fully editable.</p>
+</div>
+
+<div class="card card-blue">
+  <h3>Decision 3 — layout_json stored on the page row</h3>
+  <p>A new <code>layout_json TEXT</code> column on <code>pages</code> stores the entire block tree as a single JSON document. The old <code>page_sections</code> table is kept for legacy pages until migration is complete. New pages use <code>layout_json</code> only.</p>
+</div>
+
+<div class="card card-blue">
+  <h3>Decision 4 — Migration adapter</h3>
+  <p>On page load, if <code>layout_json</code> is empty but <code>page_sections</code> exist, the builder auto-converts each flat section into a top-level block node. This is 1:1 compatible — no data is lost.</p>
+</div>
+
+<div class="card card-purple">
+  <h3>Decision 5 — Backwards compatibility</h3>
+  <p>Public pages that still use old section components continue to work until Phase 7. The builder upgrade is opt-in per page. No forced migration.</p>
+</div>
+
+<hr class="divider" />
+
+
+<h2>9. Files Removed / Replaced</h2>
+
+<table>
+  <thead><tr><th>File</th><th>Fate</th></tr></thead>
+  <tbody>
+    <tr><td><code>PropertyEditor.tsx</code></td><td>Replaced by <code>PropertyPanel.tsx</code></td></tr>
+    <tr><td><code>AdvancedPropertyEditor.tsx</code></td><td>Replaced by <code>PropertyPanel.tsx</code></td></tr>
+    <tr><td><code>BuilderCanvas.tsx</code></td><td>Full rewrite</td></tr>
+    <tr><td><code>PageBuilder.tsx</code></td><td>Replaced by <code>PageBuilderRoot.tsx</code></td></tr>
+    <tr><td><code>ComponentTreePanel.tsx</code></td><td>Replaced by <code>LayersPanel.tsx</code></td></tr>
+    <tr><td><code>PageSectionRenderer.tsx</code></td><td>Replaced by <code>BlockRenderer.tsx</code></td></tr>
+    <tr><td>All <code>*Section.tsx</code> files</td><td>Replaced by <code>BlockRenderer</code> + stored block trees (Phase 7)</td></tr>
+  </tbody>
+</table>
+
+<hr class="divider" />
+
+
+<h2>10. Questions Before We Start</h2>
+
+<div class="card card-amber">
+  <ol>
+    <li style="margin-bottom:0.6rem"><strong>Backend change approval:</strong> Adding <code>layout_json</code> column to <code>pages</code> table requires a DB migration and backend API change to accept/return it. Approved?</li>
+    <li style="margin-bottom:0.6rem"><strong>Phase order:</strong> Do you want to start with the data model + BlockRenderer first (the foundation), or start with the UI (canvas + property panel) using a mock tree in state?</li>
+    <li style="margin-bottom:0.6rem"><strong>Inline text editing:</strong> Should clicking a heading/paragraph on the canvas allow direct in-place editing (contentEditable), or always edit through the right panel?</li>
+    <li style="margin-bottom:0.6rem"><strong>Drag-and-drop library:</strong> Use a library like <code>@dnd-kit/core</code> for robust DnD (handles touch, keyboard, nested containers), or stay with native HTML5 drag events?</li>
+    <li><strong>Hardcoded pages (About, Board, etc.):</strong> Should we migrate them to block trees in Phase 7, or keep them as custom React components permanently?</li>
+  </ol>
+</div>
+
+<footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

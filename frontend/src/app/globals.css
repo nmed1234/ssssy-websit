@@ -1,0 +1,449 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
+
+@layer base {
+  :root {
+    /* shadcn-style HSL variables (overridable by theme settings) */
+    --background: 40 30% 96%;
+    --foreground: 20 30% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 30% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 30% 15%;
+    --primary: 15 30% 35%;
+    --primary-foreground: 40 30% 96%;
+    --secondary: 120 30% 35%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 40 15% 85%;
+    --muted-foreground: 20 10% 40%;
+    --accent: 30 25% 70%;
+    --accent-foreground: 20 30% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 15% 80%;
+    --input: 30 15% 80%;
+    --ring: 15 30% 35%;
+    --radius: 0.5rem;
+
+    /* brand colors (overridable by theme settings) */
+    --soil-dark: #3E2723;
+    --soil-clay: #6D4C41;
+    --soil-rich: #8D6E63;
+    --soil-taupe: #BCAAA4;
+    --soil-sand: #D7CCC8;
+    --soil-cream: #FFF8E1;
+    --forest: #2E7D32;
+    --forest-light: #558B2F;
+    --earth-gray: #616161;
+    --deep-soil: #4E342E;
+
+    /* --font-almarai is injected by next/font/google onto <html> */
+    /* Tailwind font-heading/body/arabic all resolve directly to it */
+    --font-arabic: var(--font-almarai), 'Segoe UI', Tahoma, Arial, sans-serif;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+
+    color-scheme: light dark;
+  }
+
+  .dark {
+    --background: 20 30% 10%;
+    --foreground: 40 30% 90%;
+    --card: 20 30% 14%;
+    --card-foreground: 40 30% 90%;
+    --popover: 20 30% 14%;
+    --popover-foreground: 40 30% 90%;
+    --primary: 15 30% 50%;
+    --primary-foreground: 20 30% 10%;
+    --secondary: 120 30% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 15% 20%;
+    --muted-foreground: 40 15% 70%;
+    --accent: 30 25% 25%;
+    --accent-foreground: 40 30% 90%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 15% 25%;
+    --input: 20 15% 25%;
+    --ring: 15 30% 50%;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-almarai), 'Segoe UI', Tahoma, Arial, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-almarai), 'Segoe UI', Tahoma, Arial, sans-serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Selection */
+  ::selection {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
+  }
+
+  /* Focus ring */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Apply Jozoor to all Arabic text — any element with dir="rtl" or lang="ar" */
+  [dir="rtl"],
+  [lang="ar"],
+  :lang(ar) {
+    font-family: var(--font-arabic);
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation: animateIn 0.3s ease-out;
+  }
+
+  @keyframes animateIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.15) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .animate-count-up {
+    animation: countUp 0.6s ease-out forwards;
+  }
+
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .shadow-elevation-sm {
+    box-shadow: var(--shadow-sm);
+  }
+  .shadow-elevation-md {
+    box-shadow: var(--shadow-md);
+  }
+  .shadow-elevation-lg {
+    box-shadow: var(--shadow-lg);
+  }
+  .shadow-elevation-xl {
+    box-shadow: var(--shadow-xl);
+  }
+  .shadow-elevation-2xl {
+    box-shadow: var(--shadow-2xl);
+  }
+}
+
+@layer components {
+  /* Property editor input shorthand */
+  .field {
+    @apply w-full border rounded px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-300;
+  }
+
+  .glass {
+    background: hsl(var(--background) / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-dark {
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  @keyframes parallax-scroll {
+    from { transform: translateY(0); }
+    to { transform: translateY(-30px); }
+  }
+
+  @keyframes fade-in-scroll {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scroll-parallax {
+    animation: parallax-scroll linear;
+    animation-timeline: scroll();
+  }
+
+  .scroll-fade-in {
+    animation: fade-in-scroll linear;
+    animation-timeline: view();
+    animation-range: entry 0% entry 80%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STYLE THEME SYSTEM  ·  --style-* CSS custom properties
+   Default values = Classic Soil (original site appearance).
+   All overridden at runtime by StyleThemeProvider via JS setProperty().
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Colors ────────────────────────────────────────────────────────── */
+  --style-color-primary:   #3E2723;
+  --style-color-secondary: #2E7D32;
+  --style-color-accent:    #8D6E63;
+  --style-color-bg:        #FFF8E1;
+  --style-color-surface:   #FFFFFF;
+  --style-color-fg:        #1C1B1A;
+  --style-color-muted:     #6D4C41;
+  --style-color-border:    rgba(188, 170, 164, 0.40);
+
+  /* ── Gradients ─────────────────────────────────────────────────────── */
+  --style-gradient-hero-start: #3E2723;
+  --style-gradient-hero-mid:   #4E342E;
+  --style-gradient-hero-end:   #6D4C41;
+  --style-gradient-card-start: #FFFFFF;
+  --style-gradient-card-end:   #FAFAF8;
+
+  /* ── Radii ─────────────────────────────────────────────────────────── */
+  --style-radius-card:  0.75rem;
+  --style-radius-btn:   0.5rem;
+  --style-radius-input: 0.375rem;
+  --style-radius-badge: 999px;
+
+  /* ── Shadows ───────────────────────────────────────────────────────── */
+  --style-shadow-card:       0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --style-shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.08);
+  --style-shadow-focus:      0 0 0 3px rgba(62, 39, 35, 0.20);
+
+  /* ── Blur ──────────────────────────────────────────────────────────── */
+  --style-blur-card:     0px;
+  --style-blur-backdrop: 8px;
+
+  /* ── Animations ────────────────────────────────────────────────────── */
+  --style-anim-enter:  400ms;
+  --style-anim-hover:  200ms;
+  --style-anim-slow:   600ms;
+  --style-anim-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Component modes ───────────────────────────────────────────────── */
+  --style-card-mode:      flat;
+  --style-btn-shape:      rounded;
+  --style-hero-pattern:   particle;
+  --style-section-divider: none;
+
+  /* ── Typography ────────────────────────────────────────────────────── */
+  --style-font-weight-heading:    700;
+  --style-font-weight-body:       400;
+  --style-line-height-body:       1.75;
+  --style-letter-spacing-heading: -0.02em;
+}
+
+/* Smooth CSS transition when JS injects new theme token values */
+:root {
+  transition:
+    background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    color            300ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color     300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CARD VARIANT UTILITY CLASSES
+   StyleCard reads --style-card-mode and applies one of these two classes.
+   Hover is pure CSS — no Framer whileHover needed.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Flat — white/surface bg, thin border, 2-stop shadow */
+.style-card-flat {
+  background:    var(--style-color-surface);
+  border:        1px solid var(--style-color-border);
+  border-radius: var(--style-radius-card);
+  box-shadow:    var(--style-shadow-card);
+  transition:
+    box-shadow var(--style-anim-hover) var(--style-anim-easing),
+    transform  var(--style-anim-hover) var(--style-anim-easing);
+}
+.style-card-flat:hover {
+  box-shadow: var(--style-shadow-card-hover);
+  transform:  translateY(-3px);
+}
+
+/* Glass — frosted backdrop-filter + border + shadow */
+.style-card-glass {
+  background:              var(--style-color-surface);
+  backdrop-filter:         blur(var(--style-blur-card));
+  -webkit-backdrop-filter: blur(var(--style-blur-card));
+  border:                  1px solid var(--style-color-border);
+  border-radius:           var(--style-radius-card);
+  box-shadow:              var(--style-shadow-card);
+  transition:
+    box-shadow var(--style-anim-hover) var(--style-anim-easing),
+    transform  var(--style-anim-hover) var(--style-anim-easing);
+}
+.style-card-glass:hover {
+  box-shadow: var(--style-shadow-card-hover);
+  transform:  translateY(-3px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTON SHAPE UTILITIES
+   ═══════════════════════════════════════════════════════════════════════════ */
+.style-btn-rounded { border-radius: var(--style-radius-btn); }
+.style-btn-pill    { border-radius: 999px; }
+.style-btn-sharp   { border-radius: 0; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCROLL PROGRESS BAR
+   2px thin bar — professional, not showy.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.scroll-progress-bar {
+  position:         fixed;
+  top:              0;
+  left:             0;
+  right:            0;
+  height:           2px;
+  background:       var(--style-color-primary);
+  transform-origin: 0%;
+  z-index:          9999;
+  pointer-events:   none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3D PAGE-FLIP BOOK
+   Used by StylePdfBook. The animation is user-triggered (click/swipe),
+   not a loop — acceptable per animation rules.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.book-page {
+  backface-visibility:         hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style:             preserve-3d;
+  transition:                  transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1.0);
+}
+.book-page.flipping-forward {
+  animation: page-flip-forward 0.6s cubic-bezier(0.645, 0.045, 0.355, 1.0) forwards;
+}
+.book-page.flipping-backward {
+  animation: page-flip-backward 0.6s cubic-bezier(0.645, 0.045, 0.355, 1.0) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   KEYFRAMES
+   Only user-triggered or scroll-tied animations — no idle loops.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* SVG timeline line draw — triggered by scroll progress (not a loop) */
+@keyframes draw-line {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* 3D page flip — triggered by user click/swipe */
+@keyframes page-flip-forward {
+  0%   { transform: perspective(2000px) rotateY(0deg);    z-index: 2; }
+  100% { transform: perspective(2000px) rotateY(-180deg); z-index: 1; }
+}
+@keyframes page-flip-backward {
+  0%   { transform: perspective(2000px) rotateY(0deg);   z-index: 2; }
+  100% { transform: perspective(2000px) rotateY(180deg); z-index: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION
+   Instantly disable all transitions + override theme animation durations.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --style-anim-enter: 0.001ms;
+    --style-anim-hover: 0.001ms;
+    --style-anim-slow:  0.001ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.001ms !important;
+    animation-iteration-count: 1       !important;
+    transition-duration:       0.001ms !important;
+  }
+}

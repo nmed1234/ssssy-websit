@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+.env.local

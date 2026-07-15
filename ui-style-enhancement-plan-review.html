@@ -1,0 +1,507 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UI Style Enhancement Plan v3.0</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.65; color: #1f2328; background: #ffffff; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 24px 48px; }
+
+  h1 { font-size: 22px; font-weight: 700; color: #1f2328; margin-bottom: 4px; }
+  .version { font-size: 12px; color: #57606a; margin-bottom: 32px; }
+  h2 { font-size: 16px; font-weight: 700; color: #1f2328; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 13px; font-weight: 600; color: #1f2328; margin: 20px 0 8px; }
+  p { margin-bottom: 10px; color: #3b3c3f; }
+
+  /* Sections */
+  .section { margin-bottom: 36px; }
+
+  /* Philosophy rules */
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .rule-box { padding: 12px 14px; border-radius: 8px; font-size: 13px; }
+  .rule-box.allowed { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .rule-box.forbidden { background: #fff1f2; border: 1px solid #fecdd3; }
+  .rule-box .label { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .rule-box.allowed .label { color: #16a34a; }
+  .rule-box.forbidden .label { color: #dc2626; }
+  .rule-box li { margin-left: 14px; margin-bottom: 3px; color: #374151; }
+
+  /* Effects table */
+  .effects-list { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .effect-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; background: #f7f8fa; border-radius: 6px; border: 1px solid #e5e7eb; font-size: 13px; }
+  .effect-num { background: #3b82d4; color: #fff; border-radius: 4px; font-size: 10px; font-weight: 700; padding: 1px 5px; flex-shrink: 0; margin-top: 1px; }
+  .effect-title { font-weight: 600; color: #1f2328; }
+  .effect-desc { color: #57606a; }
+
+  /* Theme cards */
+  .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .theme-card { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+  .theme-header { padding: 10px 12px 8px; }
+  .theme-num { font-size: 10px; font-weight: 700; color: #57606a; text-transform: uppercase; letter-spacing: 0.05em; }
+  .theme-name { font-size: 14px; font-weight: 700; margin: 2px 0; }
+  .theme-desc { font-size: 11px; color: #57606a; line-height: 1.45; }
+  .theme-swatches { display: flex; gap: 0; height: 6px; }
+  .swatch { flex: 1; }
+  .theme-body { padding: 8px 12px 10px; background: #f7f8fa; font-size: 11px; color: #57606a; border-top: 1px solid #e5e7eb; }
+  .theme-body .row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .theme-body .key { color: #6b7280; }
+  .theme-body .val { font-weight: 500; color: #374151; font-family: monospace; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 999px; margin-left: 6px; }
+  .badge.default { background: #dcfce7; color: #16a34a; }
+  .badge.protected { background: #fef9c3; color: #854d0e; }
+  .badge.dark { background: #1f2937; color: #f9fafb; }
+
+  /* Sub-task list */
+  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  .task-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 8px; }
+  .task-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .task-num.pending { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+  .task-body { flex: 1; }
+  .task-title { font-weight: 600; font-size: 13px; color: #1f2328; margin-bottom: 3px; }
+  .task-meta { font-size: 12px; color: #57606a; }
+  .task-files { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .file-tag { font-size: 10px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 4px; padding: 1px 6px; font-family: monospace; }
+  .file-tag.create { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+  .file-tag.modify { background: #fef9c3; color: #854d0e; border-color: #fde68a; }
+
+  /* Dependency */
+  .dep-chain { font-family: monospace; font-size: 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; line-height: 2; color: #374151; white-space: pre; }
+
+  /* File table */
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th { background: #f7f8fa; text-align: left; padding: 7px 10px; font-weight: 600; color: #374151; border: 1px solid #e5e7eb; }
+  td { padding: 6px 10px; border: 1px solid #e5e7eb; color: #374151; }
+  td:first-child { font-family: monospace; font-size: 11px; color: #1d4ed8; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .act-create { color: #16a34a; font-weight: 600; }
+  .act-modify { color: #b45309; font-weight: 600; }
+
+  /* Footer */
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 11px; color: #57606a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>UI Style Enhancement Plan</h1>
+  <p class="version">Version 3.0 — Professional Design System with Admin-Controlled Theme Switching — Soil Science Society of Syria</p>
+
+  
+  <div class="section">
+    <h2>Design Philosophy — Official Website Standard</h2>
+    <p>All motion follows <strong>"purposeful restraint"</strong> — the standard of UN, WHO, World Bank, national universities. Animations serve information, never decorate.</p>
+    <div class="rules-grid">
+      <div class="rule-box allowed">
+        <div class="label">✅ Permitted</div>
+        <ul>
+          <li>Fade-in on scroll (400ms, once)</li>
+          <li>Translate-up on scroll (20px → 0)</li>
+          <li>Card stagger entrance (50ms delay)</li>
+          <li>Hover: lift 3px + shadow deepen (200ms)</li>
+          <li>Input focus: border + shadow (150ms)</li>
+          <li>Thin scroll progress bar</li>
+          <li>Animated counters (once on entry)</li>
+          <li>Hero heading word-reveal (once)</li>
+          <li>PDF page-flip (user-triggered)</li>
+          <li>Timeline SVG line draw (scroll-tied)</li>
+        </ul>
+      </div>
+      <div class="rule-box forbidden">
+        <div class="label">❌ Forbidden in ALL Themes</div>
+        <ul>
+          <li>Looping floating blobs / shapes</li>
+          <li>Hero parallax background</li>
+          <li>Spring bounce / elastic physics</li>
+          <li>Magnetic cursor effects</li>
+          <li>Gradient shift background loop</li>
+          <li>Particle fields on content</li>
+          <li>Pulsing glow on rest state</li>
+          <li>Shimmer loops on elements</li>
+          <li>Scale breathe / continuous loops</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#57606a">Note: ParticleField is kept only in Classic Soil (existing behavior). Hidden by CSS for all other themes.</p>
+  </div>
+
+  
+  <div class="section">
+    <h2>Advanced Smooth Effects Applied in All Themes</h2>
+    <div class="effects-list">
+      <div class="effect-item"><span class="effect-num">1</span><div><span class="effect-title">Frosted Surface</span> — <span class="effect-desc">backdrop-filter: blur(0–20px). Degree varies: flat themes use 0px, glass themes use 8–16px. Creates depth without noise.</span></div></div>
+      <div class="effect-item"><span class="effect-num">2</span><div><span class="effect-title">2-Stop Layered Shadows</span> — <span class="effect-desc">Every card uses ambient + direct shadow (two box-shadow values). Hover deepens both. Creates realistic lift.</span></div></div>
+      <div class="effect-item"><span class="effect-num">3</span><div><span class="effect-title">Standard Easing Curve</span> — <span class="effect-desc">cubic-bezier(0.4, 0, 0.2, 1) on all transitions. Clean deceleration. No bounce, no elastic, no spring.</span></div></div>
+      <div class="effect-item"><span class="effect-num">4</span><div><span class="effect-title">Soft Border Opacity</span> — <span class="effect-desc">Borders use rgba at 15–40% opacity. Cards sit softly on background rather than looking cut out.</span></div></div>
+      <div class="effect-item"><span class="effect-num">5</span><div><span class="effect-title">Scroll-Linked Section Reveals</span> — <span class="effect-desc">Framer Motion whileInView, once:true, margin:"-80px". Every section fades + rises on first entry only.</span></div></div>
+      <div class="effect-item"><span class="effect-num">6</span><div><span class="effect-title">Reading Typography Tuning</span> — <span class="effect-desc">line-height: 1.65–1.8, letter-spacing per theme, text-wrap:balance on headings. Each theme feels typographically complete.</span></div></div>
+      <div class="effect-item"><span class="effect-num">7</span><div><span class="effect-title">3-Level Surface Hierarchy</span> — <span class="effect-desc">Page background → card surface → elevated element. Each step is 4–8% lighter/darker for depth without using shadows alone.</span></div></div>
+      <div class="effect-item"><span class="effect-num">8</span><div><span class="effect-title">Accessible Focus Ring</span> — <span class="effect-desc">3px solid primary color ring on every interactive element. Matches each theme's primary color via --style-shadow-focus.</span></div></div>
+      <div class="effect-item"><span class="effect-num">9</span><div><span class="effect-title">Theme Switch Transition</span> — <span class="effect-desc">:root transition on background-color, color, border-color at 300ms. Switching themes feels smooth not jarring.</span></div></div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>The 8 Themes</h2>
+    <p style="margin-bottom:14px">Theme 0 is the protected original. It is always restorable from the admin panel with a dedicated green "Restore Default" button.</p>
+    <div class="theme-grid">
+
+      
+      <div class="theme-card">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#3E2723"></div>
+          <div class="swatch" style="background:#2E7D32"></div>
+          <div class="swatch" style="background:#8D6E63"></div>
+          <div class="swatch" style="background:#FFF8E1"></div>
+          <div class="swatch" style="background:#6D4C41"></div>
+          <div class="swatch" style="background:#BCAAA4"></div>
+        </div>
+        <div class="theme-header">
+          <div class="theme-num">Theme 0</div>
+          <div class="theme-name">Classic Soil <span class="badge default">Default</span><span class="badge protected">Protected</span></div>
+          <div class="theme-desc">Exact snapshot of the current site. Original gradient, particle field, white cards, forest-green buttons. Always restorable.</div>
+        </div>
+        <div class="theme-body">
+          <div class="row"><span class="key">Primary</span><span class="val">#3E2723 soil-dark</span></div>
+          <div class="row"><span class="key">Secondary</span><span class="val">#2E7D32 forest</span></div>
+          <div class="row"><span class="key">Background</span><span class="val">#FFF8E1 cream</span></div>
+          <div class="row"><span class="key">Cards</span><span class="val">Flat white, thin border</span></div>
+          <div class="row"><span class="key">Blur</span><span class="val">0px (no glass)</span></div>
+          <div class="row"><span class="key">Hero</span><span class="val">Particle field + SVG wave</span></div>
+        </div>
+      </div>
+
+      
+      <div class="theme-card">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#5D4037"></div>
+          <div class="swatch" style="background:#2E7D32"></div>
+          <div class="swatch" style="background:#8D6E63"></div>
+          <div class="swatch" style="background:#FAF6F0"></div>
+          <div class="swatch" style="background:#6D4C41"></div>
+          <div class="swatch" style="background:rgba(255,252,245,0.72)"></div>
+        </div>
+        <div class="theme-header">
+          <div class="theme-num">Theme 1</div>
+          <div class="theme-name">Soil Glass</div>
+          <div class="theme-desc">The soil palette elevated with frosted glass cards. Same warmth, more modern feel.</div>
+        </div>
+        <div class="theme-body">
+          <div class="row"><span class="key">Primary</span><span class="val">#5D4037 rich brown</span></div>
+          <div class="row"><span class="key">Background</span><span class="val">#FAF6F0 warm off-white</span></div>
+          <div class="row"><span class="key">Cards</span><span class="val">Frosted glass 12px blur</span></div>
+          <div class="row"><span class="key">Surface</span><span class="val">rgba(255,252,245,0.72)</span></div>
+          <div class="row"><span class="key">Enter</span><span class="val">450ms silky</span></div>
+        </div>
+      </div>
+
+      
+      <div class="theme-card">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#1A3A5C"></div>
+          <div class="swatch" style="background:#8B4513"></div>
+          <div class="swatch" style="background:#C5961A"></div>
+          <div class="swatch" style="background:#FAFAF8"></div>
+          <div class="swatch" style="background:#1A1A1A"></div>
+          <div class="swatch" style="background:#555550"></div>
+        </div>
+        <div class="theme-header">
+          <div class="theme-num">Theme 2</div>
+          <div class="theme-name">Academic Serif</div>
+          <div class="theme-desc">Oxford/MIT scholarly style. Navy authority, gold accents, generous whitespace, 1.8 line-height.</div>
+        </div>
+        <div class="theme-body">
+          <div class="row"><span class="key">Primary</span><span class="val">#1A3A5C Oxford navy</span></div>
+          <div class="row"><span class="key">Accent</span><span class="val">#C5961A gold</span></div>
+          <div class="row"><span class="key">Cards</span><span class="val">Flat, 0.5rem radius</span></div>
+          <div class="row"><span class="key">Letter-spacing</span><span class="val">+0.01em heading</span></div>
+          <div class="row"><span class="key">Line-height</span><span class="val">1.8 generous</span></div>
+        </div>
+      </div>
+
+      
+      <div class="theme-card">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#111827"></div>
+          <div class="swatch" style="background:#374151"></div>
+          <div class="swatch" style="background:#059669"></div>
+          <div class="swatch" style="background:#FFFFFF"></div>
+          <div class="swatch" style="background:#6B7280"></div>
+          <div class="swatch" style="background:#E5E7EB"></div>
+        </div>
+        <div class="theme-header">
+          <div class="theme-num">Theme 3</div>
+          <div class="theme-name">Minimal Light</div>
+          <div class="theme-desc">Swiss / Stripe / Linear inspired. Pure white, near-black, single emerald accent. Every pixel intentional.</div>
+        </div>
+        <div class="theme-body">
+          <div class="row"><span class="key">Primary</span><span class="val">#111827 near-black</span></div>
+          <div class="row"><span class="key">Accent</span><span class="val">#059669 emerald</span></div>
+          <div class="row"><span class="key">Shadows</span><span class="val">Hairline border-shadow</span></div>
+          <div class="row"><span class="key">Hover speed</span><span class="val">150ms snappy</span></div>
+          <div class="row"><span class="key">Letter-spacing</span><span class="val">-0.03em tight</span></div>
+        </div>
+      </div>
+
+      
+      <div class="theme-card">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#B45309"></div>
+          <div class="swatch" style="background:#44403C"></div>
+          <div class="swatch" style="background:#D97706"></div>
+          <div class="swatch" style="background:#F5F4F0"></div>
+          <div class="swatch" style="background:#1C1917"></div>
+          <div class="swatch" style="background:#78716C"></div>
+        </div>
+        <div class="theme-header">
+          <div class="theme-num">Theme 4</div>
+          <div class="theme-name">Warm Professional</div>
+          <div class="theme-desc">McKinsey / World Bank / UNDP palette. Amber authority on warm stone. NGO &amp; consultancy grade.</div>
+        </div>
+        <div class="theme-body">
+          <div class="row"><span class="key">Primary</span><span class="val">#B45309 amber-brown</span></div>
+          <div class="row"><span class="key">Background</span><span class="val">#F5F4F0 warm stone</span></div>
+          <div class="row"><span class="key">Cards</span><span class="val">Flat, 0.5rem radius</span></div>
+          <div class="row"><span class="key">Hero</span><span class="val">Near-black gradient</span></div>
+        </div>
+      </div>
+
+      
+      <div class="theme-card" style="border-color:#2d2d2d">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#E2C68A"></div>
+          <div class="swatch" style="background:#4ADE80"></div>
+          <div class="swatch" style="background:#FDE68A"></div>
+          <div class="swatch" style="background:#141414"></div>
+          <div class="swatch" style="background:#0A0A0A"></div>
+          <div class="swatch" style="background:#A8A29E"></div>
+        </div>
+        <div class="theme-header" style="background:#141414">
+          <div class="theme-num" style="color:#6b7280">Theme 5</div>
+          <div class="theme-name" style="color:#F5F5F4">Sophisticated Dark <span class="badge dark">Dark</span></div>
+          <div class="theme-desc" style="color:#a8a29e">Apple Events / Vercel dark. Warm gold on deep black, subtle glass, premium science journal feel.</div>
+        </div>
+        <div class="theme-body" style="background:#0d0d0d;border-color:#2d2d2d">
+          <div class="row"><span class="key" style="color:#6b7280">Primary</span><span class="val" style="color:#E2C68A">#E2C68A warm gold</span></div>
+          <div class="row"><span class="key" style="color:#6b7280">Cards</span><span class="val" style="color:#d1d5db">Subtle glass 8px blur</span></div>
+          <div class="row"><span class="key" style="color:#6b7280">Shadows</span><span class="val" style="color:#d1d5db">Deep black + white hairline</span></div>
+          <div class="row"><span class="key" style="color:#6b7280">Enter</span><span class="val" style="color:#d1d5db">450ms smooth</span></div>
+        </div>
+      </div>
+
+      
+      <div class="theme-card">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#0D9488"></div>
+          <div class="swatch" style="background:#0F766E"></div>
+          <div class="swatch" style="background:#F59E0B"></div>
+          <div class="swatch" style="background:#F0FDFA"></div>
+          <div class="swatch" style="background:#134E4A"></div>
+          <div class="swatch" style="background:#5F9EA0"></div>
+        </div>
+        <div class="theme-header">
+          <div class="theme-num">Theme 6</div>
+          <div class="theme-name">Fresh Teal</div>
+          <div class="theme-desc">WHO / UNICEF / research institute palette. Clean teal trust, amber CTA contrast, accessible and authoritative.</div>
+        </div>
+        <div class="theme-body">
+          <div class="row"><span class="key">Primary</span><span class="val">#0D9488 teal</span></div>
+          <div class="row"><span class="key">Accent</span><span class="val">#F59E0B amber contrast</span></div>
+          <div class="row"><span class="key">Background</span><span class="val">#F0FDFA teal tint</span></div>
+          <div class="row"><span class="key">Cards</span><span class="val">Flat, teal shadow</span></div>
+        </div>
+      </div>
+
+      
+      <div class="theme-card">
+        <div class="theme-swatches">
+          <div class="swatch" style="background:#1E40AF"></div>
+          <div class="swatch" style="background:#1D4ED8"></div>
+          <div class="swatch" style="background:#DC2626"></div>
+          <div class="swatch" style="background:#F8FAFC"></div>
+          <div class="swatch" style="background:#0F172A"></div>
+          <div class="swatch" style="background:#64748B"></div>
+        </div>
+        <div class="theme-header">
+          <div class="theme-num">Theme 7</div>
+          <div class="theme-name">Slate Corporate</div>
+          <div class="theme-desc">IBM / SAP / government portal. Corporate blue, crisp grid, fast 300ms interactions. No-nonsense.</div>
+        </div>
+        <div class="theme-body">
+          <div class="row"><span class="key">Primary</span><span class="val">#1E40AF corporate blue</span></div>
+          <div class="row"><span class="key">Background</span><span class="val">#F8FAFC blue-gray</span></div>
+          <div class="row"><span class="key">Enter speed</span><span class="val">300ms efficient</span></div>
+          <div class="row"><span class="key">Cards</span><span class="val">Flat, 0.5rem radius</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>11 Sub-Tasks (Dependency Order)</h2>
+    <div class="task-list">
+
+      <div class="task-item">
+        <div class="task-num pending">1</div>
+        <div class="task-body">
+          <div class="task-title">Define Style Theme Schema &amp; 8 Presets</div>
+          <div class="task-meta">TypeScript interface StyleThemeTokens (37 tokens) + 8 preset constants. Updated token names: animDurationHover, animDurationEnter, shadowFocus, letterSpacingHeading. cardMode simplified to flat|glass.</div>
+          <div class="task-files"><span class="file-tag create">CREATE style-themes.ts</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">2</div>
+        <div class="task-body">
+          <div class="task-title">Enhance StyleThemeProvider — CSS Variable Injection</div>
+          <div class="task-meta">Add applyStyleTokens() + resolveStyleTheme(). Apply DEFAULT_THEME immediately on mount (no flash). Extend context with activeStyleTheme + applyStyleTheme. Keep all existing applySettings() behavior intact.</div>
+          <div class="task-files"><span class="file-tag modify">MODIFY style-theme-context.tsx</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">3</div>
+        <div class="task-body">
+          <div class="task-title">Extend globals.css &amp; tailwind.config.ts</div>
+          <div class="task-meta">Append --style-* CSS variables (Classic Soil defaults). 2 card classes (flat + glass). 3 button shape classes. 3 keyframes (draw-line, page-flip-forward, page-flip-backward). scroll-progress-bar + book-page classes. prefers-reduced-motion block. Extend Tailwind with style-* tokens.</div>
+          <div class="task-files"><span class="file-tag modify">MODIFY globals.css</span><span class="file-tag modify">MODIFY tailwind.config.ts</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">4</div>
+        <div class="task-body">
+          <div class="task-title">Enhance Homepage (page.tsx)</div>
+          <div class="task-meta">Replace all hardcoded soil/forest Tailwind color classes with --style-* CSS variable references. Replace plain inputs/cards with StyleCard/StyleInput/StyleTextarea. Add whileInView stagger to all card grids. Keep original SVG wave, keep ParticleField. No looping animations added.</div>
+          <div class="task-files"><span class="file-tag modify">MODIFY page.tsx</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">5</div>
+        <div class="task-body">
+          <div class="task-title">Build StyleCard Component</div>
+          <div class="task-meta">Two real variants: flat and glass. variant="auto" reads --style-card-mode CSS var. Hover is pure CSS (no Framer whileHover). Removed TiltCard + glow props — too much motion for official site.</div>
+          <div class="task-files"><span class="file-tag create">CREATE style-card.tsx</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">6</div>
+        <div class="task-body">
+          <div class="task-title">Build StyleInput, StyleTextarea, StyleParagraph</div>
+          <div class="task-meta">Floating label inputs with focus-glow (shadow-focus token). Auto-grow textarea. StyleParagraph as server component. All via --style-* vars, no hardcoded colors. forwardRef on inputs.</div>
+          <div class="task-files"><span class="file-tag create">CREATE style-input.tsx</span><span class="file-tag create">CREATE style-textarea.tsx</span><span class="file-tag create">CREATE style-paragraph.tsx</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">7</div>
+        <div class="task-body">
+          <div class="task-title">Build StyleUploader Component</div>
+          <div class="task-meta">5 states: idle, drag-over, uploading, success, error. No looping idle animation. Drag-over: smooth scale+tint (200ms). Upload: Framer Motion width progress bar. Success: SVG checkmark pathLength draw (once). Error: border red only — no shake animation.</div>
+          <div class="task-files"><span class="file-tag create">CREATE style-uploader.tsx</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">8</div>
+        <div class="task-body">
+          <div class="task-title">Build StylePdfBook Component (3D Page-Flip)</div>
+          <div class="task-meta">User-triggered page flip (click + swipe) — not a loop. Desktop: two-page spread + spine. Mobile: single page + touch swipe. Keyboard navigation. Theme-aware spine gradient. Book-level drop shadow.</div>
+          <div class="task-files"><span class="file-tag create">CREATE style-pdf-book.tsx</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">9</div>
+        <div class="task-body">
+          <div class="task-title">Build StyleTimeline Component (Vertical + Horizontal)</div>
+          <div class="task-meta">Vertical: SVG connecting line drawn by scroll progress (not loop). Cards fade in from side whileInView (once). Horizontal: snap-scroll track with drag-scroll on desktop. Uses StyleCard. Integrated into page builder BlockRenderer.</div>
+          <div class="task-files"><span class="file-tag create">CREATE style-timeline.tsx</span><span class="file-tag modify">MODIFY BlockRenderer.tsx</span><span class="file-tag modify">MODIFY default-props.ts</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">10</div>
+        <div class="task-body">
+          <div class="task-title">Admin Style Themes Panel</div>
+          <div class="task-meta">3-tab panel: Built-in Themes (8 cards) | Custom Themes (fork + JSON editor) | Live Preview. Classic Soil has green "Restore Default" button + protected badge. Preview is scoped (--p-* vars, doesn't affect admin). Add Style Themes nav item to sidebar.</div>
+          <div class="task-files"><span class="file-tag create">CREATE admin/style-themes/page.tsx</span><span class="file-tag create">CREATE StyleThemePreview.tsx</span><span class="file-tag modify">MODIFY AdminSidebar.tsx</span></div>
+        </div>
+      </div>
+
+      <div class="task-item">
+        <div class="task-num pending">11</div>
+        <div class="task-body">
+          <div class="task-title">Scroll Progress Bar &amp; Public Layout</div>
+          <div class="task-meta">Add 2px scroll progress bar to PublicLayoutContent.tsx (spring already exists, just add the rendered div). Audit headings + card grids in page.tsx. No hero parallax (removed from v3).</div>
+          <div class="task-files"><span class="file-tag modify">MODIFY PublicLayoutContent.tsx</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Dependency Order</h2>
+    <div class="dep-chain">Sub-Task 1 — style-themes.ts (8 presets)
+    ↓
+Sub-Task 2 — style-theme-context.tsx (CSS var injection)
+    ↓
+Sub-Task 3 — globals.css + tailwind.config.ts
+    ↓
+Sub-Task 5 — StyleCard (must exist before homepage + timeline)
+    ↓
+┌──────────────────────────────────────────┐
+│ Sub-Task 4    Sub-Task 6    Sub-Task 7   │  parallel
+│ (Homepage)  (Inputs/Para) (Uploader)    │
+└──────────────────────────────────────────┘
+    ↓
+┌──────────────────────────────────┐
+│  Sub-Task 8       Sub-Task 9    │  parallel
+│  (PdfBook)       (Timeline)     │
+└──────────────────────────────────┘
+    ↓
+Sub-Task 10 — Admin Style Themes Panel
+    ↓
+Sub-Task 11 — Scroll Progress Bar</div>
+  </div>
+
+  
+  <div class="section">
+    <h2>All File Changes (18 files)</h2>
+    <table>
+      <tr><th>File</th><th>Action</th><th>Sub-Task</th></tr>
+      <tr><td>src/lib/style-themes.ts</td><td class="act-create">CREATE</td><td>1</td></tr>
+      <tr><td>src/lib/style-theme-context.tsx</td><td class="act-modify">MODIFY</td><td>2</td></tr>
+      <tr><td>src/app/globals.css</td><td class="act-modify">MODIFY</td><td>3</td></tr>
+      <tr><td>frontend/tailwind.config.ts</td><td class="act-modify">MODIFY</td><td>3</td></tr>
+      <tr><td>src/app/(public)/page.tsx</td><td class="act-modify">MODIFY</td><td>4</td></tr>
+      <tr><td>src/components/ui/style-card.tsx</td><td class="act-create">CREATE</td><td>5</td></tr>
+      <tr><td>src/components/ui/style-input.tsx</td><td class="act-create">CREATE</td><td>6</td></tr>
+      <tr><td>src/components/ui/style-textarea.tsx</td><td class="act-create">CREATE</td><td>6</td></tr>
+      <tr><td>src/components/ui/style-paragraph.tsx</td><td class="act-create">CREATE</td><td>6</td></tr>
+      <tr><td>src/components/ui/style-uploader.tsx</td><td class="act-create">CREATE</td><td>7</td></tr>
+      <tr><td>src/components/ui/style-pdf-book.tsx</td><td class="act-create">CREATE</td><td>8</td></tr>
+      <tr><td>src/components/ui/style-timeline.tsx</td><td class="act-create">CREATE</td><td>9</td></tr>
+      <tr><td>src/app/admin/style-themes/page.tsx</td><td class="act-create">CREATE</td><td>10</td></tr>
+      <tr><td>src/components/admin/StyleThemePreview.tsx</td><td class="act-create">CREATE</td><td>10</td></tr>
+      <tr><td>src/components/layout/AdminSidebar.tsx</td><td class="act-modify">MODIFY</td><td>10</td></tr>
+      <tr><td>src/components/layout/PublicLayoutContent.tsx</td><td class="act-modify">MODIFY</td><td>11</td></tr>
+      <tr><td>src/components/page-builder/BlockRenderer.tsx</td><td class="act-modify">MODIFY</td><td>9</td></tr>
+      <tr><td>src/components/page-builder/schema/default-props.ts</td><td class="act-modify">MODIFY</td><td>9</td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    <p>Made with IBM Bob — Soil Science Society of Syria Website — UI Style Enhancement Plan v3.0</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,288 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Public Pages Audit</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system,"Segoe UI",system-ui,sans-serif; font-size:14px; line-height:1.6; color:#1f2328; background:#fff; }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px; }
+  h1 { font-size:20px; font-weight:700; margin-bottom:4px; }
+  .subtitle { color:#57606a; font-size:13px; margin-bottom:28px; }
+  h2 { font-size:14px; font-weight:700; color:#57606a; text-transform:uppercase; letter-spacing:.05em; margin:28px 0 10px; }
+  table { width:100%; border-collapse:collapse; margin-bottom:24px; font-size:13px; }
+  th { background:#f7f8fa; border:1px solid #e5e7eb; padding:8px 10px; text-align:left; font-weight:600; color:#57606a; }
+  td { border:1px solid #e5e7eb; padding:8px 10px; vertical-align:top; }
+  tr:hover td { background:#f7f8fa; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:9999px; font-size:11px; font-weight:600; white-space:nowrap; }
+  .ok    { background:#dcfce7; color:#15803d; }
+  .warn  { background:#fef9c3; color:#854d0e; }
+  .bad   { background:#fee2e2; color:#b91c1c; }
+  .mono  { font-family: "Consolas","SF Mono",monospace; font-size:12px; color:#57606a; }
+  .note  { font-size:12px; color:#57606a; margin-top:3px; }
+  details summary { cursor:pointer; color:#3b82d4; font-size:13px; margin-bottom:6px; }
+  details summary:hover { text-decoration:underline; }
+  ul.issues { margin:6px 0 0 16px; font-size:12px; color:#57606a; }
+  ul.issues li { margin-bottom:3px; }
+  .section-divider { border:none; border-top:1px solid #e5e7eb; margin:28px 0 0; }
+  footer { margin-top:40px; padding-top:12px; border-top:1px solid #e5e7eb; text-align:center; font-size:11px; color:#57606a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Public Pages — Static Content Audit</h1>
+  <p class="subtitle">All pages under <code>frontend/src/app/(public)/</code> — classified by how much hardcoded / static content remains vs. DB-driven sections.</p>
+
+  
+  <h2>Legend</h2>
+  <table>
+    <tr><td><span class="badge ok">✓ DB-Driven</span></td><td>Page fetches every section/content from the API. Nothing hardcoded.</td></tr>
+    <tr><td><span class="badge warn">⚠ Mixed</span></td><td>Page queries the API but <em>also</em> contains hardcoded fallback sections rendered as static React components that bypass the DB.</td></tr>
+    <tr><td><span class="badge bad">✗ Static</span></td><td>Page layout / copy is entirely hardcoded in TSX. Only data rows (news cards, event cards) come from the API.</td></tr>
+  </table>
+
+  
+  <h2>CMS Page-Builder Pages</h2>
+  <p class="note" style="margin-bottom:10px">These load their content from the <code>pages</code> + <code>page_sections</code> tables via <code>/public/pages/{slug}</code>. They are <strong>fully DB-driven</strong> — no hardcoded content.</p>
+  <table>
+    <thead><tr><th>Route</th><th>File</th><th>API slug</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>/about</td>
+        <td class="mono">(public)/about/page.tsx</td>
+        <td class="mono">/public/pages/about</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+      <tr>
+        <td>/president-message</td>
+        <td class="mono">(public)/president-message/page.tsx</td>
+        <td class="mono">/public/pages/president-message</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+      <tr>
+        <td>/contact</td>
+        <td class="mono">(public)/contact/page.tsx</td>
+        <td class="mono">/public/pages/contact</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+      <tr>
+        <td>/publications</td>
+        <td class="mono">(public)/publications/page.tsx</td>
+        <td class="mono">/public/pages/publications</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+      <tr>
+        <td>/board</td>
+        <td class="mono">(public)/board/page.tsx</td>
+        <td class="mono">/public/pages/board</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+      <tr>
+        <td>/newsletter</td>
+        <td class="mono">(public)/newsletter/page.tsx</td>
+        <td class="mono">/public/pages/newsletter</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+      <tr>
+        <td>/page/[slug]</td>
+        <td class="mono">(public)/page/[slug]/page.tsx</td>
+        <td class="mono">/public/pages/{slug}</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+      <tr>
+        <td>/sections</td>
+        <td class="mono">(public)/sections/page.tsx</td>
+        <td class="mono">/public/site-sections</td>
+        <td><span class="badge ok">✓ DB-Driven</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>Data-List Pages (news / events / jobs / members)</h2>
+  <p class="note" style="margin-bottom:10px">These pages list rows from the DB (articles, events, etc.) which is correct. However their <strong>hero banner, section titles, category filters, and page structure</strong> are all hardcoded static TSX. The page chrome never changes without a code deploy.</p>
+  <table>
+    <thead><tr><th>Route</th><th>File</th><th>Static elements</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>/news</td>
+        <td class="mono">(public)/news/page.tsx</td>
+        <td>
+          Hero banner copy ("News &amp; Announcements", "الأخبار والإعلانات"),
+          category filter tabs, page structure.
+          <div class="note">Card data = DB ✓</div>
+        </td>
+        <td><span class="badge bad">✗ Static chrome</span></td>
+      </tr>
+      <tr>
+        <td>/events</td>
+        <td class="mono">(public)/events/page.tsx</td>
+        <td>
+          Hero banner copy, event type filter tabs ("Conference", "Workshop"…),
+          list/calendar toggle, page structure.
+          <div class="note">Event data = DB ✓</div>
+        </td>
+        <td><span class="badge bad">✗ Static chrome</span></td>
+      </tr>
+      <tr>
+        <td>/events/[slug]</td>
+        <td class="mono">(public)/events/[slug]/page.tsx</td>
+        <td>Detail page layout is hardcoded. Event data = DB ✓</td>
+        <td><span class="badge bad">✗ Static layout</span></td>
+      </tr>
+      <tr>
+        <td>/jobs</td>
+        <td class="mono">(public)/jobs/page.tsx</td>
+        <td>
+          Hero copy, application modal layout, filter UI, status badge copy.
+          <div class="note">Vacancy data = DB ✓</div>
+        </td>
+        <td><span class="badge bad">✗ Static chrome</span></td>
+      </tr>
+      <tr>
+        <td>/members</td>
+        <td class="mono">(public)/members/page.tsx</td>
+        <td>
+          Hero copy, hardcoded MEMBERSHIP_TYPES array, hardcoded SPECIALIZATIONS array.
+          <div class="note">Member rows = DB ✓</div>
+        </td>
+        <td><span class="badge bad">✗ Static chrome</span></td>
+      </tr>
+      <tr>
+        <td>/members/[slug]</td>
+        <td class="mono">(public)/members/[slug]/page.tsx</td>
+        <td>Detail page layout hardcoded. Member data = DB ✓</td>
+        <td><span class="badge bad">✗ Static layout</span></td>
+      </tr>
+      <tr>
+        <td>/news/[slug]</td>
+        <td class="mono">(public)/news/[slug]/page.tsx</td>
+        <td>Article detail layout hardcoded. Article data = DB ✓</td>
+        <td><span class="badge bad">✗ Static layout</span></td>
+      </tr>
+      <tr>
+        <td>/search</td>
+        <td class="mono">(public)/search/page.tsx</td>
+        <td>
+          Hero section, CONTENT_TYPES filter array, result card layout — all hardcoded.
+          <div class="note">Results = DB ✓</div>
+        </td>
+        <td><span class="badge bad">✗ Static chrome</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>Home Page — Most Critical</h2>
+  <table>
+    <thead><tr><th>Route</th><th>File</th><th>Issue</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>/</td>
+        <td class="mono">(public)/page.tsx</td>
+        <td>
+          <strong>Queries DB site-sections first</strong>, but every section is implemented as a <em>static local React function</em>:
+          <ul class="issues">
+            <li><code>HeroSection()</code> — title, subtitle, buttons, SVG art all hardcoded</li>
+            <li><code>OurFocusAreasSection()</code> — 3 hardcoded focus-area cards (Research, Education, Sustainability)</li>
+            <li><code>JoinOurCommunitySection()</code> — CTA copy hardcoded</li>
+            <li><code>TestimonialsSection()</code> — 3 hardcoded fake testimonials (Dr. Ahmad K., Fatima M., Prof. Omar S.)</li>
+            <li><code>ContactFormSection()</code> — form that calls <code>e.preventDefault()</code> only — <strong>never submits to the API</strong></li>
+            <li><code>NewsletterSection()</code> — subscribe form uses <code>setTimeout(1000)</code> fake delay — <strong>never calls the API</strong></li>
+            <li><code>StatisticsSection()</code> — stats array (15+ years, 500+ members, 200+ pubs, 50+ events) hardcoded constants</li>
+            <li><code>CTAsSection()</code> — "Become a Member" / "Contact Us" CTA copy hardcoded</li>
+            <li><code>AboutSection()</code> — full about text hardcoded (never rendered in the final render tree — dead code!)</li>
+          </ul>
+          When DB site-sections exist, the page still renders the same hardcoded components — the DB sections only <em>choose which hardcoded component to show</em>, they do not feed data into it.
+        </td>
+        <td><span class="badge bad">✗ Static façade</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>What is Legitimately Static (should stay)</h2>
+  <table>
+    <thead><tr><th>Page</th><th>Why static is fine</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Loading skeletons, error states, "not found" banners</td>
+        <td>UI chrome — not content. Correct to be in code.</td>
+      </tr>
+      <tr>
+        <td>Pagination controls, search form widget</td>
+        <td>Behaviour, not content.</td>
+      </tr>
+      <tr>
+        <td>Tailwind classes, layout structure</td>
+        <td>Presentation layer, belongs in code.</td>
+      </tr>
+      <tr>
+        <td><code>/page/[slug]</code> — back-to-home link "Page Not Found" text</td>
+        <td>Fallback UI, acceptable in code.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+  <h2>Recommended Actions (Priority Order)</h2>
+  <table>
+    <thead><tr><th>#</th><th>Action</th><th>Impact</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>
+          <strong>Home page — wire real data into existing section components</strong><br />
+          <span class="note">Hero: read title/subtitle/buttons from DB site-section config JSON.<br />
+          TestimonialsSection: call <code>/api/public/testimonials</code> (or use PageSectionRenderer).<br />
+          StatisticsSection: call an API or at minimum make constants configurable via admin.<br />
+          ContactFormSection &amp; NewsletterSection: wire to <code>/api/public/contact</code> and <code>/api/public/newsletter/subscribe</code>.</span>
+        </td>
+        <td><span class="badge bad">High — fake form / fake stats visible to users</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>
+          <strong>Replace <code>AboutSection()</code> dead-code on home page</strong><br />
+          <span class="note">It is defined but never rendered in the current render path. Either delete it or plug it into the section loop.</span>
+        </td>
+        <td><span class="badge warn">Medium — dead code / confusion</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>
+          <strong>News / Events / Jobs / Members / Search — replace hardcoded hero banners with a DB page header</strong><br />
+          <span class="note">The cleanest approach: add a "page-header" entry in <code>pages</code> table for each route (slug = "news-page-header" etc) and render it via PageSectionRenderer. Alternatively keep a simple API call for the page title/subtitle only.</span>
+        </td>
+        <td><span class="badge warn">Medium — admin cannot change headings without a deploy</span></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>
+          <strong>Members page — load MEMBERSHIP_TYPES and SPECIALIZATIONS from API</strong><br />
+          <span class="note">Hardcoded filter arrays mean new membership types added in the DB won't appear as filter options.</span>
+        </td>
+        <td><span class="badge warn">Medium — filter out-of-sync with DB</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>
+          <strong>Jobs / Events pages — load EVENT_TYPES filter from API</strong><br />
+          <span class="note">Same issue as members — if new types are added to the DB they won't appear as filters.</span>
+        </td>
+        <td><span class="badge warn">Low–Medium</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="section-divider" />
+  <p class="note" style="margin-top:16px">
+    <strong>Summary:</strong> The 8 CMS page-builder pages (<code>/about</code>, <code>/board</code>, <code>/contact</code>, etc.) are fully DB-driven and require no changes.
+    The 8 data-list pages and the home page still have significant static hardcoded content — most critically the home page contact/newsletter forms which do not submit to the API, and the hardcoded testimonials/statistics that admins cannot update without a code deployment.
+  </p>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

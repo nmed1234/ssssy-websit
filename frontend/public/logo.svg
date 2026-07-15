@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="200" height="220">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="soilGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B6914;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#6D4C1F;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#4A3020;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2D1B0E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#66BB6A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Arched text -->
+  <path id="arch" d="M 30,100 A 70,70 0 0,1 170,100" fill="none"/>
+  <text font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#B8860B" letter-spacing="1">
+    <textPath href="#arch" startOffset="5%">SOIL SCIENCE SOCIETY OF SYRIA</textPath>
+  </text>
+  
+  <!-- Left wheat stalk -->
+  <g transform="translate(30, 70) rotate(-30)">
+    <line x1="0" y1="0" x2="0" y2="40" stroke="#C9A84C" stroke-width="2"/>
+    <ellipse cx="-4" cy="5" rx="3" ry="6" fill="#C9A84C" transform="rotate(-15)"/>
+    <ellipse cx="4" cy="5" rx="3" ry="6" fill="#C9A84C" transform="rotate(15)"/>
+    <ellipse cx="-4" cy="15" rx="3" ry="6" fill="#C9A84C" transform="rotate(-15)"/>
+    <ellipse cx="4" cy="15" rx="3" ry="6" fill="#C9A84C" transform="rotate(15)"/>
+    <ellipse cx="0" cy="0" rx="3" ry="7" fill="#C9A84C"/>
+  </g>
+  
+  <!-- Right wheat stalk -->
+  <g transform="translate(170, 70) rotate(30)">
+    <line x1="0" y1="0" x2="0" y2="40" stroke="#C9A84C" stroke-width="2"/>
+    <ellipse cx="-4" cy="5" rx="3" ry="6" fill="#C9A84C" transform="rotate(-15)"/>
+    <ellipse cx="4" cy="5" rx="3" ry="6" fill="#C9A84C" transform="rotate(15)"/>
+    <ellipse cx="-4" cy="15" rx="3" ry="6" fill="#C9A84C" transform="rotate(-15)"/>
+    <ellipse cx="4" cy="15" rx="3" ry="6" fill="#C9A84C" transform="rotate(15)"/>
+    <ellipse cx="0" cy="0" rx="3" ry="7" fill="#C9A84C"/>
+  </g>
+  
+  <!-- Syria map silhouette (simplified) -->
+  <path d="M 80,75 L 75,80 L 70,85 L 68,92 L 72,100 L 80,105 L 90,103 L 100,108 L 110,105 L 118,98 L 120,90 L 116,82 L 108,76 L 98,72 L 88,72 Z" 
+        fill="url(#leafGrad)" opacity="0.9"/>
+  
+  <!-- Soil layers -->
+  <rect x="40" y="145" width="120" height="12" rx="2" fill="#8B6914"/>
+  <rect x="40" y="158" width="120" height="12" rx="2" fill="#6D4C1F"/>
+  <rect x="40" y="171" width="120" height="12" rx="2" fill="#4A3020"/>
+  
+  <!-- Main plant stem -->
+  <line x1="100" y1="190" x2="100" y2="120" stroke="#2E7D32" stroke-width="3"/>
+  
+  <!-- Root system -->
+  <path d="M 100,190 Q 80,200 70,210" stroke="#6D4C1F" stroke-width="1.5" fill="none"/>
+  <path d="M 100,190 Q 120,200 130,210" stroke="#6D4C1F" stroke-width="1.5" fill="none"/>
+  <path d="M 95,185 Q 75,195 65,205" stroke="#6D4C1F" stroke-width="1.5" fill="none"/>
+  <path d="M 105,185 Q 125,195 135,205" stroke="#6D4C1F" stroke-width="1.5" fill="none"/>
+  
+  <!-- Center large leaf -->
+  <path d="M 100,120 Q 85,105 90,90 Q 100,95 100,120" fill="url(#leafGrad)"/>
+  <path d="M 100,120 Q 115,105 110,90 Q 100,95 100,120" fill="url(#leafGrad)"/>
+  
+  <!-- Left small leaf -->
+  <path d="M 98,135 Q 80,125 78,108 Q 90,112 98,135" fill="url(#leafGrad)"/>
+  
+  <!-- Right small leaf -->
+  <path d="M 102,135 Q 120,125 122,108 Q 110,112 102,135" fill="url(#leafGrad)"/>
+  
+  <!-- Small sprout left -->
+  <line x1="70" y1="145" x2="70" y2="125" stroke="#2E7D32" stroke-width="2"/>
+  <path d="M 70,125 Q 60,115 62,105 Q 70,110 70,125" fill="#66BB6A"/>
+  
+  <!-- Small sprout right -->
+  <line x1="130" y1="145" x2="130" y2="125" stroke="#2E7D32" stroke-width="2"/>
+  <path d="M 130,125 Q 140,115 138,105 Q 130,110 130,125" fill="#66BB6A"/>
+</svg>

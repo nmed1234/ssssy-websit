@@ -1,0 +1,661 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stage 2 Audit Report</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #ffffff; color: #1f2328; padding: 32px 16px; }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; color: #1f2328; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #57606a; margin-bottom: 32px; }
+  h2 { font-size: 15px; font-weight: 700; color: #1f2328; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 13px; font-weight: 600; color: #57606a; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: .05em; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; text-align: center; }
+  .stat-card .num { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .stat-card .lbl { font-size: 11px; color: #57606a; }
+  .green .num { color: #1a7f37; }
+  .yellow .num { color: #9a6700; }
+  .red .num { color: #cf222e; }
+  .blue .num { color: #3b82d4; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 13px; }
+  thead th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #57606a; }
+  tbody td { border: 1px solid #e5e7eb; padding: 7px 10px; vertical-align: top; }
+  tbody tr:hover td { background: #fafbfc; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .done { background: #dafbe1; color: #1a7f37; }
+  .partial { background: #fff8c5; color: #9a6700; }
+  .missing { background: #ffebe9; color: #cf222e; }
+  .na { background: #f0f1f3; color: #57606a; }
+
+  .detail { font-size: 12px; color: #57606a; margin-top: 2px; }
+  .code { font-family: ui-monospace, monospace; font-size: 11px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 5px; }
+
+  .gap-section { background: #fff8c5; border: 1px solid #f0e68c; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .gap-section h4 { font-size: 13px; font-weight: 700; color: #9a6700; margin-bottom: 8px; }
+  .gap-section ul { margin-left: 20px; }
+  .gap-section li { margin-bottom: 4px; font-size: 13px; }
+
+  .critical { background: #ffebe9; border: 1px solid #ffc1bd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .critical h4 { font-size: 13px; font-weight: 700; color: #cf222e; margin-bottom: 8px; }
+  .critical ul { margin-left: 20px; }
+  .critical li { margin-bottom: 4px; font-size: 13px; }
+
+  .ok-section { background: #dafbe1; border: 1px solid #aceebb; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .ok-section h4 { font-size: 13px; font-weight: 700; color: #1a7f37; margin-bottom: 8px; }
+  .ok-section ul { margin-left: 20px; }
+  .ok-section li { margin-bottom: 4px; font-size: 13px; }
+
+  .section-divider { height: 1px; background: #e5e7eb; margin: 28px 0; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; text-align: center; color: #57606a; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Stage 2 Implementation Audit</h1>
+  <p class="subtitle">Syrian Soil Science Society (SSSSY) · Advanced CMS &amp; Page Builder · Reviewed against <strong>requirements-stage2.md</strong>, <strong>task-stage2.md</strong> &amp; <strong>SRS_V4_COMPLETE.md</strong></p>
+
+  
+  <div class="summary-grid">
+    <div class="stat-card green">
+      <div class="num">28</div>
+      <div class="lbl">Fully Implemented</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="num">14</div>
+      <div class="lbl">Partial / Gaps</div>
+    </div>
+    <div class="stat-card red">
+      <div class="num">9</div>
+      <div class="lbl">Missing / Not Implemented</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="num">~62%</div>
+      <div class="lbl">Overall Compliance</div>
+    </div>
+  </div>
+
+  
+  <h2>Group 1 · Backend – Database Schema &amp; API</h2>
+
+  <h3>1.1 Database Schema</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code class="code">component_presets</code> table</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">V30 + V31 + V34 (idempotent). Columns: id, name_ar/en, component_type, config_json, data_json, styling_json, is_system, created_by.</td>
+      </tr>
+      <tr>
+        <td><code class="code">content_version_history</code> table</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">V30/V31/V34. Includes unique constraint + index on (content_type, content_id, version_number).</td>
+      </tr>
+      <tr>
+        <td><code class="code">themes</code> table (separate entity with is_active, is_system)</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No <code class="code">themes</code> table exists. The system uses <code class="code">theme_settings</code> (key/value rows in V24). The full theme entity with activate/deactivate is absent. No <code class="code">ThemeEntity.java</code>, no <code class="code">ThemeRepository</code>, no activate endpoint.</td>
+      </tr>
+      <tr>
+        <td><code class="code">content_approval_log</code> table</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">V30/V31/V34 + ContentApprovalLog entity + controller + service.</td>
+      </tr>
+      <tr>
+        <td>Add <code class="code">events_json</code>, <code class="code">conditions_json</code>, <code class="code">version</code> to <code class="code">site_sections</code> / <code class="code">page_sections</code></td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">V30 added, V31 + V34 re-apply as idempotent fixes. Both tables covered.</td>
+      </tr>
+      <tr>
+        <td>Flyway migration script for all schema changes</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">V30, V31, V34 all present. V31 and V34 are intentional idempotency patches.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>1.2 Backend API Endpoints</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Component Presets CRUD (<code class="code">GET/POST/PUT/DELETE /api/admin/component-presets</code>)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">Full CRUD + /system + /custom sub-routes. @PreAuthorize on all endpoints.</td>
+      </tr>
+      <tr>
+        <td>Content Workflow API (<code class="code">PUT …/status</code>, <code class="code">GET …/history</code>, <code class="code">POST …/rollback</code>)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">WorkflowController: submit, assign, approve, reject, request-revision, publish, schedule, unpublish, back-to-draft, logs. ContentVersionHistoryController: history list, get by version, rollback.</td>
+      </tr>
+      <tr>
+        <td>Themes API (<code class="code">GET/POST/PUT/DELETE /api/admin/themes</code> + activate)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">ThemeSettingController provides key/value theme settings CRUD (<code class="code">/api/admin/theme-settings</code>), but no separate <code class="code">/api/admin/themes</code> resource with activate/deactivate endpoint.</td>
+      </tr>
+      <tr>
+        <td>Icon Library Metadata API (<code class="code">GET /api/admin/icons</code>, <code class="code">GET /api/admin/icons/:pack</code>)</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No backend endpoint. Icons are provided client-side only (Lucide categories in IconPickerModal.tsx). No pack-level metadata served from the API.</td>
+      </tr>
+      <tr>
+        <td>Staging Sync API (<code class="code">POST /api/admin/staging/sync-to-production</code>, <code class="code">GET …/status</code>)</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No StagingController or StagingSyncService in backend. Frontend staging page uses mock data with a hardcoded 2-second delay.</td>
+      </tr>
+      <tr>
+        <td>Update page-sections/site-sections APIs to support new JSON fields</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">eventsJson + conditionsJson + version mapped in entity &amp; DTOs; API accepts them.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 Backend Services</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>ComponentPresetService (CRUD, system vs custom)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">Full CRUD + getSystemPresets() + getCustomPresets() + getByType().</td>
+      </tr>
+      <tr>
+        <td>ContentWorkflowService (status changes, approval/reject with comments)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">WorkflowService: full state machine (DRAFT→SUBMITTED→IN_REVIEW→APPROVED→PUBLISHED→ARCHIVED) with notification hooks.</td>
+      </tr>
+      <tr>
+        <td>ContentVersionService (snapshots, diff generation, rollback)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">ContentVersionHistoryService: snapshot creation, list, rollback for ContentItem. <strong>No diff generation</strong> (side-by-side diff not implemented). Rollback is data-replace only.</td>
+      </tr>
+      <tr>
+        <td>ThemeService (CRUD themes, activate/deactivate)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">ThemeSettingService: key-value CRUD, caching. No activate/deactivate pattern for full theme presets.</td>
+      </tr>
+      <tr>
+        <td>StagingSyncService (sync staging DB/media to production)</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">Not implemented anywhere in the backend.</td>
+      </tr>
+      <tr>
+        <td>Update ContentSchedulerService to handle more content types</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">ContentSchedulerService handles SCHEDULED content items. Events have their own status field but are not scheduled through the same engine.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-divider"></div>
+
+  
+  <h2>Group 2 · Frontend – Advanced Page Builder</h2>
+
+  <h3>2.1 Core Page Builder Infrastructure</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Dedicated <code class="code">admin/page-builder/[pageId]</code> route</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Page builder is embedded inside <code class="code">admin/pages/[id]/page.tsx</code> — not a standalone <code class="code">/admin/page-builder/[pageId]</code> route as specified. AdvancedPropertyEditor &amp; ComponentTreePanel exist as components but are <strong>not wired into the page editor</strong> (it still uses the basic <code class="code">PropertyEditor</code>).</td>
+      </tr>
+      <tr>
+        <td>Drag-and-drop canvas (dnd-kit or React DnD)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">BuilderCanvas uses native HTML5 drag events (no dnd-kit/react-dnd library). Functional but lacks advanced features (ghost images, animations, touch support).</td>
+      </tr>
+      <tr>
+        <td>Expandable Component Tree sidebar with drag/drop reorder</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">ComponentTreePanel.tsx: collapse/expand, drag-to-reorder, delete, duplicate, toggle visibility. Not yet connected in the live page editor (admin/pages/[id]/page.tsx uses PageBuilder which uses PropertyEditor, not AdvancedPropertyEditor).</td>
+      </tr>
+      <tr>
+        <td>Property Editor sidebar with tabs (Content, Layout, Style, Events, Conditions)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">AdvancedPropertyEditor.tsx has all 6 tabs (Content, Layout, Style, BG, Events, Conditions). However the live editor routes to the basic PropertyEditor.tsx instead.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2.2 Property Editor Controls</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Text controls (plain + Rich HTML editor with AR/EN support)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Plain text inputs exist in AdvancedPropertyEditor. RichTextEditor.tsx (TipTap) exists and is used in content forms. It is <strong>not integrated into the Property Editor tabs</strong> for page sections.</td>
+      </tr>
+      <tr>
+        <td>Media picker (existing media library with alt/caption)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Image URL text fields present. No in-editor media library picker modal (browse/select from existing uploads). Users must type URLs manually.</td>
+      </tr>
+      <tr>
+        <td>Color picker (visual picker, presets, hex/RGB/HSL, opacity)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">PropColor uses native browser color input + hex text field. No hex/RGB/HSL toggle, no saved theme color presets panel, no opacity slider on color.</td>
+      </tr>
+      <tr>
+        <td>Gradient builder (linear/radial/conic, color stops, angle/position)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">6 preset gradients + manual CSS gradient string + direction selector. No interactive gradient stop editor (drag stops on a gradient bar).</td>
+      </tr>
+      <tr>
+        <td>Layout controls (Flexbox/Grid visual editor, margin/padding sliders, per-breakpoint)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">LayoutTab: full flexbox dropdowns, margin/padding text inputs, grid columns, responsive columns (mobile/tablet/desktop). Missing: visual drag-column grid editor, range sliders for margin/padding, full sm/md/lg/xl/2xl breakpoint override system.</td>
+      </tr>
+      <tr>
+        <td>Typography controls (font, size, weight, line-height, letter-spacing, align, transform, decoration, color, shadow)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">StyleTab: font-family, size, weight, line-height, letter-spacing, text-align all implemented. Missing: text-transform, text-decoration, text-shadow.</td>
+      </tr>
+      <tr>
+        <td>Border/shadow controls (per-corner radius, box/text shadow presets + custom)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Border radius (single value), border width/color, box shadow text input present. Missing: per-corner border radius, shadow presets picker, text-shadow.</td>
+      </tr>
+      <tr>
+        <td>Background controls (solid/gradient/image/pattern/video + overlay)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">BackgroundTab covers solid (color + opacity slider), gradient (presets + custom), image (URL + size/position/repeat + overlay color+opacity), video (mp4/YouTube). <strong>Pattern background missing</strong> (no SVG pattern library).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 Icon System Integration</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Icon Picker Modal (search/filter, categories, preview)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">IconPickerModal.tsx: 11 categories, search, category sidebar, icon grid preview.</td>
+      </tr>
+      <tr>
+        <td>Integrate icon packs (Lucide, Heroicons, Tabler, Font Awesome Free, ~10k+ icons)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Only Lucide icons (~250 curated) are available. Heroicons, Tabler, Font Awesome Free packs are not integrated. Target of 10k+ icons not met.</td>
+      </tr>
+      <tr>
+        <td>Icon properties: color, size, stroke width, rotation, flip</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">IconPickerModal has color picker, size input, rotation, flipH/flipV. Stroke width missing (Lucide SVG doesn't expose it via props in this implementation).</td>
+      </tr>
+      <tr>
+        <td>Custom SVG icon upload</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">Not implemented in IconPickerModal or elsewhere.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2.4 Preset Library</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Preset Library Modal (system presets, custom presets, preview)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">PresetLibraryModal.tsx: system/custom/types tabs, search, API-driven via ComponentPresetController.</td>
+      </tr>
+      <tr>
+        <td>Save custom preset function</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">onSave callback in modal + POST /api/admin/component-presets with isSystem=false.</td>
+      </tr>
+      <tr>
+        <td>One-click preset application to sections</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">onApply applies preset config/data/styling to selected section.</td>
+      </tr>
+      <tr>
+        <td>50+ pre-built responsive section presets (Hero, Features, etc.)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">35 component type references in SYSTEM_COMPONENT_TYPES but these are type names only — <strong>no actual seeded preset records</strong> with config/styling JSON are present in any migration file.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2.5 Event &amp; Condition Builder</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Event Builder UI (trigger → action)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">EventsTab: click/hover/scroll-into-view/focus triggers; navigate/modal/toggle/scroll-to/copy/download/call-api actions. Custom JS action missing.</td>
+      </tr>
+      <tr>
+        <td>Condition Builder UI (conditional visibility rules)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">ConditionsTab: user role, device type, date range. Custom API condition missing.</td>
+      </tr>
+      <tr>
+        <td>Dynamic data binding for list components (CMS data, custom APIs)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">dataSource dropdown: static / latest-articles / upcoming-events / board-members / custom-api + apiUrl field + maxItems. Runtime consumption not yet implemented in PageSectionRenderer.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-divider"></div>
+
+  
+  <h2>Group 3 · Frontend – Content Workflow &amp; Approval</h2>
+
+  <h3>3.1 Workflow Management UI</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code class="code">admin/workflow</code> route (approval queue dashboard)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">Both admin/workflow/page.tsx and admin/content-approval/page.tsx implement full queue with tabs (submitted/pending/approved).</td>
+      </tr>
+      <tr>
+        <td>Status badge/selector on all content edit pages</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Content edit page shows status. Status badge shown in list views. Inline status change selector not present on all edit forms (events, jobs, board members pages lack it).</td>
+      </tr>
+      <tr>
+        <td>Approval request form (with comments)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">Modal with comment textarea + action button in both workflow pages.</td>
+      </tr>
+      <tr>
+        <td>Reject feedback form (with comments)</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">Reject action with comments supported in both workflow pages and WorkflowService.</td>
+      </tr>
+      <tr>
+        <td>In-app notifications for approval requests/feedback</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">WorkflowService calls NotificationService on approve/reject/submit.</td>
+      </tr>
+      <tr>
+        <td>Email alerts for approval requests/feedback</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Notification infrastructure exists but workflow events do not explicitly trigger email sends. EmailSendService exists but no workflow → email hook confirmed.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 Version History UI</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Version history list view (who/when)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">content-versions.ts lib + API exists. The content edit page (admin/content/[id]) references version/history but no dedicated history panel UI component rendered.</td>
+      </tr>
+      <tr>
+        <td>Side-by-side diff viewer</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No diff viewer component exists anywhere in frontend/src.</td>
+      </tr>
+      <tr>
+        <td>One-click rollback button</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">rollbackContentItem() API call exists in content-versions.ts and backend endpoint exists. No visible rollback UI button in any admin page.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-divider"></div>
+
+  
+  <h2>Group 4 · Frontend – Theme &amp; Global Design</h2>
+
+  <h3>4.1 Theme Customization UI</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code class="code">admin/themes</code> route</td>
+        <td><span class="badge done">Done</span></td>
+        <td class="detail">admin/themes/page.tsx: color palette, typography, layout, spacing groups via ThemeSettingService.</td>
+      </tr>
+      <tr>
+        <td>Full theme editor (color palette, typography, spacing, borders, shadows)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Colors (HSL + hex preview), fonts, layout, spacing present. Border and shadow token groups missing from the UI.</td>
+      </tr>
+      <tr>
+        <td>Save/load custom themes (named theme presets)</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">Settings are saved per-key. There is no "save as theme preset" / "load theme preset" flow — the <code class="code">themes</code> table is absent.</td>
+      </tr>
+      <tr>
+        <td>Live preview of theme changes in staging mode</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No staging preview for theme changes. Theme edits apply globally immediately on save.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 Global Design Tokens</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>CSS custom properties (variables) in Tailwind config</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">globals.css uses HSL CSS variables (--background, --primary, etc.) via shadcn/ui convention. Not all components read from theme_settings API dynamically.</td>
+      </tr>
+      <tr>
+        <td>Update all components to use CSS variables for theme values</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">shadcn/ui components use --primary/--background etc. Soil-specific classes (soil-dark etc.) are hardcoded Tailwind, not driven by theme_settings.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-divider"></div>
+
+  
+  <h2>Group 5 · Frontend – Staging &amp; Bulk Operations</h2>
+
+  <h3>5.1 Staging System</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Staging toggle in admin header</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">AdminSidebar has no staging mode toggle. No staging context provider.</td>
+      </tr>
+      <tr>
+        <td>Staging/production sync UI</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">admin/staging/page.tsx UI exists with sync button, pending records list, conflict indicators. All data is mock — not connected to real backend.</td>
+      </tr>
+      <tr>
+        <td>Generate temporary public preview links</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">Preview links UI in staging page. Generation uses mock data only — no backend endpoint to create/store preview tokens.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Bulk Operations UI</h3>
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Bulk select checkboxes on content list pages</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">BulkActions.tsx component exists with select-all + per-row checkboxes. Not integrated into most content list pages (articles, events, pages, jobs etc.).</td>
+      </tr>
+      <tr>
+        <td>Bulk edit modal (status, tags, categories, publish date)</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">BulkActions only exposes delete/approve/reject/publish. No bulk-edit properties modal.</td>
+      </tr>
+      <tr>
+        <td>Bulk duplicate/archive modals</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">Not implemented.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-divider"></div>
+
+  
+  <h2>Group 6 · Page Builder Components Updates</h2>
+
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Update all page-section components to consume config_json/styling_json/events_json/conditions_json</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">PageSectionRenderer.tsx renders sections but individual section components (HeroBanner, BoardMembersGrid etc.) don't dynamically apply eventsJson/conditionsJson/styling overrides at runtime.</td>
+      </tr>
+      <tr>
+        <td>Responsive breakpoint overrides applied at render time</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">Breakpoint data is stored (colsMobile/colsTablet/colsDesktop) but no runtime CSS injection or Tailwind class selection based on these values in the renderer.</td>
+      </tr>
+      <tr>
+        <td>Custom CSS/JS (sandboxed) support</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">customClass and inlineCss fields are editable in StyleTab. inlineCss is stored but not applied to rendered sections. No JS sandboxing at all.</td>
+      </tr>
+      <tr>
+        <td>New optional components: Pricing tables, FAQ accordions, advanced sliders, interactive maps</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">FAQ / accordion component types referenced in presets list. No dedicated PricingTable component. Interactive maps referenced in ComponentPalette but no MapComponent. Marked optional in task.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-divider"></div>
+
+  
+  <h2>Group 7 · Testing &amp; QA</h2>
+
+  <table>
+    <thead><tr><th style="width:50%">Requirement</th><th style="width:15%">Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Backend unit tests &gt;80% coverage for new services</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">4 test files exist: AuthServiceTest, PageServiceTest, EmailAdminControllerTest, PageControllerTest. New Stage 2 services (ComponentPresetService, ContentVersionHistoryService, WorkflowService, ThemeSettingService) have <strong>no test coverage</strong>.</td>
+      </tr>
+      <tr>
+        <td>Integration tests for new API endpoints</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No integration test classes found.</td>
+      </tr>
+      <tr>
+        <td>Frontend component tests for new page builder controls</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No Jest/React Testing Library tests found for page builder components.</td>
+      </tr>
+      <tr>
+        <td>Cypress E2E tests (page build, approval, staging sync)</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No Cypress test files found in the project.</td>
+      </tr>
+      <tr>
+        <td>Full accessibility audit of admin interfaces</td>
+        <td><span class="badge missing">Missing</span></td>
+        <td class="detail">No axe/ARIA audit tooling configured. Some semantic HTML used but not systematically verified.</td>
+      </tr>
+      <tr>
+        <td>Security audit (XSS, input sanitization, CSP)</td>
+        <td><span class="badge partial">Partial</span></td>
+        <td class="detail">HtmlSanitizer.java exists. CSP headers not configured in Nginx/Spring. Custom JS event action in page builder has no sandbox.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-divider"></div>
+
+  
+  <h2>Priority Gaps to Fix</h2>
+
+  <div class="critical">
+    <h4>🔴 Critical — Blocking Core Stage 2 Functionality</h4>
+    <ul>
+      <li><strong>AdvancedPropertyEditor not wired into the live page editor</strong> — admin/pages/[id]/page.tsx still uses the basic <code class="code">PropertyEditor</code>. ComponentTreePanel is also disconnected. Users cannot access the advanced 6-tab editor at all.</li>
+      <li><strong>No <code class="code">themes</code> table / Theme entity</strong> — The full theme preset save/load/activate system (as specified in task 1.1 and 4.1) is absent. Only flat key-value theme settings exist.</li>
+      <li><strong>No Staging backend</strong> — StagingController and StagingSyncService are completely missing. The staging page is 100% mock.</li>
+      <li><strong>No Icon Library backend API</strong> — GET /api/admin/icons and GET /api/admin/icons/:pack not implemented.</li>
+      <li><strong>No side-by-side diff viewer</strong> — Version history rollback exists in the API but zero UI to see/compare versions.</li>
+    </ul>
+  </div>
+
+  <div class="gap-section">
+    <h4>🟡 Medium — Significant Feature Gaps</h4>
+    <ul>
+      <li><strong>Pattern background missing</strong> in BackgroundTab (SVG dot/grid/stripe patterns).</li>
+      <li><strong>No media library picker</strong> in the property editor — image/video/file fields require manual URL entry.</li>
+      <li><strong>No custom SVG upload</strong> in IconPickerModal; only Lucide icons (~250) vs. required ~10k+.</li>
+      <li><strong>Bulk edit modal</strong> not implemented (BulkActions only does delete/approve/reject/publish).</li>
+      <li><strong>Bulk duplicate + archive modals</strong> missing.</li>
+      <li><strong>BulkActions not integrated</strong> into actual content list pages.</li>
+      <li><strong>Dynamic data binding not rendered</strong> — dataSource values stored but PageSectionRenderer does not fetch/inject CMS data at runtime.</li>
+      <li><strong>inlineCss and responsive breakpoint overrides not applied</strong> at render time in PageSectionRenderer.</li>
+      <li><strong>No workflow → email hook</strong> — approval requests don't trigger actual email sends.</li>
+      <li><strong>50+ system preset seed data missing</strong> — no SQL migration seeds preset records into component_presets.</li>
+    </ul>
+  </div>
+
+  <div class="gap-section">
+    <h4>🟡 Low — Minor / Polish Gaps</h4>
+    <ul>
+      <li>Text-transform, text-decoration, text-shadow missing from StyleTab typography controls.</li>
+      <li>Per-corner border radius not implemented (only single radius value).</li>
+      <li>Color picker: no hex/RGB/HSL toggle, no saved theme color swatches.</li>
+      <li>Gradient editor: no interactive stop editor (drag stops).</li>
+      <li>Staging toggle missing from admin header/sidebar.</li>
+      <li>Stage 2 services (ComponentPresetService, ContentVersionHistoryService, WorkflowService) have zero unit tests.</li>
+      <li>Admin/themes page missing border/shadow token groups.</li>
+      <li>RichTextEditor not integrated into PropertyEditor content tab.</li>
+      <li>No Cypress E2E or frontend component tests.</li>
+    </ul>
+  </div>
+
+  <div class="ok-section">
+    <h4>✅ Fully Solid</h4>
+    <ul>
+      <li>All 4 Stage 2 database tables (component_presets, content_version_history, content_approval_log) + site/page_sections columns. Migrations idempotent across V30/V31/V34.</li>
+      <li>Full workflow state machine (DRAFT→SUBMITTED→IN_REVIEW→APPROVED→SCHEDULED→PUBLISHED→ARCHIVED) with role checks and notifications.</li>
+      <li>ComponentPresetController + Service: full CRUD, system/custom separation, type filtering.</li>
+      <li>ContentVersionHistoryController + Service: snapshot, list, get-by-version, rollback.</li>
+      <li>ContentApprovalLogController + Service: record, list, paginate.</li>
+      <li>ThemeSettingController: public + admin key/value theme settings with Redis caching.</li>
+      <li>ComponentTreePanel: expandable tree, drag-to-reorder, visibility toggle, duplicate, delete.</li>
+      <li>AdvancedPropertyEditor: 6 tabs (Content/Layout/Style/BG/Events/Conditions) fully built.</li>
+      <li>IconPickerModal: search, category browser, color/size/rotation/flip controls.</li>
+      <li>PresetLibraryModal: system/custom/types tabs, search, save custom preset.</li>
+      <li>EventsTab: click/hover/scroll/focus triggers + 7 action types.</li>
+      <li>ConditionsTab: user role, device, date range, dynamic data source binding UI.</li>
+      <li>Workflow admin pages (admin/workflow + admin/content-approval) with full approve/reject/schedule/publish flows.</li>
+      <li>admin/staging/page.tsx UI (needs backend connectivity).</li>
+      <li>admin/themes/page.tsx: color + typography + layout + spacing editors.</li>
+      <li>4 existing backend test classes (Auth, Page service + controller).</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>Made with IBM Bob · SSSSY Stage 2 Audit · 2026-07-10</p>
+  </footer>
+</div>
+</body>
+</html>

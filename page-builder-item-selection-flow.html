@@ -1,0 +1,225 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; color: #1f2328; background: #f7f8fa; padding: 24px; }
+  h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .sub { color: #57606a; font-size: 13px; margin-bottom: 24px; }
+  .flow { display: flex; gap: 0; align-items: stretch; margin-bottom: 32px; }
+  .step { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; flex: 1; position: relative; }
+  .step + .step { margin-left: 12px; }
+  .step-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+  .s1 .step-num { background: #3b82d4; }
+  .s2 .step-num { background: #7c3aed; }
+  .s3 .step-num { background: #7c3aed; }
+  .s4 .step-num { background: #059669; }
+  .step h3 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .step p { font-size: 12px; color: #57606a; line-height: 1.6; }
+  .arrow { display: flex; align-items: center; padding: 0 4px; color: #9ca3af; font-size: 20px; flex-shrink: 0; }
+
+  .mockup { display: flex; gap: 12px; margin-bottom: 32px; }
+  .canvas-col { flex: 1; }
+  .panel-col { width: 240px; }
+  .box { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+  .box-hdr { padding: 8px 12px; border-bottom: 1px solid #e5e7eb; background: #f7f8fa; font-size: 11px; font-weight: 700; color: #57606a; text-transform: uppercase; letter-spacing: 0.05em; }
+  .box-body { padding: 10px 12px; }
+
+  /* Canvas mockup */
+  .section-card { border: 2px solid #3b82f6; border-radius: 8px; padding: 10px; margin-bottom: 8px; position: relative; background: #fff; }
+  .section-card.item-mode { border-color: #7c3aed; }
+  .sec-label { display: inline-block; background: #1e3a2f; color: #fff; font-size: 9px; font-family: monospace; padding: 2px 6px; border-radius: 3px; margin-bottom: 6px; }
+  .sec-label.violet { background: #7c3aed; }
+  .items-row { display: flex; gap: 6px; }
+  .item-box { flex: 1; border: 1.5px dashed #a78bfa; border-radius: 4px; padding: 6px 4px; position: relative; text-align: center; background: rgba(139,92,246,0.07); cursor: pointer; }
+  .item-box:hover { background: rgba(139,92,246,0.15); border-color: #7c3aed; }
+  .item-badge { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #7c3aed; color: #fff; font-size: 9px; font-weight: 700; }
+  .item-text { font-size: 9px; color: #57606a; margin-top: 2px; }
+  .banner { background: #7c3aed; color: #fff; font-size: 9px; text-align: center; padding: 3px; margin-top: 6px; border-radius: 0 0 5px 5px; font-weight: 600; }
+
+  /* Property panel mockup */
+  .prop-hdr { padding: 10px 12px 8px; border-bottom: 1px solid #e5e7eb; background: #f7f8fa; }
+  .prop-badge { display: inline-block; background: #ede9fe; color: #6d28d9; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; margin-left: 4px; }
+  .prop-type { font-size: 10px; font-family: monospace; color: #57606a; }
+  .back-bar { padding: 6px 10px; background: #f5f3ff; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
+  .back-btn { font-size: 10px; color: #6d28d9; font-weight: 600; }
+  .nav-nums { font-size: 10px; color: #6d28d9; font-weight: 700; }
+  .tab-row { display: flex; gap: 3px; padding: 6px 10px 4px; border-bottom: 1px solid #e5e7eb; background: #f7f8fa; }
+  .tab { flex: 1; padding: 4px 0; text-align: center; font-size: 10px; font-weight: 700; border-radius: 4px; }
+  .tab.active { background: #6d28d9; color: #fff; }
+  .tab.inactive { color: #9ca3af; }
+  .field-row { margin-bottom: 8px; }
+  .field-label { font-size: 9px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 2px; }
+  .field-input { border: 1px solid #e5e7eb; border-radius: 4px; padding: 4px 6px; font-size: 10px; color: #374151; width: 100%; background: #fff; }
+
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .feature { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; }
+  .feature h4 { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .feature ul { list-style: none; padding: 0; }
+  .feature li { font-size: 11px; color: #57606a; padding: 2px 0; }
+  .feature li::before { content: "✓ "; color: #059669; font-weight: 700; }
+  .tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; margin-right: 3px; }
+  .tag-blue { background: #dbeafe; color: #1d4ed8; }
+  .tag-violet { background: #ede9fe; color: #6d28d9; }
+  .tag-green { background: #dcfce7; color: #166534; }
+
+  footer { border-top: 1px solid #e5e7eb; margin-top: 24px; padding-top: 10px; text-align: center; font-size: 11px; color: #9ca3af; }
+</style>
+</head>
+<body>
+
+<h1>Page Builder — Item Selection</h1>
+<p class="sub">Two-tier interaction: select a section, then drill into individual items to edit their properties</p>
+
+
+<div class="flow">
+  <div class="step s1">
+    <div class="step-num">1</div>
+    <h3>Click a Section</h3>
+    <p>Click any section on the canvas. It gets a <strong>blue border</strong>. Property panel shows section-level Content / Config / Styling tabs.</p>
+  </div>
+  <div class="arrow">→</div>
+  <div class="step s2">
+    <div class="step-num">2</div>
+    <h3>Click "Select item"</h3>
+    <p>A <strong style="color:#7c3aed">Select item</strong> button appears in the top-right toolbar when a section with items is selected. Click it to enter item-pick mode.</p>
+  </div>
+  <div class="arrow">→</div>
+  <div class="step s3">
+    <div class="step-num">3</div>
+    <h3>Click an Item on Canvas</h3>
+    <p>The section shows a <strong style="color:#7c3aed">numbered overlay grid</strong>. Each zone corresponds to one item. Click any zone to select that item.</p>
+  </div>
+  <div class="arrow">→</div>
+  <div class="step s4">
+    <div class="step-num">4</div>
+    <h3>Edit Item Properties</h3>
+    <p>Property panel switches to <strong style="color:#059669">Item Mode</strong>: Content tab shows all item fields (title, text, URL, button…), Style tab shows visual properties.</p>
+  </div>
+</div>
+
+
+<div class="mockup">
+  
+  <div class="canvas-col">
+    <div class="box">
+      <div class="box-hdr">Canvas — Item Pick Mode</div>
+      <div class="box-body">
+        <div class="section-card item-mode">
+          <span class="sec-label violet">about-documents-section · item select</span>
+          <div class="items-row">
+            <div class="item-box">
+              <div class="item-badge">1</div>
+              <div class="item-text">SSSSY Bylaws</div>
+            </div>
+            <div class="item-box" style="border-color:#7c3aed;background:rgba(139,92,246,0.18)">
+              <div class="item-badge" style="background:#6d28d9">2</div>
+              <div class="item-text" style="font-weight:700;color:#374151">Annual Report ← hover</div>
+            </div>
+            <div class="item-box">
+              <div class="item-badge">3</div>
+              <div class="item-text">Membership Form</div>
+            </div>
+            <div class="item-box">
+              <div class="item-badge">4</div>
+              <div class="item-text">Strategic Plan</div>
+            </div>
+          </div>
+          <div class="banner">Click any item below to edit it · 4 items</div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#57606a;margin-top:6px;padding:0 4px">
+      <strong>Also works from the property panel:</strong> click any row in the Items list → same item-edit mode opens.
+    </p>
+  </div>
+
+  
+  <div class="panel-col">
+    <div class="box">
+      <div class="prop-hdr">
+        <div style="font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.07em">Properties</div>
+        <div style="display:flex;align-items:center;margin-top:2px">
+          <span class="prop-type">about-documents-section</span>
+          <span class="prop-badge">item mode</span>
+        </div>
+      </div>
+      <div class="back-bar">
+        <span class="back-btn">← Back to section</span>
+        <span class="nav-nums">‹ Item 2 ›</span>
+      </div>
+      <div class="tab-row">
+        <div class="tab active">Content</div>
+        <div class="tab inactive">Style</div>
+      </div>
+      <div class="box-body">
+        <div class="field-row">
+          <div class="field-label">Title / Label</div>
+          <div class="field-input">Annual Report 2024 (PDF)</div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Button Label</div>
+          <div class="field-input">Download</div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Button URL</div>
+          <div class="field-input">/annual-report-2024.pdf</div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Icon</div>
+          <div class="field-input">⬇</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="feature-grid">
+  <div class="feature">
+    <h4>Canvas Changes</h4>
+    <ul>
+      <li>Selected section gets <span class="tag tag-blue">blue border</span></li>
+      <li>"Select item" <span class="tag tag-violet">violet button</span> appears in toolbar</li>
+      <li>Item-pick mode shows <span class="tag tag-violet">numbered overlay grid</span></li>
+      <li>Hover shows item label badge + highlight</li>
+      <li>Click zone → exits item-pick, opens item editor</li>
+    </ul>
+  </div>
+  <div class="feature">
+    <h4>Property Panel Changes</h4>
+    <ul>
+      <li>Section mode: same Content / Config / Styling tabs</li>
+      <li>Items list: click any row → full item editor opens</li>
+      <li>Item mode: violet header + <span class="tag tag-violet">item mode</span> badge</li>
+      <li>Content tab: title, text, URL, button, icon fields</li>
+      <li>Style tab: bg color, text color, border, padding</li>
+      <li>← / → navigation between items</li>
+      <li>"Back to section" returns to section mode</li>
+    </ul>
+  </div>
+  <div class="feature">
+    <h4>Supported Section Types</h4>
+    <ul>
+      <li>section, row, flexbox, grid, accordion, list</li>
+      <li>card-group, team, testimonial, timeline</li>
+      <li>gallery, carousel, slideshow, lightbox</li>
+      <li>stats, counter, faq, tabs, navbar, footer</li>
+      <li>pricing-table, progress, breadcrumb</li>
+    </ul>
+  </div>
+  <div class="feature">
+    <h4>How Updates Are Saved</h4>
+    <ul>
+      <li>Item edits write to <code>section.data[fieldKey][index]</code></li>
+      <li>Live-saved on every field change (no Save button needed)</li>
+      <li>Changes immediately reflected in canvas preview</li>
+      <li>Full JSON mode available for bulk edits</li>
+    </ul>
+  </div>
+</div>
+
+<footer>Made with IBM Bob</footer>
+</body>
+</html>

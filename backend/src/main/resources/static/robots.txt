@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ssssy.org.sy/api/public/sitemap.xml
+
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/content/
+Disallow: /api/categories/
+Disallow: /api/tags/
+Disallow: /api/media/
+Disallow: /api/email/
+Disallow: /api/crm/
+Disallow: /api/seo/
+Disallow: /api/auth/
+Disallow: /uploads/
+Disallow: /actuator/
+Disallow: /login
+Disallow: /register

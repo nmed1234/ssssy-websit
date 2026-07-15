@@ -1,0 +1,353 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Add `propKeyAr`, `valueAr` props to `InlineTextField`; add `activeLang` internal state; derive `activeKey` and `activeValue` from it": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988208782
+      },
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988224213
+      },
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988386358
+      }
+    ],
+    "1.2 Render the EN/AR toggle badge inside `InlineTextField` view mode": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988209077
+      },
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988393379
+      },
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988600640
+      }
+    ],
+    "2.1 Create `InlineLeafRenderer.tsx` with the `LEAF_KEY_FIELDS` registry": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988209227
+      },
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988394169
+      },
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988601499
+      }
+    ],
+    "2.2 Implement the overlay rendering in `InlineLeafRenderer`": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988209348
+      },
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988607924
+      },
+      {
+        "executionId": "a38948d7-f418-44db-801e-5464aeb4748d",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988852753
+      }
+    ],
+    "3. Checkpoint — ensure TypeScript compiles cleanly": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988209466
+      },
+      {
+        "executionId": "a38948d7-f418-44db-801e-5464aeb4748d",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988874828
+      },
+      {
+        "executionId": "a38948d7-f418-44db-801e-5464aeb4748d",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988921075
+      }
+    ],
+    "4.1 Remove legacy state, refs, and constants from `BuilderCanvas`": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988209571
+      },
+      {
+        "executionId": "a38948d7-f418-44db-801e-5464aeb4748d",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988943585
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783993250193
+      }
+    ],
+    "4.2 Replace the leaf-block rendering branch in `BlockWrapper` with `InlineLeafRenderer`": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988209698
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783993259360
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783993269471
+      }
+    ],
+    "5. Checkpoint — ensure TypeScript compiles cleanly": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988209883
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783993279172
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783993722789
+      }
+    ],
+    "6.1 Remove `useBilingualKey`, the `bilKey` variable, and the `makeIT` factory from `CanvasBlockRenderer`": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988210051
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783993732971
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994025266
+      }
+    ],
+    "6.2 Update all `IT` call sites in the `section`, `card-group`, `tabs`, `accordion` cases to use `<InlineTextField>` directly with `propKey` + `propKeyAr`": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988210231
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994034918
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994044046
+      }
+    ],
+    "6.3 Update all `IT` call sites inside `LegacyContainerWithInlineEdit` to the dual-key pattern": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988210377
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994053207
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994061791
+      }
+    ],
+    "7. Final checkpoint after core migration — compile check": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988210479
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994071189
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994193097
+      }
+    ],
+    "8.1 Create `InlineItemsEditor.tsx` with the `ITEMS_EDITOR_REGISTRY` and component implementation": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988210728
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994204094
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994430406
+      }
+    ],
+    "8.2 Implement Add Item and Remove Item in `InlineItemsEditor`": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988210875
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994439451
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994450842
+      }
+    ],
+    "8.3 Implement optional drag-to-reorder in `InlineItemsEditor`": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988210997
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994461382
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994469967
+      }
+    ],
+    "9.1 Update `InlineLeafRenderer` to render `InlineItemsEditor` for items-bearing leaf block types": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988211088
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994483211
+      },
+      {
+        "executionId": "d2a69628-0d6a-416f-9138-ad8716923728",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1784021110389
+      }
+    ],
+    "9.2 Update `LegacyContainerWithInlineEdit` to render `InlineItemsEditor` for items-bearing legacy section types": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988211181
+      },
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994484077
+      },
+      {
+        "executionId": "d2a69628-0d6a-416f-9138-ad8716923728",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1784021110997
+      }
+    ],
+    "10. Final checkpoint — full compile, lint, and test pass": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988211284
+      },
+      {
+        "executionId": "d2a69628-0d6a-416f-9138-ad8716923728",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1784021120974
+      },
+      {
+        "executionId": "d2a69628-0d6a-416f-9138-ad8716923728",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1784021424092
+      }
+    ],
+    "1. Extend InlineTextField with bilingual props and EN/AR toggle": [
+      {
+        "executionId": "53ac000b-d78b-4d76-ba46-cf76f29ad032",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988600757
+      }
+    ],
+    "2. Create InlineLeafRenderer": [
+      {
+        "executionId": "a38948d7-f418-44db-801e-5464aeb4748d",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783988852898
+      }
+    ],
+    "4. Migrate BuilderCanvas to remove the legacy editingTextId system": [
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783993269606
+      }
+    ],
+    "6. Migrate CanvasBlockRenderer to dual-key pattern": [
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994061938
+      }
+    ],
+    "8. Create InlineItemsEditor component": [
+      {
+        "executionId": "6483da07-65b3-4d03-8508-bfeab80af974",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1783994470139
+      }
+    ],
+    "9. Integrate InlineItemsEditor into InlineLeafRenderer and LegacyContainerWithInlineEdit": [
+      {
+        "executionId": "d2a69628-0d6a-416f-9138-ad8716923728",
+        "chatSessionId": "sess_a741d342-a383-4691-b321-607160c77718",
+        "timestamp": 1784021111142
+      }
+    ]
+  }
+}
