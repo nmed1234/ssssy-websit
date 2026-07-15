@@ -17,7 +17,7 @@ import java.nio.file.StandardCopyOption;
 @Slf4j
 public class LocalStorageService implements StorageService {
 
-  @Value("${app.storage.local.path:uploads}")
+  @Value("${app.storage.local.path:/tmp/uploads}")
   private String storagePath;
 
   private Path basePath;
@@ -27,10 +27,18 @@ public class LocalStorageService implements StorageService {
     basePath = Path.of(storagePath);
     try {
       Files.createDirectories(basePath);
+      log.info("LocalStorageService initialized at {}", basePath.toAbsolutePath());
     } catch (IOException e) {
-      throw new RuntimeException("Could not create storage directory: " + storagePath, e);
+      // Fall back to /tmp/uploads which is always writable in containers
+      log.warn("Could not create storage directory '{}', falling back to /tmp/uploads: {}", storagePath, e.getMessage());
+      basePath = Path.of("/tmp/uploads");
+      try {
+        Files.createDirectories(basePath);
+        log.info("LocalStorageService initialized at fallback path {}", basePath.toAbsolutePath());
+      } catch (IOException ex) {
+        log.error("Could not create fallback storage directory either: {}", ex.getMessage());
+      }
     }
-    log.info("LocalStorageService initialized at {}", basePath.toAbsolutePath());
   }
 
   @Override
