@@ -52,7 +52,7 @@ export function TestimonialsSection({ data = {}, config = {}, boardMembers }: Te
     | undefined;
 
   // Build the full display list — all items, no slice.
-  let allItems: { name: string; role: string; quote: string; avatar?: string }[];
+  let allItems: { name: string; role: string; quote: string; avatar?: string }[] = [];
 
   if (rawItems && rawItems.length > 0) {
     allItems = rawItems.map((item) => ({
@@ -77,13 +77,12 @@ export function TestimonialsSection({ data = {}, config = {}, boardMembers }: Te
       quote: bm.bio || "",
       avatar: bm.photoUrl || bm.memberPhoto,
     }));
-  } else {
-    return null;
   }
 
   const totalPages = Math.ceil(allItems.length / CARDS_PER_PAGE);
   const visibleItems = allItems.slice(page * CARDS_PER_PAGE, page * CARDS_PER_PAGE + CARDS_PER_PAGE);
 
+  // useCallback must be declared unconditionally (Rules of Hooks)
   const go = useCallback(
     (delta: 1 | -1) => {
       setDirection(delta);
@@ -91,6 +90,9 @@ export function TestimonialsSection({ data = {}, config = {}, boardMembers }: Te
     },
     [totalPages]
   );
+
+  // Return null only after all hooks have been called
+  if (allItems.length === 0) return null;
 
   const heading =
     language === "ar"
