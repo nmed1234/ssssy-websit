@@ -5,6 +5,11 @@ spring:
   application:
     name: ssssy-backend
 
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ssssy_website}
     username: ${SPRING_DATASOURCE_USERNAME:ssssy}
