@@ -21,7 +21,7 @@ BEGIN
     UPDATE member_profiles SET photo_url = '/members/akram-mohammed-al-balkhi.jpg',   updated_at = CURRENT_TIMESTAMP WHERE user_id = u_balkhi;
     UPDATE member_profiles SET photo_url = '/members/mahmoud-oudeh.jpg',              updated_at = CURRENT_TIMESTAMP WHERE user_id = u_oudeh;
     UPDATE member_profiles SET photo_url = '/members/mohammed-hussam-bahlawan.jpg',   updated_at = CURRENT_TIMESTAMP WHERE user_id = u_bahlawan;
-    -- u_haidar has no photo — left as NULL (fallback avatar will be shown)
+    -- u_haidar photo added via V78__haidar_photo.sql
 
     RAISE NOTICE 'V74: Member photos linked successfully (7 of 8 members have photos).';
 END $$;
