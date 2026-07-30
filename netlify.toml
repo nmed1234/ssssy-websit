@@ -4,8 +4,12 @@
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS    = "--legacy-peer-deps"
+  NODE_VERSION             = "20"
+  NPM_FLAGS                = "--legacy-peer-deps"
+  NEXT_PUBLIC_API_URL      = "https://ssssy-websit-production.up.railway.app/api"
+  NEXT_PUBLIC_APP_URL      = "https://ssssyria.org"
+  NEXT_PUBLIC_APP_NAME     = "SSSSY"
+  NEXT_PUBLIC_STORAGE_URL  = "https://ssssy-websit-production.up.railway.app/storage"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
