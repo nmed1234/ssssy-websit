@@ -1,0 +1,161 @@
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Environment Variables</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; background: #fff; color: #1f2328; max-width: 760px; margin: 0 auto; padding: 24px 16px; font-size: 14px; line-height: 1.6; }
+  h1 { font-size: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 4px; }
+  h2 { font-size: 15px; margin: 28px 0 8px; background: #f7f8fa; padding: 8px 12px; border-right: 4px solid #3b82d4; border-radius: 4px; }
+  h3 { font-size: 13px; color: #57606a; margin: 20px 0 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+  th { background: #f7f8fa; text-align: right; padding: 8px 10px; border: 1px solid #e5e7eb; font-weight: 600; }
+  td { padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  td:first-child { font-family: monospace; font-size: 12px; background: #f7f8fa; white-space: nowrap; }
+  td:nth-child(2) { font-family: monospace; font-size: 12px; color: #3b82d4; }
+  .required { color: #dc2626; font-weight: 700; font-size: 11px; }
+  .optional { color: #57606a; font-size: 11px; }
+  .later { color: #7c5cd8; font-size: 11px; }
+  .badge-req { background: #fee2e2; color: #dc2626; border-radius: 3px; padding: 1px 5px; font-size: 10px; font-weight: 700; }
+  .badge-opt { background: #f0fdf4; color: #16a34a; border-radius: 3px; padding: 1px 5px; font-size: 10px; }
+  .badge-later { background: #ede9fe; color: #7c5cd8; border-radius: 3px; padding: 1px 5px; font-size: 10px; }
+  .platform { display: inline-block; background: #1f2328; color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 11px; margin-bottom: 6px; }
+  .platform.netlify { background: #00ad9f; }
+  .platform.railway { background: #7c5cd8; }
+  .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 4px; padding: 8px 12px; font-size: 12px; margin: 8px 0 16px; color: #92400e; }
+  footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 11px; color: #57606a; }
+</style>
+</head>
+<body>
+
+<h1>Environment Variables — ssssyria.org</h1>
+<p style="color:#57606a;font-size:13px">جميع المتغيرات المطلوبة لتشغيل الموقع على Railway (Backend) و Netlify (Frontend)</p>
+
+
+<h2><span class="platform railway">Railway</span> — Backend Service Variables</h2>
+
+<h3>1. Spring Profile <span class="badge-req">مطلوب</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>SPRING_PROFILES_ACTIVE</td><td>prod</td><td>تفعيل إعدادات الإنتاج</td></tr>
+</table>
+
+<h3>2. قاعدة البيانات — PostgreSQL <span class="badge-req">مطلوب</span></h3>
+<div class="note">⚠️ استخدم Railway Reference Syntax — Railway يحلّها تلقائياً من PostgreSQL service المرتبط</div>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>SPRING_DATASOURCE_URL</td><td>jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}</td><td>رابط قاعدة البيانات</td></tr>
+  <tr><td>SPRING_DATASOURCE_USERNAME</td><td>${{Postgres.PGUSER}}</td><td>اسم المستخدم</td></tr>
+  <tr><td>SPRING_DATASOURCE_PASSWORD</td><td>${{Postgres.PGPASSWORD}}</td><td>كلمة المرور</td></tr>
+</table>
+<div class="note">💡 إذا كنت تستخدم Neon بدلاً من Railway PostgreSQL، ضع connection string مباشرة:<br />
+<code>SPRING_DATASOURCE_URL=jdbc:postgresql://ep-xxx.neon.tech/neondb?sslmode=require</code><br />
+<code>SPRING_DATASOURCE_USERNAME=neondb_owner</code><br />
+<code>SPRING_DATASOURCE_PASSWORD=your_neon_password</code>
+</div>
+
+<h3>3. Redis <span class="badge-req">مطلوب</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>REDIS_HOST</td><td>${{Redis.REDISHOST}}</td><td>عنوان Redis</td></tr>
+  <tr><td>REDIS_PORT</td><td>${{Redis.REDISPORT}}</td><td>منفذ Redis</td></tr>
+  <tr><td>REDIS_PASSWORD</td><td>${{Redis.REDISPASSWORD}}</td><td>كلمة مرور Redis</td></tr>
+</table>
+
+<h3>4. JWT Secret <span class="badge-req">مطلوب — حرج</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>JWT_SECRET</td><td>← أنشئه بالأمر أدناه</td><td>256-bit سر لتوقيع الـ JWT tokens — لا تشاركه أبداً</td></tr>
+</table>
+<div class="note">🔑 أنشئ JWT_SECRET بهذا الأمر في PowerShell:<br />
+<code>-join ((1..32) | ForEach-Object { '{0:x2}' -f (Get-Random -Max 256) })</code><br />
+أو في Linux: <code>openssl rand -hex 32</code>
+</div>
+
+<h3>5. روابط التطبيق وCORS <span class="badge-req">مطلوب</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>APP_BASE_URL</td><td>https://ssssyria.org</td><td>الرابط الأساسي للموقع</td></tr>
+  <tr><td>APP_CORS_ALLOWED_ORIGINS</td><td>https://ssssyria.org,https://www.ssssyria.org</td><td>النطاقات المسموح بها للـ CORS</td></tr>
+  <tr><td>APP_COOKIE_SECURE</td><td>true</td><td>يجب true في الإنتاج (HTTPS)</td></tr>
+</table>
+
+<h3>6. SMTP — البريد الإلكتروني (Brevo) <span class="badge-req">مطلوب</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>SPRING_MAIL_HOST</td><td>smtp-relay.brevo.com</td><td>سيرفر SMTP</td></tr>
+  <tr><td>SPRING_MAIL_PORT</td><td>587</td><td>منفذ SMTP</td></tr>
+  <tr><td>SPRING_MAIL_USERNAME</td><td>your_brevo_email</td><td>بريدك على Brevo</td></tr>
+  <tr><td>SPRING_MAIL_PASSWORD</td><td>your_brevo_smtp_key</td><td>SMTP Key من Brevo (ليس كلمة مرور الحساب)</td></tr>
+  <tr><td>SPRING_MAIL_SMTP_AUTH</td><td>true</td><td>تفعيل المصادقة</td></tr>
+  <tr><td>SPRING_MAIL_SMTP_STARTTLS</td><td>true</td><td>تفعيل التشفير</td></tr>
+</table>
+
+<h3>7. تخزين الملفات — Cloudflare R2 <span class="badge-req">مطلوب</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>APP_STORAGE_TYPE</td><td>minio</td><td>R2 متوافق مع S3/MinIO</td></tr>
+  <tr><td>APP_STORAGE_MINIO_ENDPOINT</td><td>https://&lt;ACCOUNT_ID&gt;.r2.cloudflarestorage.com</td><td>رابط R2 bucket</td></tr>
+  <tr><td>APP_STORAGE_MINIO_ACCESS_KEY</td><td>your_r2_access_key_id</td><td>مفتاح R2</td></tr>
+  <tr><td>APP_STORAGE_MINIO_SECRET_KEY</td><td>your_r2_secret_access_key</td><td>السر الخاص بـ R2</td></tr>
+  <tr><td>APP_STORAGE_MINIO_BUCKET</td><td>ssss-media</td><td>اسم الـ bucket</td></tr>
+</table>
+
+<h3>8. إعدادات اختيارية <span class="badge-opt">اختياري</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>APP_SWAGGER_ENABLED</td><td>false</td><td>أغلق Swagger في الإنتاج</td></tr>
+  <tr><td>LOG_LEVEL</td><td>INFO</td><td>مستوى الـ logs</td></tr>
+  <tr><td>SSSSY_EMAIL_DOMAIN</td><td>ssssyria.org</td><td>نطاق البريد</td></tr>
+  <tr><td>SSSSY_EMAIL_DEFAULT_QUOTA</td><td>1073741824</td><td>1 GB لكل صندوق بريد</td></tr>
+  <tr><td>CLAMAV_ENABLED</td><td>false</td><td>أوقفه الآن — فعّله بعد Mailcow</td></tr>
+</table>
+
+<h3>9. Mailcow — لاحقاً <span class="badge-later">Phase 11</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>SSSSY_EMAIL_IMAP_HOST</td><td>mail.ssssyria.org</td><td>سيرفر IMAP</td></tr>
+  <tr><td>SSSSY_EMAIL_IMAP_PORT</td><td>993</td><td>منفذ IMAP</td></tr>
+  <tr><td>MAILCOW_API_URL</td><td>https://mail.ssssyria.org/api/v1</td><td>Mailcow API</td></tr>
+  <tr><td>MAILCOW_API_KEY</td><td>من Mailcow admin</td><td>مفتاح API</td></tr>
+</table>
+
+
+<h2><span class="platform netlify">Netlify</span> — Frontend Environment Variables</h2>
+<div class="note">⚠️ هذه المتغيرات تُدمج في الـ JavaScript bundle وقت البناء — أي تغيير يتطلب re-deploy</div>
+
+<h3>جميع المتغيرات المطلوبة <span class="badge-req">مطلوب</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>NEXT_PUBLIC_API_URL</td><td>https://ssssyria.org/api</td><td>رابط الـ API — يشير لـ Netlify proxy وليس Railway مباشرة</td></tr>
+  <tr><td>NEXT_PUBLIC_APP_URL</td><td>https://ssssyria.org</td><td>رابط الموقع الأساسي</td></tr>
+  <tr><td>NEXT_PUBLIC_APP_NAME</td><td>SSSS</td><td>اسم التطبيق</td></tr>
+  <tr><td>NEXT_PUBLIC_STORAGE_URL</td><td>https://ssssyria.org/storage</td><td>رابط الملفات والصور — عبر Netlify proxy</td></tr>
+</table>
+
+
+<h2>GitHub Actions — Secrets للـ CI/CD</h2>
+<p style="font-size:12px;color:#57606a">Settings → Secrets and variables → Actions</p>
+
+<h3>Repository Secrets <span class="badge-req">للـ SSH Deploy</span></h3>
+<table>
+  <tr><th>الـ Secret</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>DEPLOY_HOST</td><td>IP السيرفر</td><td>عنوان سيرفر الإنتاج</td></tr>
+  <tr><td>DEPLOY_USER</td><td>ubuntu</td><td>اسم مستخدم SSH</td></tr>
+  <tr><td>DEPLOY_SSH_KEY</td><td>مفتاح SSH الخاص</td><td>محتوى ملف ~/.ssh/id_rsa</td></tr>
+  <tr><td>DEPLOY_PORT</td><td>22</td><td>منفذ SSH</td></tr>
+  <tr><td>DEPLOY_PATH</td><td>/opt/ssss</td><td>مسار المشروع على السيرفر</td></tr>
+</table>
+
+<h3>Repository Variables <span class="badge-opt">للـ Build</span></h3>
+<table>
+  <tr><th>المتغير</th><th>القيمة</th><th>الوصف</th></tr>
+  <tr><td>NEXT_PUBLIC_API_URL</td><td>https://ssssyria.org/api</td><td>يُستخدم في بناء Docker image</td></tr>
+  <tr><td>NEXT_PUBLIC_APP_URL</td><td>https://ssssyria.org</td><td>يُستخدم في بناء Docker image</td></tr>
+  <tr><td>NEXT_PUBLIC_STORAGE_URL</td><td>https://ssssyria.org/storage</td><td>يُستخدم في بناء Docker image</td></tr>
+</table>
+
+<footer>Made with IBM Bob  ·  Syrian Soil Science Society (SSSS)  ·  ssssyria.org</footer>
+</body>
+</html>
