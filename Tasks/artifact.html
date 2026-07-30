@@ -1,0 +1,485 @@
+
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>خطة تطوير صفحة الأعضاء</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: #1f2328;
+    font-size: 14px;
+    line-height: 1.6;
+    direction: rtl;
+  }
+  .page { max-width: 780px; margin: 0 auto; padding: 32px 20px; }
+
+  h1 {
+    font-size: 22px; font-weight: 700; color: #1f2328;
+    border-bottom: 3px solid #3b82d4; padding-bottom: 10px; margin-bottom: 6px;
+  }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 28px; }
+
+  h2 {
+    font-size: 16px; font-weight: 700; color: #1f2328;
+    margin: 28px 0 12px; padding: 8px 12px;
+    background: #f7f8fa; border-right: 4px solid #3b82d4;
+    border-radius: 0 6px 6px 0;
+  }
+  h3 { font-size: 14px; font-weight: 600; color: #1f2328; margin: 16px 0 8px; }
+
+  .phase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .phase-card {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .phase-card .phase-num {
+    font-size: 11px; font-weight: 700; color: #3b82d4; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 4px;
+  }
+  .phase-card .phase-title { font-size: 14px; font-weight: 700; color: #1f2328; margin-bottom: 6px; }
+  .phase-card .phase-desc { font-size: 12px; color: #57606a; }
+
+  .card-preview {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 12px;
+    padding: 20px; margin: 12px 0;
+  }
+  .card-mock {
+    background: #ffffff; border: 1px solid #e5e7eb; border-radius: 14px;
+    padding: 20px 16px; max-width: 220px; text-align: center;
+    display: inline-block; vertical-align: top; margin: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .card-mock .avatar-ring {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, #3b82d4, #7c5cd8);
+    margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 22px; font-weight: 700;
+  }
+  .card-mock .member-name { font-size: 13px; font-weight: 700; color: #1f2328; margin-bottom: 4px; }
+  .card-mock .member-title { font-size: 11px; color: #57606a; margin-bottom: 6px; }
+  .card-mock .spec-tag {
+    display: inline-block; background: #eff6ff; color: #3b82d4;
+    font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+    margin: 2px;
+  }
+  .card-mock .inst-tag {
+    display: inline-block; background: #f3f0ff; color: #7c5cd8;
+    font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+    margin: 2px;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th {
+    background: #f7f8fa; text-align: right; padding: 8px 10px;
+    border: 1px solid #e5e7eb; font-weight: 600; color: #57606a;
+    font-size: 12px;
+  }
+  td { padding: 8px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  tr:hover td { background: #fafbfc; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-new { background: #dcfce7; color: #166534; }
+  .badge-mod { background: #fef9c3; color: #854d0e; }
+  .badge-db { background: #fce7f3; color: #9d174d; }
+  .badge-front { background: #eff6ff; color: #1d4ed8; }
+  .badge-admin { background: #f3f0ff; color: #6b21a8; }
+
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 5px 0; font-size: 13px; color: #1f2328;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check { color: #3b82d4; font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .check-new { color: #7c5cd8; }
+
+  .data-section {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 10px;
+    padding: 14px 16px; margin: 10px 0; font-size: 13px;
+  }
+  .data-section .label { font-weight: 600; color: #57606a; min-width: 140px; display: inline-block; }
+  .data-section .value { color: #1f2328; }
+  .data-row { margin-bottom: 6px; }
+
+  .section-divider { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }
+
+  .alert {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
+    padding: 12px 14px; font-size: 13px; color: #92400e; margin: 12px 0;
+  }
+  .alert-blue {
+    background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8;
+  }
+  .alert strong { font-weight: 700; }
+
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .info-box {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 12px 14px; font-size: 13px;
+  }
+  .info-box .box-title { font-weight: 700; color: #1f2328; margin-bottom: 8px; font-size: 13px; }
+
+  .migration-block {
+    background: #1f2328; color: #e6edf3; border-radius: 8px;
+    padding: 14px 16px; font-size: 12px; font-family: 'Consolas', monospace;
+    margin: 10px 0; overflow-x: auto; direction: ltr; text-align: left;
+  }
+  .sql-keyword { color: #ff7b72; }
+  .sql-string { color: #a5d6ff; }
+  .sql-comment { color: #8b949e; }
+
+  footer {
+    text-align: center; font-size: 12px; color: #57606a;
+    border-top: 1px solid #e5e7eb; margin-top: 36px; padding-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>خطة تطوير صفحة الأعضاء</h1>
+  <p class="subtitle">جمعية علوم التربة السورية (SSSS) — خطة تفصيلية لإدخال بيانات حقيقية وإعادة تصميم صفحات الأعضاء</p>
+
+  
+  <h2>📊 الوضع الحالي — تشخيص المشكلة</h2>
+  <div class="alert">
+    <strong>المشكلة:</strong> صفحة الأعضاء تعرض 11 عضواً بدون صور ولا أسماء ولا معلومات حقيقية — فقط أيقونة "?" مع نص "Soil Science / FOUNDER". البنية التحتية موجودة ومكتملة لكن بيانات وهمية فارغة.
+  </div>
+
+  <table>
+    <tr><th>العنصر</th><th>الوضع الحالي</th><th>المطلوب</th></tr>
+    <tr><td>كارد العضو</td><td>دائرة رمادية + اسم فارغ</td><td>صورة حقيقية + اسم + لقب + تخصص</td></tr>
+    <tr><td>صفحة التفاصيل</td><td>موجودة (<code>/members/[slug]</code>)</td><td>تعمير بالبيانات الكاملة الحقيقية</td></tr>
+    <tr><td>لوحة الأدمن</td><td>جدول بسيط بدون إمكانية التعديل</td><td>نموذج كامل لإضافة/تعديل الأعضاء</td></tr>
+    <tr><td>قاعدة البيانات</td><td>seed data وهمية (V53, V54)</td><td>migration جديد ببيانات حقيقية</td></tr>
+    <tr><td>الصور</td><td>لا يوجد</td><td>رفع صور + ربطها بملف كل عضو</td></tr>
+  </table>
+
+  
+  <h2>🗄️ البيانات المتوفرة — نموذج د. محمد سعيد الشاطر</h2>
+  <p style="font-size:13px;color:#57606a;margin-bottom:10px">استناداً إلى المعلومات المقدمة، هذا ما سيُخزَّن لكل عضو:</p>
+
+  <div class="data-section">
+    <div class="data-row"><span class="label">الاسم الكامل (عربي):</span><span class="value">الدكتور محمد سعيد الشاطر</span></div>
+    <div class="data-row"><span class="label">التخصص العام:</span><span class="value">علوم التربة</span></div>
+    <div class="data-row"><span class="label">التخصص الدقيق:</span><span class="value">خصوبة وتحسين الأراضي</span></div>
+    <div class="data-row"><span class="label">المنصب الحالي:</span><span class="value">أستاذ، قسم علوم التربة، كلية الزراعة، جامعة دمشق</span></div>
+    <div class="data-row"><span class="label">سنة الميلاد / المدينة:</span><span class="value">1950 — دمشق، سوريا</span></div>
+    <div class="data-row"><span class="label">المؤهل الأعلى:</span><span class="value">دكتوراه — المعهد الوطني متعدد التقانات في اللورين، فرنسا، 1987</span></div>
+    <div class="data-row"><span class="label">السيرة الوظيفية:</span><span class="value">رئيس قسم (2004–2008، 2012–2016)، أستاذ مُعار KFU السعودية (1992–1997)...</span></div>
+    <div class="data-row"><span class="label">العضويات:</span><span class="value">مجمع اللغة العربية، اللجنة السورية للإنتاج العضوي</span></div>
+    <div class="data-row"><span class="label">البريد الإلكتروني:</span><span class="value">ssaidshater@gmail.com</span></div>
+    <div class="data-row"><span class="label">اللغات:</span><span class="value">العربية (أم) — الفرنسية — الإنجليزية</span></div>
+  </div>
+
+  
+  <h2>🔧 التعديلات المطلوبة على قاعدة البيانات</h2>
+  <p style="font-size:13px;color:#57606a;margin-bottom:10px">الجدول الحالي <code>member_profiles</code> يفتقر إلى عدة حقول. سنُنشئ migration جديد (<code>V55</code>) يُضيف:</p>
+
+  <table>
+    <tr><th>الحقل الجديد</th><th>النوع</th><th>الوصف</th></tr>
+    <tr><td><code>name_ar</code></td><td>VARCHAR(200)</td><td>الاسم الكامل بالعربية</td></tr>
+    <tr><td><code>name_en</code></td><td>VARCHAR(200)</td><td>الاسم الكامل بالإنجليزية</td></tr>
+    <tr><td><code>title_ar</code></td><td>VARCHAR(100)</td><td>اللقب العلمي (دكتور، أستاذ...)</td></tr>
+    <tr><td><code>specialization_detail</code></td><td>VARCHAR(255)</td><td>التخصص الدقيق</td></tr>
+    <tr><td><code>birth_year</code></td><td>INTEGER</td><td>سنة الميلاد</td></tr>
+    <tr><td><code>birth_city</code></td><td>VARCHAR(100)</td><td>مدينة الميلاد</td></tr>
+    <tr><td><code>nationality</code></td><td>VARCHAR(100)</td><td>الجنسية</td></tr>
+    <tr><td><code>marital_status</code></td><td>VARCHAR(50)</td><td>الحالة الاجتماعية</td></tr>
+    <tr><td><code>career_summary</code></td><td>TEXT</td><td>ملخص المسيرة المهنية (نص منسق)</td></tr>
+    <tr><td><code>memberships</code></td><td>TEXT</td><td>العضويات واللجان (JSON أو نص)</td></tr>
+    <tr><td><code>languages</code></td><td>VARCHAR(500)</td><td>اللغات المتقنة</td></tr>
+    <tr><td><code>photo_url</code></td><td>VARCHAR(500)</td><td>رابط الصورة الشخصية</td></tr>
+    <tr><td><code>slug</code></td><td>VARCHAR(255) UNIQUE</td><td>للروابط (mohammed-said-shater)</td></tr>
+  </table>
+
+  <div class="alert alert-blue">
+    <strong>ملاحظة:</strong> جدول <code>users</code> يحتوي بالفعل على: <code>institution</code>, <code>department</code>, <code>position</code>, <code>biography</code>. سنُكمل ما ينقص فقط في <code>member_profiles</code>.
+  </div>
+
+  
+  <h2>🎨 تصميم كارد العضو الجديد</h2>
+  <p style="font-size:13px;color:#57606a;margin-bottom:12px">الكارد الجديد يعرض: صورة دائرية مع حلقة ملونة + اسم عربي كامل + لقب علمي + تخصص + مؤسسة. نقر الكارد → صفحة التفاصيل.</p>
+
+  <div class="card-preview">
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
+      <div class="card-mock">
+        <div class="avatar-ring">ش</div>
+        <div class="member-name">د. محمد سعيد الشاطر</div>
+        <div class="member-title">أستاذ — كلية الزراعة</div>
+        <div>
+          <span class="spec-tag">علوم التربة</span>
+          <span class="inst-tag">جامعة دمشق</span>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:#3b82d4">عرض الملف الكامل ←</div>
+      </div>
+      <div class="card-mock" style="background:#fafbff">
+        <div class="avatar-ring" style="background:linear-gradient(135deg,#059669,#3b82d4)">م</div>
+        <div class="member-name">عضو آخر</div>
+        <div class="member-title">دكتور — باحث</div>
+        <div>
+          <span class="spec-tag">كيمياء التربة</span>
+          <span class="inst-tag">أكساد</span>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:#3b82d4">عرض الملف الكامل ←</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#57606a;text-align:center;margin-top:12px">
+      ← تقريب للتصميم المقترح. يُستبدل الحرف الأول بالصورة الحقيقية عند توفرها.
+    </p>
+  </div>
+
+  <h3>خصائص التصميم</h3>
+  <ul class="checklist">
+    <li><span class="check">◆</span> حواف ناعمة مدورة (border-radius: 20px) مع ظل خفيف</li>
+    <li><span class="check">◆</span> صورة دائرية مع حلقة تدرجية (ring gradient) بألوان الجمعية</li>
+    <li><span class="check">◆</span> Hover effect: ارتفاع الكارد مع ظل أعمق وحدود ملونة</li>
+    <li><span class="check">◆</span> شارة التخصص (أزرق) وشارة المؤسسة (بنفسجي)</li>
+    <li><span class="check">◆</span> زر "عرض الملف الكامل" خفي يظهر عند المرور بالماوس</li>
+    <li><span class="check">◆</span> دعم RTL كامل مع الاسم العربي كخط رئيسي</li>
+    <li><span class="check">◆</span> Skeleton loader أنيق أثناء التحميل</li>
+  </ul>
+
+  
+  <h2>📄 صفحة التفاصيل الكاملة (/members/[slug])</h2>
+  <div class="cols-2">
+    <div class="info-box">
+      <div class="box-title">📌 القسم الرئيسي (يمين)</div>
+      <ul class="checklist">
+        <li><span class="check">·</span> صورة كبيرة + الاسم الكامل + اللقب</li>
+        <li><span class="check">·</span> المنصب والمؤسسة الحالية</li>
+        <li><span class="check">·</span> <strong>المؤهلات الأكاديمية</strong> (timeline)</li>
+        <li><span class="check">·</span> <strong>المسيرة المهنية</strong> (timeline)</li>
+        <li><span class="check">·</span> مجالات البحث والاهتمامات</li>
+        <li><span class="check">·</span> العضويات في اللجان</li>
+        <li><span class="check">·</span> المهارات اللغوية (badges)</li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <div class="box-title">📋 الشريط الجانبي (يسار)</div>
+      <ul class="checklist">
+        <li><span class="check">·</span> بطاقة التواصل (بريد، هاتف)</li>
+        <li><span class="check">·</span> التخصص الدقيق</li>
+        <li><span class="check">·</span> الجنسية / مكان وسنة الميلاد</li>
+        <li><span class="check">·</span> الحالة الاجتماعية</li>
+        <li><span class="check">·</span> روابط أكاديمية (ORCID, Scholar)</li>
+        <li><span class="check">·</span> رابط LinkedIn</li>
+        <li><span class="check">·</span> نوع العضوية + رقمها</li>
+      </ul>
+    </div>
+  </div>
+
+  
+  <h2>⚙️ لوحة الأدمن — إعادة تصميم كاملة</h2>
+  <p style="font-size:13px;color:#57606a;margin-bottom:10px">صفحة <code>/admin/member-profiles</code> ستُعاد كتابتها لتشمل:</p>
+
+  <table>
+    <tr><th>الميزة</th><th>الحالة الحالية</th><th>بعد التطوير</th></tr>
+    <tr><td>عرض الأعضاء</td><td>جدول نصي بسيط</td><td>جدول مع صور مصغرة + معلومات سريعة</td></tr>
+    <tr><td>إضافة عضو</td><td>غير موجودة</td><td><span class="badge badge-new">جديد</span> نموذج كامل بكل الحقول</td></tr>
+    <tr><td>تعديل عضو</td><td>غير موجودة</td><td><span class="badge badge-new">جديد</span> نموذج تعديل مع بيانات محملة</td></tr>
+    <tr><td>رفع الصورة</td><td>غير موجودة</td><td><span class="badge badge-new">جديد</span> واجهة drag &amp; drop لرفع الصورة</td></tr>
+    <tr><td>حذف عضو</td><td>غير موجودة</td><td><span class="badge badge-new">جديد</span> حذف مع تأكيد</td></tr>
+    <tr><td>تبديل الظهور</td><td>غير موجودة</td><td><span class="badge badge-new">جديد</span> زر تبديل عام/خاص</td></tr>
+    <tr><td>بحث وفلترة</td><td>غير موجودة</td><td><span class="badge badge-new">جديد</span> فلتر بالتخصص والمؤسسة</td></tr>
+  </table>
+
+  <h3>أقسام نموذج إضافة/تعديل العضو في الأدمن</h3>
+  <div class="cols-2">
+    <div class="info-box">
+      <div class="box-title">قسم 1: المعلومات الشخصية</div>
+      <p style="font-size:12px;color:#57606a">الاسم الكامل (عربي/إنجليزي)، اللقب، سنة الميلاد، المدينة، الجنسية، الحالة الاجتماعية، البريد الإلكتروني، رفع الصورة</p>
+    </div>
+    <div class="info-box">
+      <div class="box-title">قسم 2: المعلومات الأكاديمية</div>
+      <p style="font-size:12px;color:#57606a">المؤسسة، القسم، المنصب، التخصص العام، التخصص الدقيق، المؤهلات الأكاديمية (نص حر)، مجالات البحث</p>
+    </div>
+    <div class="info-box">
+      <div class="box-title">قسم 3: المسيرة المهنية</div>
+      <p style="font-size:12px;color:#57606a">ملخص المسيرة (textarea)، المنظمات والعضويات، اللغات المتقنة</p>
+    </div>
+    <div class="info-box">
+      <div class="box-title">قسم 4: العضوية والروابط</div>
+      <p style="font-size:12px;color:#57606a">نوع العضوية، رقم العضوية، تاريخ الانضمام، رابط ORCID، Google Scholar، LinkedIn، تبديل الظهور العام</p>
+    </div>
+  </div>
+
+  
+  <h2>🔩 التعديلات على الـ Backend</h2>
+
+  <table>
+    <tr><th>الملف</th><th>التغيير</th><th>النوع</th></tr>
+    <tr>
+      <td><code>MemberProfile.java</code></td>
+      <td>إضافة الحقول الجديدة (nameAr, nameEn, titleAr, specializationDetail, careerSummary, memberships, languages, birthYear, birthCity, nationality, maritalStatus, photoUrl, slug)</td>
+      <td><span class="badge badge-mod">تعديل</span></td>
+    </tr>
+    <tr>
+      <td><code>MemberProfileRequest.java</code></td>
+      <td>إضافة كل الحقول الجديدة للنموذج</td>
+      <td><span class="badge badge-mod">تعديل</span></td>
+    </tr>
+    <tr>
+      <td><code>MemberProfileResponse.java</code></td>
+      <td>إضافة الحقول للرد بما فيها photoUrl و slug</td>
+      <td><span class="badge badge-mod">تعديل</span></td>
+    </tr>
+    <tr>
+      <td><code>MemberProfileController.java</code></td>
+      <td>إضافة endpoint للحذف وتبديل الظهور وجلب بالـ slug</td>
+      <td><span class="badge badge-mod">تعديل</span></td>
+    </tr>
+    <tr>
+      <td><code>MemberProfileService.java</code></td>
+      <td>دعم CRUD الكامل + auto-generate slug + رفع الصورة</td>
+      <td><span class="badge badge-mod">تعديل</span></td>
+    </tr>
+    <tr>
+      <td><code>MemberProfileRepository.java</code></td>
+      <td>إضافة <code>findBySlug()</code></td>
+      <td><span class="badge badge-mod">تعديل</span></td>
+    </tr>
+    <tr>
+      <td><code>V55__member_profiles_rich_fields.sql</code></td>
+      <td>Migration لإضافة الأعمدة الجديدة</td>
+      <td><span class="badge badge-db">DB جديد</span></td>
+    </tr>
+    <tr>
+      <td><code>V56__seed_real_members.sql</code></td>
+      <td>Seed data للأعضاء الحقيقيين (بما فيهم د. الشاطر)</td>
+      <td><span class="badge badge-db">DB جديد</span></td>
+    </tr>
+  </table>
+
+  
+  <h2>🖥️ التعديلات على الـ Frontend</h2>
+
+  <table>
+    <tr><th>الملف</th><th>التغيير</th><th>النوع</th></tr>
+    <tr>
+      <td><code>MembersPageClient.tsx</code></td>
+      <td>إعادة تصميم كارد العضو: صورة + اسم عربي + تخصص + مؤسسة + hover effect</td>
+      <td><span class="badge badge-front">تعديل Frontend</span></td>
+    </tr>
+    <tr>
+      <td><code>MemberDetailClient.tsx</code></td>
+      <td>إضافة أقسام: Timeline أكاديمي، المسيرة المهنية، العضويات، اللغات، المعلومات الشخصية</td>
+      <td><span class="badge badge-front">تعديل Frontend</span></td>
+    </tr>
+    <tr>
+      <td><code>/admin/member-profiles/page.tsx</code></td>
+      <td>إعادة كتابة كاملة: جدول متطور + نموذج إضافة/تعديل كامل + رفع صورة</td>
+      <td><span class="badge badge-admin">Admin Panel</span></td>
+    </tr>
+    <tr>
+      <td><code>types/index.ts</code></td>
+      <td>تحديث interface MemberProfile بالحقول الجديدة</td>
+      <td><span class="badge badge-front">تعديل Frontend</span></td>
+    </tr>
+  </table>
+
+  
+  <h2>📋 خطوات التنفيذ المقترحة</h2>
+
+  <div class="phase-grid">
+    <div class="phase-card">
+      <div class="phase-num">المرحلة 1</div>
+      <div class="phase-title">قاعدة البيانات</div>
+      <div class="phase-desc">V55: إضافة الأعمدة الجديدة — V56: seed data د. الشاطر + باقي الأعضاء عند توفر البيانات</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">المرحلة 2</div>
+      <div class="phase-title">Backend</div>
+      <div class="phase-desc">تحديث Entity + DTOs + Service + Controller + Repository</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">المرحلة 3</div>
+      <div class="phase-title">كاردات الأعضاء</div>
+      <div class="phase-desc">إعادة تصميم MembersPageClient بالكاردات الجديدة مع الصور والتصميم المميز</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">المرحلة 4</div>
+      <div class="phase-title">صفحة التفاصيل</div>
+      <div class="phase-desc">تطوير MemberDetailClient بأقسام timeline للمسيرة والمؤهلات</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">المرحلة 5</div>
+      <div class="phase-title">لوحة الأدمن</div>
+      <div class="phase-desc">إعادة كتابة admin/member-profiles مع نموذج CRUD كامل ورفع الصور</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">المرحلة 6</div>
+      <div class="phase-title">الصور والتكامل</div>
+      <div class="phase-desc">رفع صورة د. الشاطر + ربطها بالبيانات + التحقق النهائي</div>
+    </div>
+  </div>
+
+  
+  <h2>🌱 نموذج Seed Data — د. محمد سعيد الشاطر</h2>
+  <p style="font-size:13px;color:#57606a;margin-bottom:8px">هذا ما سيُنشأ في migration V56 لأول عضو، وسيتكرر لكل الأعضاء:</p>
+
+  <div class="migration-block">
+<span class="sql-comment">-- V56__seed_real_members.sql</span><br />
+<span class="sql-keyword">INSERT INTO</span> member_profiles (<br />
+  name_ar, name_en, title_ar,<br />
+  specialization, specialization_detail,<br />
+  birth_year, birth_city, nationality, marital_status,<br />
+  career_summary, memberships, languages,<br />
+  education, research_interests,<br />
+  membership_type, slug, is_public<br />
+) <span class="sql-keyword">VALUES</span> (<br />
+  <span class="sql-string">'الدكتور محمد سعيد الشاطر'</span>, <span class="sql-string">'Dr. Mohammed Said Al-Shater'</span>, <span class="sql-string">'دكتور'</span>,<br />
+  <span class="sql-string">'علوم التربة'</span>, <span class="sql-string">'خصوبة وتحسين الأراضي'</span>,<br />
+  1950, <span class="sql-string">'دمشق'</span>, <span class="sql-string">'سوري'</span>, <span class="sql-string">'متزوج'</span>,<br />
+  <span class="sql-string">'أستاذ قسم علوم التربة، جامعة دمشق...'</span>,<br />
+  <span class="sql-string">'مجمع اللغة العربية، اللجنة السورية للإنتاج العضوي'</span>,<br />
+  <span class="sql-string">'العربية، الفرنسية، الإنجليزية'</span>,<br />
+  <span class="sql-string">'دكتوراه - INP اللورين، فرنسا 1987...'</span>, <span class="sql-string">'خصوبة الأراضي'</span>,<br />
+  <span class="sql-string">'FOUNDER'</span>, <span class="sql-string">'mohammed-said-al-shater'</span>, <span class="sql-keyword">true</span><br />
+);
+  </div>
+
+  
+  <h2>🖼️ آلية التعامل مع الصور</h2>
+  <table>
+    <tr><th>السيناريو</th><th>الحل</th></tr>
+    <tr>
+      <td>الصور المقدمة الآن (مثل صورة د. الشاطر)</td>
+      <td>تُرفع إلى MinIO/S3 عبر لوحة الأدمن وتُربط بملف العضو</td>
+    </tr>
+    <tr>
+      <td>عضو بدون صورة</td>
+      <td>يُعرض أول حرف من الاسم في دائرة ملونة تلقائياً (fallback avatar)</td>
+    </tr>
+    <tr>
+      <td>رفع صورة من الأدمن</td>
+      <td>واجهة drag &amp; drop → رفع عبر <code>POST /api/admin/media/upload</code> → حفظ الرابط في <code>photo_url</code></td>
+    </tr>
+  </table>
+
+  
+  <h2>✅ ملخص ما تحتاج تزويده</h2>
+  <ul class="checklist">
+    <li><span class="check check-new">★</span> <strong>بيانات باقي الأعضاء</strong> بنفس تنسيق د. الشاطر (الاسم، المنصب، المؤهلات، السيرة، البريد)</li>
+    <li><span class="check check-new">★</span> <strong>صورة شخصية</strong> لكل عضو (JPG/PNG، تفضيلاً خلفية بيضاء)</li>
+    <li><span class="check check-new">★</span> <strong>موافقتك على هذه الخطة</strong> لنبدأ التنفيذ فوراً</li>
+  </ul>
+
+  <div class="alert" style="margin-top:16px">
+    <strong>تقدير الوقت:</strong> التنفيذ الكامل (الـ 6 مراحل) يستغرق جلسة واحدة متكاملة. يمكن البدء بمجرد موافقتك، وسيعمل النظام مع بيانات د. الشاطر أولاً، ثم نُضيف باقي الأعضاء تباعاً مع ورود بياناتهم.
+  </div>
+
+  <hr class="section-divider" />
+  <footer>
+    خطة تطوير صفحة الأعضاء — جمعية علوم التربة السورية (SSSS)
+    <br />Made with IBM Bob
+  </footer>
+</div>
+</body>
+</html>

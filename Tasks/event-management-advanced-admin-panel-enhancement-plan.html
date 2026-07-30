@@ -1,0 +1,703 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Events Admin Enhancement Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #1f2328;
+    padding: 24px 16px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 28px; border-bottom: 1px solid #e5e7eb; padding-bottom: 14px; }
+
+  h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; color: #1f2328; display: flex; align-items: center; gap: 8px; }
+  h3 { font-size: 13px; font-weight: 700; margin: 14px 0 6px; color: #1f2328; }
+
+  .phase {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .phase-header {
+    background: #f7f8fa;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .phase-badge {
+    background: #3b82d4;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+  .phase-badge.p2 { background: #7c5cd8; }
+  .phase-badge.p3 { background: #0f7b6c; }
+  .phase-badge.p4 { background: #b45309; }
+  .phase-badge.p5 { background: #be185d; }
+
+  .phase-title { font-weight: 700; font-size: 14px; }
+  .phase-scope { color: #57606a; font-size: 12px; margin-left: auto; }
+  .phase-body { padding: 14px 16px; }
+
+  .task-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  @media (max-width: 540px) { .task-grid { grid-template-columns: 1fr; } }
+
+  .task-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    padding: 10px 12px;
+    background: #fff;
+  }
+  .task-card .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+  .tag.be { background: #dbeafe; color: #1e40af; }
+  .tag.fe { background: #dcfce7; color: #166534; }
+  .tag.db { background: #fef9c3; color: #92400e; }
+  .tag.both { background: #ede9fe; color: #5b21b6; }
+
+  .task-card h4 { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .task-card p { font-size: 12px; color: #57606a; }
+
+  ul.checklist { list-style: none; padding: 0; margin: 6px 0 0; }
+  ul.checklist li { font-size: 12px; padding: 3px 0; padding-left: 18px; position: relative; color: #374151; }
+  ul.checklist li::before { content: "◻"; position: absolute; left: 0; color: #9ca3af; font-size: 11px; top: 3px; }
+
+  .current-state {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+  }
+  .current-state h3 { color: #991b1b; margin-top: 0; }
+  .current-state ul { padding-left: 18px; margin-top: 4px; }
+  .current-state li { font-size: 12px; color: #7f1d1d; margin-bottom: 2px; }
+
+  .arch-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+  .arch-table th { background: #f7f8fa; text-align: left; padding: 7px 10px; border: 1px solid #e5e7eb; font-weight: 700; color: #374151; }
+  .arch-table td { padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .arch-table tr:hover td { background: #f7f8fa; }
+
+  .highlight { background: #eff6ff; border-left: 3px solid #3b82d4; padding: 10px 14px; margin: 12px 0; border-radius: 0 5px 5px 0; font-size: 12px; }
+  .highlight strong { color: #1d4ed8; }
+
+  .endpoint { font-family: monospace; font-size: 11px; background: #f7f8fa; padding: 1px 5px; border-radius: 3px; border: 1px solid #e5e7eb; white-space: nowrap; }
+  .method { font-family: monospace; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+  .method.get { background: #dcfce7; color: #166534; }
+  .method.post { background: #dbeafe; color: #1e40af; }
+  .method.put { background: #fef9c3; color: #92400e; }
+  .method.del { background: #fee2e2; color: #991b1b; }
+
+  .summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .stat-box { flex: 1; min-width: 120px; border: 1px solid #e5e7eb; border-radius: 5px; padding: 10px 14px; text-align: center; }
+  .stat-box .num { font-size: 24px; font-weight: 700; color: #3b82d4; }
+  .stat-box .lbl { font-size: 11px; color: #57606a; }
+
+  .diagram { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 5px; padding: 14px; margin: 10px 0; font-size: 12px; font-family: monospace; line-height: 1.8; }
+
+  footer { text-align: center; font-size: 11px; color: #9ca3af; margin-top: 36px; padding-top: 14px; border-top: 1px solid #e5e7eb; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Events Admin Panel — Full Enhancement Plan</h1>
+  <p class="subtitle">
+    5-phase roadmap to build a production-grade Event Management system with full CRUD, registrations management,
+    configurable reminder notifications, email blasts, check-in, analytics, and public page controls — all from the admin panel.
+  </p>
+
+  
+  <div class="current-state">
+    <h3>⚠ Current Gaps Found</h3>
+    <ul>
+      <li>Admin list page exists at <code>/admin/events</code> but the "Edit" button opens a small modal — no dedicated detail/edit page</li>
+      <li>No <code>/admin/events/[id]</code> route — clicking an event links there but the page does not exist</li>
+      <li>Registrations are viewable via API (<code>GET /api/admin/events/{id}/registrations</code>) but no UI page exposes them</li>
+      <li>No registration status change (confirm / cancel / check-in) from admin</li>
+      <li>No notification system for event registrants (reminder emails, post-event surveys)</li>
+      <li>No configurable reminder timing (e.g. "send 24h before event") in admin panel</li>
+      <li>No bulk notification/email to all registrants from admin</li>
+      <li>No event statistics / analytics page in admin</li>
+      <li>Edit modal is missing: slug, endDate, featuredImage, latitude/longitude, isOnline/onlineUrl fields</li>
+      <li>No "Duplicate event" or "Archive" quick action</li>
+      <li>No public page controls (featured toggle, order, hero image) in admin</li>
+    </ul>
+  </div>
+
+  <div class="summary-row">
+    <div class="stat-box"><div class="num">5</div><div class="lbl">Phases</div></div>
+    <div class="stat-box"><div class="num">24</div><div class="lbl">Deliverables</div></div>
+    <div class="stat-box"><div class="num">8</div><div class="lbl">New API endpoints</div></div>
+    <div class="stat-box"><div class="num">5</div><div class="lbl">New Frontend Pages</div></div>
+    <div class="stat-box"><div class="num">3</div><div class="lbl">DB migrations</div></div>
+  </div>
+
+  
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge">Phase 1</span>
+      <span class="phase-title">Complete CRUD — Dedicated Event Detail/Edit Page</span>
+      <span class="phase-scope">~1 day</span>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:12px;color:#57606a;margin-bottom:10px">
+        Create the missing <code>/admin/events/[id]/page.tsx</code> with a tabbed layout: <strong>Details</strong>, <strong>Registrations</strong>, <strong>Notifications</strong>, <strong>Analytics</strong>. This is the foundation every other phase builds on.
+      </p>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>New page: /admin/events/[id]</h4>
+          <ul class="checklist">
+            <li>Full form — all 18 Event fields</li>
+            <li>Bilingual title / description (AR + EN tabs)</li>
+            <li>Rich text editor for description</li>
+            <li>Slug auto-generate from English title</li>
+            <li>Featured image picker (media library)</li>
+            <li>Online / In-person toggle with conditional fields</li>
+            <li>Map preview when lat/lon entered</li>
+            <li>Status workflow: DRAFT → PUBLISHED → ARCHIVED</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Events list page improvements</h4>
+          <ul class="checklist">
+            <li>Fix "Edit" button → navigates to /admin/events/[id]</li>
+            <li>Add "New Event" → /admin/events/new</li>
+            <li>Show registration count column</li>
+            <li>Add type-color badges for event types</li>
+            <li>Date range filter</li>
+            <li>Sort by date / registrations / status</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag be">Backend</span>
+          <h4>API improvements</h4>
+          <ul class="checklist">
+            <li>Add registration count to EventResponse</li>
+            <li>Add GET /admin/events with search + status + date filters</li>
+            <li>Add PATCH /admin/events/{id}/status quick-change</li>
+            <li>Add POST /admin/events/{id}/duplicate</li>
+            <li>Fix slug uniqueness on update (existsBySlugAndIdNot already exists in repo)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>New page: /admin/events/new</h4>
+          <ul class="checklist">
+            <li>Same form as edit page, pre-filled with defaults</li>
+            <li>Save as Draft / Publish Now buttons</li>
+            <li>Preview button opens public event page in new tab</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>Key API change:</strong> Add <code>registrationCount</code> field to <code>EventResponse</code> by injecting
+        <code>eventRegistrationRepository.countByEventId(id)</code> inside <code>EventService.toResponse()</code>.
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge p2">Phase 2</span>
+      <span class="phase-title">Registrations Management Dashboard</span>
+      <span class="phase-scope">~1 day</span>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:12px;color:#57606a;margin-bottom:10px">
+        A dedicated "Registrations" tab inside each event detail page — view, filter, export, check-in, and manually manage all registrants.
+      </p>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Registrations tab in event detail</h4>
+          <ul class="checklist">
+            <li>Table: name, email, phone, organization, status, date</li>
+            <li>Status badge: CONFIRMED / CANCELLED / WAITLISTED / CHECKED_IN</li>
+            <li>Check-in toggle per registrant</li>
+            <li>Cancel / remove registration button</li>
+            <li>Search by name or email</li>
+            <li>Filter by status</li>
+            <li>Pagination</li>
+            <li>Export to CSV button</li>
+            <li>Capacity bar (registered / max)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag be">Backend</span>
+          <h4>New registration management endpoints</h4>
+          <ul class="checklist">
+            <li>PATCH /admin/events/{id}/registrations/{regId}/status</li>
+            <li>PATCH /admin/events/{id}/registrations/{regId}/checkin</li>
+            <li>DELETE /admin/events/{id}/registrations/{regId}</li>
+            <li>GET /admin/events/{id}/registrations/export (CSV stream)</li>
+            <li>POST /admin/events/{id}/registrations (manual add by email)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag db">Database</span>
+          <h4>Migration V65 — registration enhancements</h4>
+          <ul class="checklist">
+            <li>Add WAITLISTED to allowed status values</li>
+            <li>Add checked_in_at TIMESTAMP column</li>
+            <li>Add check_in_notes TEXT column</li>
+            <li>Add waitlist_position INTEGER column</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Manual registration from admin</h4>
+          <ul class="checklist">
+            <li>"Add Registrant" button opens modal</li>
+            <li>Search existing users by email/name</li>
+            <li>Or enter external attendee (non-user)</li>
+            <li>Set status immediately on creation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge p3">Phase 3</span>
+      <span class="phase-title">Configurable Notification &amp; Reminder System</span>
+      <span class="phase-scope">~2 days</span>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:12px;color:#57606a;margin-bottom:10px">
+        The core new feature. Admin configures reminder schedules per event; a background scheduler fires
+        email + in-app notifications to all confirmed registrants at the right time.
+      </p>
+
+      <h3>Architecture</h3>
+      <div class="diagram">Admin Panel
+  └─ configure reminder rules for event
+        [24h before] [1h before] [post-event: 2h after]
+
+Scheduler (60s cron) — EventReminderService
+  └─ SELECT rules WHERE fire_at &lt;= NOW() AND fired = false
+        └─ fetch all CONFIRMED registrations for event
+              └─ for each registrant:
+                    ├─ NotificationService.createAndPush(user, "event_reminder", …)
+                    └─ EmailSendService.sendTransactional(email, template)
+  └─ mark rule as fired</div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <span class="tag db">Database</span>
+          <h4>Migration V66 — event_reminder_rules table</h4>
+          <ul class="checklist">
+            <li>id UUID PK</li>
+            <li>event_id FK → events</li>
+            <li>rule_type: BEFORE_EVENT | AFTER_EVENT | CUSTOM_DATE</li>
+            <li>offset_hours INTEGER (e.g. 24 = "24h before")</li>
+            <li>fire_at TIMESTAMP (computed on save)</li>
+            <li>subject_template TEXT</li>
+            <li>body_template TEXT (with {{name}}, {{event}}, {{date}}, {{link}} placeholders)</li>
+            <li>send_email BOOLEAN DEFAULT true</li>
+            <li>send_in_app BOOLEAN DEFAULT true</li>
+            <li>is_fired BOOLEAN DEFAULT false</li>
+            <li>fired_at TIMESTAMP</li>
+            <li>recipients_count INTEGER (filled after fire)</li>
+            <li>created_at / updated_at</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag be">Backend</span>
+          <h4>EventReminderService (new)</h4>
+          <ul class="checklist">
+            <li>CRUD for reminder rules</li>
+            <li>computeFireAt(): event.eventDate minus offset_hours</li>
+            <li>@Scheduled(fixedDelay=60000) processDueReminders()</li>
+            <li>For each due rule: load confirmed registrants, fire notifications</li>
+            <li>Template substitution: {{name}}, {{eventTitle}}, {{eventDate}}, {{location}}, {{link}}</li>
+            <li>Mark rule as fired + record count</li>
+            <li>Handle AFTER_EVENT rules for post-event follow-ups</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag be">Backend</span>
+          <h4>New reminder rule endpoints</h4>
+          <ul class="checklist">
+            <li>GET /admin/events/{id}/reminders</li>
+            <li>POST /admin/events/{id}/reminders</li>
+            <li>PUT /admin/events/{id}/reminders/{ruleId}</li>
+            <li>DELETE /admin/events/{id}/reminders/{ruleId}</li>
+            <li>POST /admin/events/{id}/reminders/{ruleId}/fire (manual trigger)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Notifications tab in event detail page</h4>
+          <ul class="checklist">
+            <li>List of all configured reminder rules</li>
+            <li>"Add Reminder" button</li>
+            <li>Rule form: type, offset (hours/days), email template subject+body</li>
+            <li>Toggle: email / in-app / both</li>
+            <li>Status badge: PENDING / FIRED / FAILED</li>
+            <li>"Send Now" manual trigger button</li>
+            <li>Preview template button with sample substitution</li>
+            <li>History: last fired at + recipients count</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Global Reminder Defaults (Settings panel)</h3>
+      <div class="task-grid">
+        <div class="task-card">
+          <span class="tag db">Database</span>
+          <h4>Migration V67 — system_config keys</h4>
+          <ul class="checklist">
+            <li>event.reminder.default_offsets = "24,1" (hours before)</li>
+            <li>event.reminder.post_event_hours = "2" (hours after)</li>
+            <li>event.reminder.email_subject_template</li>
+            <li>event.reminder.email_body_template</li>
+            <li>event.registration.confirmation_email_enabled = true</li>
+            <li>event.registration.waitlist_enabled = true</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Settings → Event Notifications section</h4>
+          <ul class="checklist">
+            <li>Default reminder offsets (multi-value input)</li>
+            <li>Global email subject/body templates</li>
+            <li>Toggle: auto-create reminders on event publish</li>
+            <li>Confirmation email toggle + template editor</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge p4">Phase 4</span>
+      <span class="phase-title">Bulk Messaging &amp; Registrant Communication</span>
+      <span class="phase-scope">~1 day</span>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:12px;color:#57606a;margin-bottom:10px">
+        Send ad-hoc messages to all or filtered registrants directly from the admin panel — updates, cancellations, venue changes, etc.
+      </p>
+      <div class="task-grid">
+        <div class="task-card">
+          <span class="tag be">Backend</span>
+          <h4>POST /admin/events/{id}/notify</h4>
+          <ul class="checklist">
+            <li>Body: subject, htmlBody, textBody, targetStatus (ALL / CONFIRMED / WAITLISTED)</li>
+            <li>Loops all matching registrants</li>
+            <li>Sends email via JavaMailSender</li>
+            <li>Creates in-app Notification per registrant</li>
+            <li>Returns sent count + failed count</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>"Message Registrants" action in event detail</h4>
+          <ul class="checklist">
+            <li>Rich text compose modal</li>
+            <li>Recipient filter: All / Confirmed / Waitlisted / Custom</li>
+            <li>Preview shows estimated recipient count</li>
+            <li>Send confirmation step</li>
+            <li>Success toast with sent count</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Cancellation workflow</h4>
+          <ul class="checklist">
+            <li>"Cancel Event" button with confirmation dialog</li>
+            <li>Option to automatically notify all registrants</li>
+            <li>Cancellation reason field</li>
+            <li>Status set to CANCELLED, isPublished = false</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag be">Backend</span>
+          <h4>Registration confirmation emails</h4>
+          <ul class="checklist">
+            <li>Auto-send on registerForEvent() success</li>
+            <li>HTML email with event details (date, location, link)</li>
+            <li>iCal attachment (.ics) for calendar import</li>
+            <li>Configurable from system_config templates</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-badge p5">Phase 5</span>
+      <span class="phase-title">Analytics, Public Page Controls &amp; Polishing</span>
+      <span class="phase-scope">~1 day</span>
+    </div>
+    <div class="phase-body">
+      <p style="font-size:12px;color:#57606a;margin-bottom:10px">
+        Analytics tab in each event, global events dashboard stats, and full admin control over how each event appears on the public website.
+      </p>
+      <div class="task-grid">
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Analytics tab in event detail</h4>
+          <ul class="checklist">
+            <li>Registration trend chart (day-by-day)</li>
+            <li>Capacity fill rate gauge</li>
+            <li>Status distribution: confirmed / waitlisted / cancelled</li>
+            <li>Organization breakdown table</li>
+            <li>Check-in rate (% checked in on event day)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag fe">Frontend</span>
+          <h4>Public page controls tab</h4>
+          <ul class="checklist">
+            <li>Featured event toggle (shows in hero/highlight sections)</li>
+            <li>Homepage display order (drag to reorder)</li>
+            <li>Custom featured image per event</li>
+            <li>Social share image (OG image)</li>
+            <li>SEO meta title + description fields</li>
+            <li>Registration form custom fields (JSON schema builder)</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag be">Backend</span>
+          <h4>GET /admin/events/stats dashboard</h4>
+          <ul class="checklist">
+            <li>Total events (by status)</li>
+            <li>Total registrations this month</li>
+            <li>Upcoming events count</li>
+            <li>Most-registered event</li>
+            <li>Events with open registration</li>
+          </ul>
+        </div>
+        <div class="task-card">
+          <span class="tag db">Database</span>
+          <h4>Event table additions (in V65 or separate)</h4>
+          <ul class="checklist">
+            <li>is_featured BOOLEAN DEFAULT false</li>
+            <li>display_order INTEGER</li>
+            <li>og_image VARCHAR(500)</li>
+            <li>meta_title VARCHAR(255)</li>
+            <li>meta_description TEXT</li>
+            <li>registration_form_schema JSONB</li>
+            <li>cancelled_at TIMESTAMP</li>
+            <li>cancellation_reason TEXT</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>Complete New API Endpoints</h2>
+  <table class="arch-table">
+    <tr>
+      <th>Method</th>
+      <th>Path</th>
+      <th>Purpose</th>
+      <th>Phase</th>
+    </tr>
+    <tr>
+      <td><span class="method put">PUT</span></td>
+      <td><span class="endpoint">/admin/events/{id}/status</span></td>
+      <td>Quick status change</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><span class="method post">POST</span></td>
+      <td><span class="endpoint">/admin/events/{id}/duplicate</span></td>
+      <td>Clone event</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><span class="method put">PUT</span></td>
+      <td><span class="endpoint">/admin/events/{id}/registrations/{regId}/status</span></td>
+      <td>Change registrant status</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><span class="method put">PUT</span></td>
+      <td><span class="endpoint">/admin/events/{id}/registrations/{regId}/checkin</span></td>
+      <td>Toggle check-in</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><span class="method get">GET</span></td>
+      <td><span class="endpoint">/admin/events/{id}/registrations/export</span></td>
+      <td>CSV download</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><span class="method get">GET</span></td>
+      <td><span class="endpoint">/admin/events/{id}/reminders</span></td>
+      <td>List reminder rules</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td><span class="method post">POST</span></td>
+      <td><span class="endpoint">/admin/events/{id}/reminders</span></td>
+      <td>Create reminder rule</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td><span class="method put">PUT</span></td>
+      <td><span class="endpoint">/admin/events/{id}/reminders/{ruleId}</span></td>
+      <td>Update reminder rule</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td><span class="method post">POST</span></td>
+      <td><span class="endpoint">/admin/events/{id}/reminders/{ruleId}/fire</span></td>
+      <td>Manually fire a reminder</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td><span class="method post">POST</span></td>
+      <td><span class="endpoint">/admin/events/{id}/notify</span></td>
+      <td>Bulk message registrants</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td><span class="method get">GET</span></td>
+      <td><span class="endpoint">/admin/events/stats</span></td>
+      <td>Dashboard stats</td>
+      <td>5</td>
+    </tr>
+  </table>
+
+  
+  <h2>Frontend Pages to Create / Update</h2>
+  <table class="arch-table">
+    <tr>
+      <th>Route</th>
+      <th>Type</th>
+      <th>Tabs / Content</th>
+      <th>Phase</th>
+    </tr>
+    <tr>
+      <td><span class="endpoint">/admin/events/new</span></td>
+      <td>New</td>
+      <td>Full event creation form</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><span class="endpoint">/admin/events/[id]</span></td>
+      <td>New</td>
+      <td>Details · Registrations · Notifications · Analytics · Public Controls</td>
+      <td>1–5</td>
+    </tr>
+    <tr>
+      <td><span class="endpoint">/admin/events</span></td>
+      <td>Update</td>
+      <td>Fix Edit button, add columns, date filter, stats cards</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><span class="endpoint">/admin/settings</span></td>
+      <td>Update</td>
+      <td>Add "Event Notifications" section with defaults config</td>
+      <td>3</td>
+    </tr>
+  </table>
+
+  
+  <h2>Notification Flow — Full Picture</h2>
+  <div class="diagram">1. User registers → EventService.registerForEvent()
+   └─ [Immediate] send confirmation email (HTML + iCal attachment)
+   └─ [Immediate] create in-app Notification (type: "event_registration")
+
+2. Admin publishes event → EventController.updateEvent() / status change
+   └─ [Auto] EventReminderService.createDefaultReminders(eventId)
+         reads system_config for default offsets (e.g. [24h, 1h])
+         creates event_reminder_rules rows with computed fire_at
+
+3. Scheduler (every 60s) — EventReminderService.processDueReminders()
+   └─ SELECT * FROM event_reminder_rules WHERE fire_at &lt;= NOW() AND is_fired = false
+         for each rule:
+           load CONFIRMED registrations for rule.event_id
+           for each registration:
+             if send_email: JavaMailSender.send(template substituted)
+             if send_in_app: NotificationService.createAndPush(user, …)
+           rule.is_fired = true
+           rule.fired_at = NOW()
+           rule.recipients_count = N
+
+4. Admin "Send Now" → POST /admin/events/{id}/reminders/{ruleId}/fire
+   └─ same logic as scheduler step, immediate execution
+
+5. Admin "Message Registrants" → POST /admin/events/{id}/notify
+   └─ custom ad-hoc message to selected registrant group
+
+6. Admin cancels event
+   └─ sets status = CANCELLED, isPublished = false
+   └─ optionally fires cancellation notification to all registrants</div>
+
+  
+  <h2>Database Migrations Required</h2>
+  <table class="arch-table">
+    <tr>
+      <th>Migration</th>
+      <th>What it adds</th>
+    </tr>
+    <tr>
+      <td><strong>V65</strong></td>
+      <td>event_registrations: add checked_in_at, check_in_notes, waitlist_position; add WAITLISTED status<br />events: add is_featured, display_order, og_image, meta_title, meta_description, registration_form_schema, cancelled_at, cancellation_reason</td>
+    </tr>
+    <tr>
+      <td><strong>V66</strong></td>
+      <td>CREATE TABLE event_reminder_rules (id, event_id FK, rule_type, offset_hours, fire_at, subject_template, body_template, send_email, send_in_app, is_fired, fired_at, recipients_count, created_at, updated_at)</td>
+    </tr>
+    <tr>
+      <td><strong>V67</strong></td>
+      <td>INSERT into system_config: event.reminder.default_offsets, event.reminder.post_event_hours, event.reminder.email_subject_template, event.reminder.email_body_template, event.registration.confirmation_email_enabled</td>
+    </tr>
+  </table>
+
+  <div class="highlight" style="margin-top:20px">
+    <strong>Implementation order recommendation:</strong> Phase 1 first (unlocks the detail page as a container for all other tabs),
+    then Phase 2 (registrations data needed before notifications make sense), then Phase 3 (the reminder engine —
+    highest value feature), then Phase 4 (bulk messaging), finally Phase 5 (analytics + public controls polish).
+  </div>
+
+<footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

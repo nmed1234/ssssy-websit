@@ -1,0 +1,777 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SSSS — Complete Deployment &amp; Hosting Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.7;background:#fff;color:#1f2328;padding:0 16px 80px}
+.page{max-width:800px;margin:0 auto}
+/* header */
+.doc-header{background:#1f2328;color:#fff;padding:32px 32px 24px;border-radius:0 0 12px 12px;margin-bottom:36px}
+.doc-header h1{font-size:22px;font-weight:800;margin-bottom:4px}
+.doc-header .meta{font-size:12px;color:#8b949e;margin-top:8px;line-height:1.8}
+.doc-header .meta strong{color:#e6edf3}
+/* toc */
+.toc{background:#f7f8fa;border:1px solid #e5e7eb;border-radius:8px;padding:18px 22px;margin-bottom:36px}
+.toc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#57606a;margin-bottom:10px}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}
+.toc-item{font-size:13px;padding:2px 0;color:#3b82d4;border:none;background:none;text-align:left;cursor:pointer;text-decoration:none;display:block}
+/* phase headings */
+h2{font-size:17px;font-weight:800;margin:44px 0 14px;padding:10px 14px;background:#1f2328;color:#fff;border-radius:6px}
+h3{font-size:14px;font-weight:700;margin:22px 0 8px;color:#1f2328;padding-left:3px;border-left:3px solid #3b82d4}
+h4{font-size:13px;font-weight:700;margin:16px 0 6px;color:#57606a}
+p{margin-bottom:10px}
+ul,ol{padding-left:22px;margin-bottom:12px}
+li{margin-bottom:5px}
+/* code */
+code{font-family:"SFMono-Regular",Consolas,monospace;font-size:12px;background:#f7f8fa;border:1px solid #e5e7eb;border-radius:4px;padding:1px 6px}
+pre{background:#1f2328;color:#e6edf3;border-radius:8px;padding:16px 18px;overflow-x:auto;margin:10px 0 16px;font-size:12px;line-height:1.7}
+pre code{background:none;border:none;color:inherit;padding:0}
+/* callouts */
+.ok   {border-left:3px solid #22c55e;padding:10px 14px;background:#f0fdf4;border-radius:0 6px 6px 0;margin:12px 0;font-size:13px;color:#166534}
+.warn {border-left:3px solid #f59e0b;padding:10px 14px;background:#fffbeb;border-radius:0 6px 6px 0;margin:12px 0;font-size:13px;color:#92400e}
+.note {border-left:3px solid #3b82d4;padding:10px 14px;background:#eff6ff;border-radius:0 6px 6px 0;margin:12px 0;font-size:13px;color:#1e40af}
+.danger{border-left:3px solid #ef4444;padding:10px 14px;background:#fef2f2;border-radius:0 6px 6px 0;margin:12px 0;font-size:13px;color:#991b1b}
+/* tables */
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:13px}
+th{background:#f0f2f5;text-align:left;padding:9px 11px;border:1px solid #e5e7eb;font-weight:700}
+td{padding:8px 11px;border:1px solid #e5e7eb;vertical-align:top}
+tr.hi-green td{background:#f0fdf4}
+tr.hi-yellow td{background:#fffbeb}
+tr.hi-red td{background:#fef2f2}
+/* cost cards */
+.cost-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}
+.cost-card{border:1px solid #e5e7eb;border-radius:8px;padding:14px;background:#f7f8fa}
+.cost-card h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#57606a;margin-bottom:8px;border:none;padding:0}
+.cost-card .price{font-size:28px;font-weight:900;color:#1d4ed8;line-height:1.1}
+.cost-card .per{font-size:11px;color:#57606a;margin-bottom:8px}
+.cost-card ul{font-size:12px;padding-left:16px;margin:0}
+.cost-card li{margin-bottom:2px}
+/* step boxes */
+.step{border:1px solid #e5e7eb;border-radius:8px;padding:16px 18px;margin:14px 0;background:#f7f8fa}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#1d4ed8;color:#fff;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
+.step-header{display:flex;align-items:center;margin-bottom:10px}
+.step-header h3{margin:0;border:none;padding:0;font-size:14px}
+/* checklist */
+.chk li{list-style:none;padding-left:0}
+.chk li::before{content:"☐  ";color:#6b7280}
+/* arch */
+.arch{background:#1f2328;color:#a5d6ff;border-radius:8px;padding:18px;font-family:"SFMono-Regular",Consolas,monospace;font-size:12px;line-height:1.9;margin:12px 0 16px;overflow-x:auto}
+/* tag badges */
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin:0 3px}
+.tag-free{background:#d1fae5;color:#065f46}
+.tag-req{background:#fee2e2;color:#991b1b}
+.tag-later{background:#dbeafe;color:#1d4ed8}
+.tag-warn{background:#fef3c7;color:#92400e}
+/* section divider */
+.divider{border:none;border-top:2px solid #e5e7eb;margin:40px 0}
+a{color:#3b82d4}
+footer{text-align:center;font-size:12px;color:#57606a;border-top:1px solid #e5e7eb;padding-top:18px;margin-top:48px}
+</style>
+</head>
+<body>
+<div class="page">
+
+
+<div class="doc-header">
+  <h1>SSSS Website — Complete Deployment &amp; Hosting Guide</h1>
+  <p style="color:#8b949e;font-size:13px;margin-top:6px">Professional step-by-step guide — from zero to a live, secure, production website</p>
+  <div class="meta">
+    <strong>Organisation:</strong> Syrian Soil Science Society (SSSS)  | 
+    <strong>Domain:</strong> ssssyria.org  | 
+    <strong>Version:</strong> 1.0<br />
+    <strong>Stack:</strong> Spring Boot 3 · Next.js 14 · PostgreSQL 16 · Redis 7 · Cloudflare R2 · Brevo SMTP<br />
+    <strong>Hosting:</strong> Netlify (frontend) · Railway (backend) · Porkbun (domain) · Hetzner (Mailcow — later)
+  </div>
+</div>
+
+
+<div class="toc">
+  <div class="toc-title">Table of Contents</div>
+  <div class="toc-grid">
+    <span>1. Architecture Overview</span>
+    <span>9. Security Hardening Checklist</span>
+    <span>2. Complete Cost Breakdown</span>
+    <span>10. Verify the Full Stack</span>
+    <span>3. Phase 1 — Register ssssyria.org</span>
+    <span>11. CI/CD Auto-Deploy (GitHub Actions)</span>
+    <span>4. Phase 2 — Railway Backend</span>
+    <span>12. Phase 11 — Mailcow Member Email</span>
+    <span>5. Phase 3 — Netlify Frontend</span>
+    <span>13. Renewal &amp; Maintenance</span>
+    <span>6. Phase 4 — DNS &amp; Domain Connection</span>
+    <span>14. Troubleshooting</span>
+    <span>7. Phase 5 — Environment Variables</span>
+    <span>15. Complete Env Vars Checklist</span>
+    <span>8. Phase 6–7 — SMTP &amp; File Storage</span>
+    <span>16. Files in This Folder</span>
+  </div>
+</div>
+
+
+<h2>1 — Architecture Overview</h2>
+
+<div class="arch">
+┌────────────────────────────────────────────────────────────┐
+│  End User Browser                                          │
+└───────────────────┬────────────────────────────────────────┘
+                    │ HTTPS  ssssyria.org
+                    ▼
+┌───────────────────────────────────────────────────────────┐
+│  Netlify CDN  (Global Edge — 30+ PoPs worldwide)          │
+│  Next.js 14 · SSR/ISR via Netlify Functions               │
+│  /api/*      → proxy → Railway backend                    │
+│  /storage/*  → proxy → Cloudflare R2                      │
+│  Free TLS via Let's Encrypt (auto-issued + auto-renewed)  │
+└───────────────────┬───────────────────────────────────────┘
+                    │ Private HTTPS proxy
+                    ▼
+┌───────────────────────────────────────────────────────────┐
+│  Railway Private Network                                  │
+│  ┌──────────────┐  ┌────────────┐  ┌───────────────────┐  │
+│  │ Spring Boot  │  │ PostgreSQL │  │  Redis 7          │  │
+│  │ Java 21      │  │ Port 5432  │  │  JWT blacklist    │  │
+│  │ Port 8080    │  │ (internal) │  │  Rate limiting    │  │
+│  └──────────────┘  └────────────┘  └───────────────────┘  │
+└───────────────────┬───────────────────────────────────────┘
+                    │ S3 API (HTTPS)
+                    ▼
+┌───────────────────────────────────────────────────────────┐
+│  Cloudflare R2 Object Storage                             │
+│  Member uploads · Free 10 GB · Zero egress fees           │
+└───────────────────────────────────────────────────────────┘
+
+Later (Phase 12):
+┌───────────────────────────────────────────────────────────┐
+│  Mailcow VPS — Hetzner CX22 (~$5/mo)                      │
+│  Postfix (SMTP) · Dovecot (IMAP) · Rspamd · ClamAV        │
+│  member@ssssyria.org real mailboxes                       │
+└───────────────────────────────────────────────────────────┘</div>
+
+<h3>Why this stack?</h3>
+<table>
+<tr><th>Decision</th><th>Why</th></tr>
+<tr><td><strong>Netlify</strong> — frontend</td><td>Free global CDN; zero-config HTTPS; <code>@netlify/plugin-nextjs</code> handles SSR/ISR; proxy rewrites eliminate CORS issues; 300 build min/mo free</td></tr>
+<tr><td><strong>Railway</strong> — backend</td><td>Managed PostgreSQL + Redis + Spring Boot in one private network; Dockerfile auto-detected; no port exposed to internet; $5/mo Starter covers all services</td></tr>
+<tr><td><strong>Porkbun</strong> — domain</td><td>Cheapest .org (~$9/yr); WHOIS privacy always free; clean DNS panel; no tricks or upsells</td></tr>
+<tr><td><strong>Cloudflare R2</strong> — storage</td><td>10 GB free forever; zero egress cost; S3-compatible (existing MinIO code works unchanged); no persistence issues unlike Railway disk</td></tr>
+<tr><td><strong>Brevo</strong> — SMTP</td><td>300 emails/day free; excellent deliverability; no credit card; easy domain verification</td></tr>
+<tr><td><strong>Mailcow</strong> — member email</td><td>Open-source; full IMAP/SMTP; DKIM/SPF/DMARC/Rspamd/ClamAV built-in; REST API for automated provisioning; ~$4–6/mo VPS total</td></tr>
+</table>
+
+
+<h2>2 — Complete Cost Breakdown</h2>
+
+<div class="cost-grid">
+  <div class="cost-card">
+    <h4>Launch / Minimum</h4>
+    <div class="price">$0.75</div>
+    <div class="per">per month (~$9/year)</div>
+    <ul>
+      <li>Domain: $9/yr</li>
+      <li>Frontend: Netlify Free</li>
+      <li>Backend: Railway $5 trial</li>
+      <li>Storage: Cloudflare R2 Free</li>
+      <li>SMTP: Brevo Free</li>
+      <li>Email: Zoho Free</li>
+      <li>SSL: Free (Let's Encrypt)</li>
+    </ul>
+  </div>
+  <div class="cost-card">
+    <h4>Stable Production</h4>
+    <div class="price">$5.75</div>
+    <div class="per">per month</div>
+    <ul>
+      <li>Domain: $0.75/mo</li>
+      <li>Railway Starter: $5/mo</li>
+      <li>Frontend: Netlify Free</li>
+      <li>Storage: R2 Free</li>
+      <li>SMTP: Brevo Free</li>
+      <li>Email: Zoho Free (5 accounts)</li>
+      <li>SSL: Free</li>
+    </ul>
+  </div>
+  <div class="cost-card">
+    <h4>+ Member Email</h4>
+    <div class="price">~$11</div>
+    <div class="per">per month (all-in)</div>
+    <ul>
+      <li>Domain: $0.75/mo</li>
+      <li>Railway Starter: $5/mo</li>
+      <li>Mailcow VPS (Hetzner): $4–6/mo</li>
+      <li>Storage: R2 Free</li>
+      <li>SSL: Free</li>
+      <li>Real @ssssyria.org mailboxes</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Detailed cost table</h3>
+<table>
+<tr><th>Service</th><th>Provider</th><th>Free Tier</th><th>Paid</th><th>Your cost</th></tr>
+<tr class="hi-green"><td>Domain ssssyria.org</td><td>Porkbun</td><td>—</td><td>~$9/yr</td><td><strong>$0.75/mo</strong></td></tr>
+<tr class="hi-green"><td>WHOIS Privacy</td><td>Porkbun</td><td>Always free</td><td>—</td><td><strong>$0</strong></td></tr>
+<tr class="hi-green"><td>SSL Certificate</td><td>Let's Encrypt/Netlify</td><td>Free</td><td>—</td><td><strong>$0</strong></td></tr>
+<tr class="hi-green"><td>Frontend hosting</td><td>Netlify</td><td>100 GB BW, 300 build min</td><td>$19/mo</td><td><strong>$0</strong></td></tr>
+<tr class="hi-yellow"><td>Spring Boot backend</td><td>Railway</td><td>$5 trial credit</td><td>Starter $5/mo</td><td><strong>$0–5/mo</strong></td></tr>
+<tr class="hi-green"><td>PostgreSQL 16</td><td>Railway</td><td>Included in credit</td><td>~$1–2/mo usage</td><td><strong>Within Railway $5</strong></td></tr>
+<tr class="hi-green"><td>Redis 7</td><td>Railway</td><td>Included in credit</td><td>~$0.50/mo usage</td><td><strong>Within Railway $5</strong></td></tr>
+<tr class="hi-green"><td>File storage</td><td>Cloudflare R2</td><td>10 GB + 10M ops free</td><td>$0.015/GB/mo</td><td><strong>$0</strong></td></tr>
+<tr class="hi-green"><td>Transactional SMTP</td><td>Brevo</td><td>300 emails/day</td><td>$25/mo (20k/day)</td><td><strong>$0</strong></td></tr>
+<tr class="hi-green"><td>Admin email @ssssyria.org</td><td>Zoho Mail</td><td>5 accounts free</td><td>$1/user/mo</td><td><strong>$0</strong></td></tr>
+<tr class="hi-yellow"><td>Mailcow mail server</td><td>Hetzner CX22 VPS</td><td>—</td><td>~$4–6/mo</td><td><strong>$4–6/mo (Phase 12)</strong></td></tr>
+</table>
+
+<div class="warn">
+  <strong>Railway free trial warning:</strong> The Railway Hobby (free trial) plan puts services to sleep after ~15 minutes of inactivity. The first request after sleep takes 10–20 seconds (cold start). Upgrade to Railway Starter ($5/mo) to disable sleep and get a stable service.
+</div>
+
+
+<h2>3 — Phase 1: Register ssssyria.org</h2>
+
+<h3>3.1 Understanding what a domain is</h3>
+<p>A domain name like <code>ssssyria.org</code> is a human-readable address that maps to a server's IP address. The Domain Name System (DNS) is the global "phone book" that resolves names to IPs. You rent the domain from a registrar (Porkbun) who is authorised by ICANN (the global authority) to sell it. You own the <em>exclusive right to use it</em> for the registration period — renew annually or lose it.</p>
+
+<h3>3.2 Do you need a professional email first?</h3>
+<div class="ok">No — a Gmail or any personal email is fine to register. You only need a professional <code>info@ssssyria.org</code> address <em>after</em> the domain is registered. Set that up in Phase 6.</div>
+<table>
+<tr><th>Email use</th><th>Required?</th><th>Use</th></tr>
+<tr><td>Create registrar account</td><td><span class="tag tag-req">Required</span></td><td>Any personal email</td></tr>
+<tr><td>WHOIS registrant contact</td><td><span class="tag tag-req">Required by ICANN</span></td><td>Enable WHOIS Privacy — hides your real email</td></tr>
+<tr><td>Domain renewal reminders</td><td><span class="tag tag-req">Critical</span></td><td>An address you'll always have access to</td></tr>
+<tr><td>info@ssssyria.org</td><td><span class="tag tag-later">Set up later</span></td><td>After domain is live, via Zoho Mail</td></tr>
+</table>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">1</span><h3>Create account at Porkbun</h3></div>
+  <ol>
+    <li>Go to <a href="https://porkbun.com">porkbun.com</a> → click <strong>Sign Up</strong></li>
+    <li>Enter name, email (personal Gmail is fine), strong password</li>
+    <li>Check inbox → click the verification link immediately</li>
+    <li>Go to <strong>Account → Security → Enable 2FA</strong> — use an authenticator app<br />
+      <span class="tag tag-warn">Critical</span> Without 2FA, a hacker can steal your domain in minutes</li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">2</span><h3>Search and purchase ssssyria.org</h3></div>
+  <ol>
+    <li>Search for <code>ssssyria.org</code> — confirm green "Add to cart" button</li>
+    <li>Select <strong>2–3 years</strong> — locks current price, reduces renewal risk</li>
+    <li>Fill in registrant contact: Organisation = "Syrian Soil Science Society (SSSS)", country = Syria</li>
+    <li>Verify <strong>WHOIS Privacy</strong> is ON (default at Porkbun — always free)</li>
+    <li>Complete payment via credit card or PayPal</li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">3</span><h3>Enable all protections (after purchase)</h3></div>
+  <table>
+    <tr><th>Setting</th><th>Where in Porkbun</th><th>Must be</th></tr>
+    <tr><td>WHOIS Privacy</td><td>Domain → Privacy</td><td>ON</td></tr>
+    <tr><td>Registrar Lock</td><td>Domain → Lock</td><td>ON — prevents transfer without your approval</td></tr>
+    <tr><td>Auto-Renew</td><td>Domain → Settings</td><td>ON — prevents accidental expiry</td></tr>
+  </table>
+  <p>Set a <strong>calendar reminder 60 days before the expiry date</strong> shown in your Porkbun dashboard.</p>
+</div>
+
+
+<h2>4 — Phase 2: Railway Backend</h2>
+
+<h3>4.1 What Railway hosts</h3>
+<ul>
+  <li><strong>Spring Boot 3 API</strong> on port 8080, built from <code>backend/Dockerfile</code></li>
+  <li><strong>PostgreSQL 16</strong> — managed, private network, auto-migrated by Flyway on startup</li>
+  <li><strong>Redis 7</strong> — JWT token blacklist + rate-limiting token bucket</li>
+</ul>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">4</span><h3>Create Railway project and deploy backend</h3></div>
+  <ol>
+    <li>Go to <a href="https://railway.com">railway.com</a> → sign up with GitHub</li>
+    <li><strong>+ New Project → Deploy from GitHub repo</strong> → select your repo</li>
+    <li>Railway detects <code>backend/Dockerfile</code> automatically</li>
+    <li>In service settings: <strong>Root Directory</strong> = <code>backend</code></li>
+    <li><strong>Health Check Path</strong> = <code>/actuator/health</code></li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">5</span><h3>Add PostgreSQL and Redis</h3></div>
+  <ol>
+    <li><strong>+ New Service → Database → PostgreSQL</strong></li>
+    <li><strong>+ New Service → Database → Redis</strong></li>
+    <li>In backend service → <strong>Variables</strong>, add Railway references:</li>
+  </ol>
+  <pre><code>SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
+SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}
+SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}
+REDIS_HOST=${{Redis.REDISHOST}}
+REDIS_PORT=${{Redis.REDISPORT}}
+REDIS_PASSWORD=${{Redis.REDISPASSWORD}}</code></pre>
+  <div class="note">The <code>${{ServiceName.VAR}}</code> syntax is Railway's internal reference — it resolves automatically. No copy-pasting connection strings.</div>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">6</span><h3>Set critical security variables</h3></div>
+  <pre><code># Generate a secret: openssl rand -hex 32
+JWT_SECRET=your_64_char_hex_here
+
+SPRING_PROFILES_ACTIVE=prod
+APP_BASE_URL=https://ssssyria.org
+APP_CORS_ALLOWED_ORIGINS=https://ssssyria.org,https://www.ssssyria.org
+APP_COOKIE_SECURE=true</code></pre>
+  <div class="danger"><strong>JWT_SECRET is critical.</strong> Without it the app refuses to start. If it is leaked, anyone can impersonate any user. Generate with <code>openssl rand -hex 32</code>. Never commit it to Git.</div>
+</div>
+
+
+<h2>5 — Phase 3: Netlify Frontend</h2>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">7</span><h3>Import repository on Netlify</h3></div>
+  <ol>
+    <li>Go to <a href="https://netlify.com">netlify.com</a> → sign up with GitHub</li>
+    <li><strong>Add new site → Import an existing project → GitHub</strong></li>
+    <li>Select your SSSS repo — Netlify reads <code>netlify.toml</code> automatically</li>
+  </ol>
+  <p>Your <code>netlify.toml</code> is already configured correctly:</p>
+  <pre><code>[build]
+  base    = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"</code></pre>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">8</span><h3>Add API proxy rewrite to netlify.toml</h3></div>
+  <p>This makes <code>ssssyria.org/api/*</code> proxy to Railway — the Railway URL is never exposed to users, CORS issues disappear:</p>
+  <pre><code>[[redirects]]
+  from   = "/api/*"
+  to     = "https://YOUR-SERVICE.up.railway.app/api/:splat"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/storage/*"
+  to     = "https://pub-XXXX.r2.dev/ssss-media/:splat"
+  status = 200
+  force  = true</code></pre>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">9</span><h3>Set Netlify environment variables</h3></div>
+  <p>Netlify → Site Configuration → Environment Variables:</p>
+  <pre><code>NEXT_PUBLIC_API_URL=https://ssssyria.org/api
+NEXT_PUBLIC_APP_URL=https://ssssyria.org
+NEXT_PUBLIC_APP_NAME=SSSS
+NEXT_PUBLIC_STORAGE_URL=https://ssssyria.org/storage</code></pre>
+  <div class="warn"><strong>NEXT_PUBLIC_* variables are baked at build time.</strong> After changing them you must redeploy — push a commit or click "Trigger deploy" in Netlify.</div>
+</div>
+
+
+<h2>6 — Phase 4: DNS &amp; Domain Connection</h2>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">10</span><h3>Add domain in Netlify</h3></div>
+  <ol>
+    <li>Netlify → your site → <strong>Site Configuration → Domain Management → Add a domain</strong></li>
+    <li>Enter <code>ssssyria.org</code> → Verify, then also add <code>www.ssssyria.org</code></li>
+    <li>Netlify shows exact DNS records to add — note them down</li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">11</span><h3>Add DNS records at Porkbun</h3></div>
+  <ol>
+    <li>Porkbun → Domain Management → click <strong>DNS</strong> next to ssssyria.org</li>
+    <li>Delete any existing A/CNAME records for <code>@</code> and <code>www</code></li>
+    <li>Add:</li>
+  </ol>
+  <table>
+    <tr><th>Type</th><th>Host</th><th>Value</th><th>TTL</th><th>Purpose</th></tr>
+    <tr><td><code>A</code></td><td><code>@</code></td><td><code>75.2.60.5</code> (Netlify IP from your dashboard)</td><td>300</td><td>ssssyria.org → Netlify</td></tr>
+    <tr><td><code>CNAME</code></td><td><code>www</code></td><td><code>your-site.netlify.app</code></td><td>300</td><td>www.ssssyria.org → Netlify</td></tr>
+  </table>
+  <p><strong>TTL explained:</strong> 300 = 5 minutes caching (fast propagation during setup). Raise to 3600 (1 hour) once stable.</p>
+  <div class="note">DNS propagation takes 5 minutes to 48 hours. Check at <a href="https://dnschecker.org">dnschecker.org</a> — green checkmarks worldwide = complete.</div>
+</div>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">12</span><h3>HTTPS certificate — fully automatic</h3></div>
+  <p>Once Netlify sees your DNS pointing to it, it <strong>automatically issues a free Let's Encrypt SSL certificate</strong>. No action needed. Status changes to "HTTPS certificate: Active" in the Netlify domain panel within 5–15 minutes. Renewed automatically every 90 days.</p>
+</div>
+
+
+<h2>7 — Phase 5: Environment Variables Reference</h2>
+
+<pre><code># ═══ RAILWAY BACKEND — FULL VARIABLES REFERENCE ═══════════════════
+
+# Spring profile
+SPRING_PROFILES_ACTIVE=prod
+
+# Database — Railway auto-resolves ${{Postgres.*}}
+SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
+SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}
+SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}
+
+# Redis — Railway auto-resolves ${{Redis.*}}
+REDIS_HOST=${{Redis.REDISHOST}}
+REDIS_PORT=${{Redis.REDISPORT}}
+REDIS_PASSWORD=${{Redis.REDISPASSWORD}}
+
+# JWT — MUST be set (no default in production — app refuses to start)
+JWT_SECRET=                        # openssl rand -hex 32
+
+# Application URLs
+APP_BASE_URL=https://ssssyria.org
+APP_CORS_ALLOWED_ORIGINS=https://ssssyria.org,https://www.ssssyria.org
+APP_COOKIE_SECURE=true
+
+# SMTP — Brevo free tier (300 emails/day)
+SPRING_MAIL_HOST=smtp-relay.brevo.com
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=              # your Brevo login email
+SPRING_MAIL_PASSWORD=              # your Brevo SMTP key
+SPRING_MAIL_SMTP_AUTH=true
+SPRING_MAIL_SMTP_STARTTLS=true
+
+# File Storage — Cloudflare R2 (S3-compatible, MinIO code works unchanged)
+APP_STORAGE_TYPE=minio
+APP_STORAGE_MINIO_ENDPOINT=https://ACCOUNT_ID.r2.cloudflarestorage.com
+APP_STORAGE_MINIO_ACCESS_KEY=      # R2 Access Key ID
+APP_STORAGE_MINIO_SECRET_KEY=      # R2 Secret Access Key
+APP_STORAGE_MINIO_BUCKET=ssss-media
+
+# Email domain
+SSSSY_EMAIL_DOMAIN=ssssyria.org
+SSSSY_EMAIL_DEFAULT_QUOTA=1073741824   # 1 GB per member
+
+# Optional
+APP_SWAGGER_ENABLED=false
+LOG_LEVEL=INFO
+CLAMAV_ENABLED=false               # enable after Mailcow VPS
+
+# IMAP — leave until Phase 12 (Mailcow)
+# SSSSY_EMAIL_IMAP_HOST=mail.ssssyria.org
+# SSSSY_EMAIL_IMAP_PORT=993
+
+# Phase 12 — Mailcow API
+# MAILCOW_API_URL=https://mail.ssssyria.org/api/v1
+# MAILCOW_API_KEY=</code></pre>
+
+
+<h2>8 — Phase 6–7: SMTP &amp; File Storage</h2>
+
+<h3>Phase 6 — Brevo SMTP (transactional email)</h3>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">13</span><h3>Set up Brevo</h3></div>
+  <ol>
+    <li>Create account at <a href="https://brevo.com">brevo.com</a></li>
+    <li>Go to <strong>SMTP &amp; API → SMTP</strong> — note Host, Port, Login, Password (SMTP key)</li>
+    <li>Go to <strong>Senders, Domains → Add a domain</strong> → enter <code>ssssyria.org</code></li>
+    <li>Add the DNS records Brevo gives you in Porkbun:</li>
+  </ol>
+  <table>
+    <tr><th>Type</th><th>Host</th><th>Value</th><th>Purpose</th></tr>
+    <tr><td>TXT</td><td>@</td><td><code>v=spf1 include:spf.brevo.com ~all</code></td><td>SPF — authorise Brevo to send on your behalf</td></tr>
+    <tr><td>TXT</td><td>mail._domainkey</td><td>(DKIM key from Brevo)</td><td>DKIM — sign emails cryptographically</td></tr>
+  </table>
+  <div class="note">Domain verification dramatically improves deliverability. Without it, password reset emails often land in spam.</div>
+</div>
+
+<h3>Phase 7 — Cloudflare R2 File Storage</h3>
+
+<div class="step">
+  <div class="step-header"><span class="step-num">14</span><h3>Create R2 bucket</h3></div>
+  <ol>
+    <li>Go to <a href="https://dash.cloudflare.com">dash.cloudflare.com</a> → create account</li>
+    <li>Left sidebar → <strong>R2 Object Storage → Create bucket</strong> → name: <code>ssss-media</code></li>
+    <li><strong>R2 → Manage R2 API Tokens → Create API Token</strong> — Object Read &amp; Write on <code>ssss-media</code></li>
+    <li>Note: Account ID, Access Key ID, Secret Access Key</li>
+    <li>Bucket → <strong>Settings → Public Access → Allow Public Access</strong></li>
+    <li>Note the public URL: <code>https://pub-XXXX.r2.dev</code></li>
+  </ol>
+  <p>Set these in Railway. The existing Spring Boot MinIO code works with R2 unchanged:</p>
+  <pre><code>APP_STORAGE_TYPE=minio
+APP_STORAGE_MINIO_ENDPOINT=https://ACCOUNT_ID.r2.cloudflarestorage.com
+APP_STORAGE_MINIO_ACCESS_KEY=your_r2_access_key_id
+APP_STORAGE_MINIO_SECRET_KEY=your_r2_secret_access_key
+APP_STORAGE_MINIO_BUCKET=ssss-media</code></pre>
+</div>
+
+
+<h2>9 — Security Hardening Checklist</h2>
+
+<h3>Secrets — verify before going live</h3>
+<ul class="chk">
+  <li><code>JWT_SECRET</code> set in Railway (generated, not default)</li>
+  <li><code>SPRING_DATASOURCE_PASSWORD</code> is a strong random password</li>
+  <li><code>REDIS_PASSWORD</code> is set</li>
+  <li>R2 Access Key and Secret Key are set</li>
+  <li>No secrets in Git (.env files are in .gitignore)</li>
+</ul>
+
+<h3>Authentication</h3>
+<ul class="chk">
+  <li><code>APP_COOKIE_SECURE=true</code> — JWT in httpOnly Secure cookie</li>
+  <li><code>SPRING_PROFILES_ACTIVE=prod</code></li>
+  <li><code>APP_SWAGGER_ENABLED=false</code></li>
+  <li>Test: login → JWT in httpOnly cookie, NOT in localStorage</li>
+  <li>Test: logout → subsequent API calls return 401</li>
+  <li>Test: 5 wrong passwords → account locked 15 min (6th attempt returns 423)</li>
+  <li>Test: 6th login attempt in 15 min → 429 rate limit</li>
+</ul>
+
+<h3>Domain &amp; HTTPS</h3>
+<ul class="chk">
+  <li>https://ssssyria.org loads with green padlock</li>
+  <li>http://ssssyria.org redirects to https automatically</li>
+  <li>Response header: <code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code></li>
+  <li>Response header: <code>X-Frame-Options: DENY</code></li>
+  <li>Response header: <code>X-Content-Type-Options: nosniff</code></li>
+  <li>Registrar Lock ON at Porkbun</li>
+  <li>Auto-Renew ON at Porkbun</li>
+  <li>2FA ON on Porkbun account</li>
+</ul>
+
+<h3>Email</h3>
+<ul class="chk">
+  <li>Brevo SMTP configured and tested</li>
+  <li>SPF and DKIM DNS records added and verified in Brevo</li>
+  <li>Password reset email arrives in inbox (not spam)</li>
+  <li>Member registration automatically assigns @ssssyria.org address</li>
+</ul>
+
+
+<h2>10 — Verify the Full Stack</h2>
+
+<pre><code># 1. DNS propagation — all green at dnschecker.org
+#    Type A for ssssyria.org → 75.2.60.5
+
+# 2. HTTPS and headers
+curl -I https://ssssyria.org
+# → HTTP/2 200  strict-transport-security  x-frame-options: DENY
+
+# 3. Backend health
+curl https://ssssyria.org/actuator/health
+# → {"status":"UP"}
+
+# 4. Public API responds
+curl https://ssssyria.org/api/public/events/upcoming
+# → [] or JSON array (200 OK)
+
+# 5. Private API blocked without auth
+curl https://ssssyria.org/api/admin/users
+# → 401 Unauthorized
+
+# 6. Rate limiting active (run 7 times rapidly)
+for i in $(seq 1 7); do
+  curl -s -o /dev/null -w "%{http_code}\n" -X POST \
+    https://ssssyria.org/api/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"username":"x","password":"y"}'
+done
+# → 401 401 401 401 401 429 429  (rate limited after 5)</code></pre>
+
+
+<h2>11 — CI/CD Auto-Deploy (GitHub Actions)</h2>
+
+<p>The file <code>.github/workflows/ci.yml</code> already defines the full pipeline. On every push to <code>main</code>:</p>
+
+<pre><code>Push to main
+  │
+  ├── backend-build   → mvn compile + test + package
+  ├── frontend-build  → npm ci + lint + tsc + next build
+  │
+  └── docker (main only)
+        Build backend image → push to GHCR
+        Build frontend image → push to GHCR
+          │
+          └── deploy
+                SSH to production server
+                docker compose pull
+                docker compose up -d --remove-orphans
+                Wait for health check
+                docker image prune -f</code></pre>
+
+<h3>GitHub secrets to add</h3>
+<p>Settings → Secrets and variables → Actions → <strong>New repository secret</strong>:</p>
+<table>
+<tr><th>Name</th><th>Value</th></tr>
+<tr><td><code>DEPLOY_HOST</code></td><td>Production server IP</td></tr>
+<tr><td><code>DEPLOY_USER</code></td><td>SSH username (e.g. <code>ubuntu</code>)</td></tr>
+<tr><td><code>DEPLOY_SSH_KEY</code></td><td>Full content of your <code>~/.ssh/id_rsa</code> private key</td></tr>
+<tr><td><code>DEPLOY_PORT</code></td><td><code>22</code></td></tr>
+<tr><td><code>DEPLOY_PATH</code></td><td><code>/opt/ssss</code></td></tr>
+</table>
+
+
+<h2>12 — Phase 12: Mailcow Member Email (Later)</h2>
+
+<div class="ok"><strong>This phase is not required at launch.</strong> The system works fully without it. Member email addresses are reserved in the database. Add Mailcow when you want real <code>member@ssssyria.org</code> mailboxes.</div>
+
+<h3>What Mailcow provides</h3>
+<table>
+<tr><th>Feature</th><th>Detail</th></tr>
+<tr><td>Real IMAP mailboxes</td><td>Each member gets a working <code>firstname@ssssyria.org</code> inbox</td></tr>
+<tr><td>SMTP sending</td><td>Members send emails from their @ssssyria.org address</td></tr>
+<tr><td>Rspamd spam filter</td><td>Industry-leading spam scoring — better than most commercial providers</td></tr>
+<tr><td>ClamAV antivirus</td><td>Scans all attachments. Also used by Spring Boot upload scanner.</td></tr>
+<tr><td>DKIM / SPF / DMARC</td><td>Built-in. Mailcow generates DKIM keys and guides you through DNS setup.</td></tr>
+<tr><td>SOGo webmail</td><td>Browser-based email client — members can use without any app</td></tr>
+<tr><td>REST API</td><td>Spring Boot calls it to create/delete/suspend mailboxes automatically</td></tr>
+</table>
+
+<h3>Install Mailcow on Hetzner CX22 (~$5/mo)</h3>
+<pre><code># 1. Order Ubuntu 22.04 VPS at hetzner.com (~$4–6/mo, 2 vCPU, 4 GB RAM)
+#    Request port 25 open in Hetzner support ticket
+
+# 2. SSH into the VPS
+ssh root@YOUR_VPS_IP
+
+# 3. Install Docker
+curl -fsSL https://get.docker.com | sh
+apt install -y docker-compose-plugin
+
+# 4. Install Mailcow
+cd /opt
+git clone https://github.com/mailcow/mailcow-dockerized
+cd mailcow-dockerized
+./generate_config.sh      # Enter hostname: mail.ssssyria.org
+docker compose pull
+docker compose up -d
+
+# 5. Access admin panel
+# https://mail.ssssyria.org
+# Default: admin / moohoo — CHANGE PASSWORD IMMEDIATELY</code></pre>
+
+<h3>DNS records for Mailcow</h3>
+<table>
+<tr><th>Type</th><th>Host</th><th>Value</th><th>Purpose</th></tr>
+<tr><td>A</td><td>mail</td><td>Mailcow VPS IP</td><td>mail.ssssyria.org resolves to VPS</td></tr>
+<tr><td>MX</td><td>@</td><td>mail.ssssyria.org (priority 10)</td><td>Incoming email routing</td></tr>
+<tr><td>TXT</td><td>@</td><td>v=spf1 mx ~all</td><td>SPF — authorise your server</td></tr>
+<tr><td>TXT</td><td>dkim._domainkey</td><td>(From Mailcow admin panel)</td><td>DKIM — cryptographic signing</td></tr>
+<tr><td>TXT</td><td>_dmarc</td><td>v=DMARC1; p=quarantine</td><td>DMARC — anti-spoofing policy</td></tr>
+</table>
+
+
+<h2>13 — Renewal &amp; Ongoing Maintenance</h2>
+
+<h3>Annual</h3>
+<ul>
+  <li><strong>Domain renewal:</strong> Auto-renew is ON — Porkbun charges your card automatically. Verify your payment method is up to date each year.</li>
+  <li><strong>SSL certificate:</strong> Auto-renewed by Netlify every 90 days — no action needed.</li>
+</ul>
+
+<h3>Monthly</h3>
+<ul>
+  <li><strong>Railway usage:</strong> Check Railway → Usage tab. If usage approaches $5 credit, consider upgrading or reducing resource limits.</li>
+  <li><strong>Netlify build minutes:</strong> Netlify → Team → Billing. Free: 300 min/mo (~60 deploys).</li>
+  <li><strong>Cloudflare R2:</strong> Check storage usage in R2 dashboard. Free: 10 GB.</li>
+</ul>
+
+<h3>Database backup</h3>
+<pre><code># Run from Railway CLI or PostgreSQL data panel
+pg_dump -U $PGUSER $PGDATABASE | gzip &gt; backup_$(date +%Y%m%d).sql.gz
+
+# Store backup in a safe location (not the same server)</code></pre>
+
+
+<h2>14 — Troubleshooting</h2>
+
+<table>
+<tr><th>Problem</th><th>Likely Cause</th><th>Fix</th></tr>
+<tr><td>502 Bad Gateway / blank page</td><td>Railway service sleeping (cold start)</td><td>Wait 20 sec and refresh. Upgrade to Railway Starter ($5/mo) to disable sleep.</td></tr>
+<tr><td>CORS error in browser console</td><td><code>APP_CORS_ALLOWED_ORIGINS</code> missing the domain</td><td>Add <code>https://ssssyria.org</code> to CORS var in Railway</td></tr>
+<tr><td>Login works but logs out on refresh</td><td>Cookie Secure mismatch</td><td>Set <code>APP_COOKIE_SECURE=true</code> and <code>SPRING_PROFILES_ACTIVE=prod</code> in Railway</td></tr>
+<tr><td>Password reset email not received</td><td>SMTP not configured, or in spam</td><td>Set all <code>SPRING_MAIL_*</code> vars; add Brevo SPF/DKIM DNS records</td></tr>
+<tr><td>Application fails to start</td><td><code>JWT_SECRET</code> not set</td><td>Add <code>JWT_SECRET</code> env var in Railway (run <code>openssl rand -hex 32</code>)</td></tr>
+<tr><td>Uploaded files not showing</td><td>R2 credentials wrong or bucket missing</td><td>Verify all <code>APP_STORAGE_MINIO_*</code> vars match R2 dashboard exactly</td></tr>
+<tr><td>DNS not resolving after 48 hours</td><td>Old conflicting DNS records</td><td>Delete ALL A/CNAME records for @ and www in Porkbun, re-add only Netlify records</td></tr>
+<tr><td>Flyway error on startup</td><td>Migration script error or out-of-order</td><td>Check Railway logs for specific error. In worst case: <code>UPDATE flyway_schema_history SET success=true WHERE success=false;</code></td></tr>
+</table>
+
+
+<h2>15 — Complete Environment Variables Checklist</h2>
+
+<pre><code># Copy to Railway backend → Variables
+# Mark each line as set before deploying
+
+# REQUIRED — must be set before first deploy
+SPRING_PROFILES_ACTIVE=prod
+JWT_SECRET=                         # ← openssl rand -hex 32
+SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
+SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}
+SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}
+REDIS_HOST=${{Redis.REDISHOST}}
+REDIS_PORT=${{Redis.REDISPORT}}
+REDIS_PASSWORD=${{Redis.REDISPASSWORD}}
+APP_BASE_URL=https://ssssyria.org
+APP_CORS_ALLOWED_ORIGINS=https://ssssyria.org,https://www.ssssyria.org
+APP_COOKIE_SECURE=true
+
+# REQUIRED — SMTP (set after Brevo account created)
+SPRING_MAIL_HOST=smtp-relay.brevo.com
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=               # ← your Brevo login email
+SPRING_MAIL_PASSWORD=               # ← Brevo SMTP key
+SPRING_MAIL_SMTP_AUTH=true
+SPRING_MAIL_SMTP_STARTTLS=true
+
+# REQUIRED — File storage (set after R2 bucket created)
+APP_STORAGE_TYPE=minio
+APP_STORAGE_MINIO_ENDPOINT=https://ACCOUNT_ID.r2.cloudflarestorage.com
+APP_STORAGE_MINIO_ACCESS_KEY=       # ← R2 Access Key ID
+APP_STORAGE_MINIO_SECRET_KEY=       # ← R2 Secret Access Key
+APP_STORAGE_MINIO_BUCKET=ssss-media
+
+# OPTIONAL — safe defaults, change if needed
+APP_SWAGGER_ENABLED=false
+LOG_LEVEL=INFO
+SSSSY_EMAIL_DOMAIN=ssssyria.org
+SSSSY_EMAIL_DEFAULT_QUOTA=1073741824
+CLAMAV_ENABLED=false
+
+# LATER — uncomment when Mailcow VPS is ready (Phase 12)
+# SSSSY_EMAIL_IMAP_HOST=mail.ssssyria.org
+# SSSSY_EMAIL_IMAP_PORT=993
+# MAILCOW_API_URL=https://mail.ssssyria.org/api/v1
+# MAILCOW_API_KEY=
+# CLAMAV_ENABLED=true
+# CLAMAV_HOST=mail.ssssyria.org
+# CLAMAV_PORT=3310</code></pre>
+
+
+<h2>16 — Files in This Folder</h2>
+
+<table>
+<tr><th>File</th><th>Contents</th></tr>
+<tr><td><strong>DEPLOYMENT-GUIDE.md</strong></td><td>This guide as Markdown — keep with the project forever</td></tr>
+<tr><td>ssssy-domain-registration-full-deployment-guide.html</td><td>Earlier domain + VPS deployment draft</td></tr>
+<tr><td>railway-netlify-free-hosting-full-setup-guide.html</td><td>Railway + Netlify detailed setup steps</td></tr>
+<tr><td>full-deep-guide-how-to-register-ssss-org.html</td><td>Domain registration deep-dive (step-by-step)</td></tr>
+<tr><td>full-deep-guide-register-ssss-org-all-hosting-costs.html</td><td>Cost breakdown with domain registration guide</td></tr>
+<tr><td>mailcow-integration-plan-auto-email-on-member-creation.html</td><td>Mailcow Phase 12 architecture &amp; integration plan</td></tr>
+<tr><td>free-hosting-guide-ssssy-website.html</td><td>Free hosting overview (Railway + Netlify)</td></tr>
+</table>
+
+<div class="ok" style="margin-top:28px">
+  <strong>Summary:</strong> You can go live at <code>ssssyria.org</code> for as little as <strong>$9/year</strong> (domain only, everything else free).
+  A stable no-cold-start production setup costs <strong>~$5.75/month</strong>.
+  Adding full member email with Mailcow brings the total to <strong>~$10–12/month</strong> — for a complete, professional, institution-grade platform.
+</div>
+
+<footer>Syrian Soil Science Society (SSSS) · ssssyria.org · Made with IBM Bob</footer>
+</div>
+</body>
+</html>

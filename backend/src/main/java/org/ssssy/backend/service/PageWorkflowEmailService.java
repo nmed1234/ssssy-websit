@@ -49,7 +49,7 @@ public class PageWorkflowEmailService {
      * @param toState   new workflow state
      * @param timestamp when the transition occurred
      */
-    @Async
+    @Async("ssssyTaskExecutor")
     public void notifyTransition(Page page, String fromState, String toState, LocalDateTime timestamp) {
         try {
             String body = buildEmailBody(page, toState, timestamp);

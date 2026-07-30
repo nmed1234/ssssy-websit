@@ -1,0 +1,614 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Full Deep Guide — How to Register ssss.org</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.7;
+    background: #ffffff; color: #1f2328;
+    padding: 32px 16px 64px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 32px; }
+  h2 {
+    font-size: 17px; font-weight: 700;
+    margin: 44px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  h3 { font-size: 14px; font-weight: 700; margin: 22px 0 8px; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 5px; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 12px; background: #f7f8fa;
+    border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px;
+  }
+  pre {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 14px 16px; overflow-x: auto; margin-bottom: 14px;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: 12px; }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #1d4ed8; color: #fff;
+    font-size: 13px; font-weight: 700;
+    margin-right: 10px; flex-shrink: 0;
+  }
+  .step-header {
+    display: flex; align-items: center;
+    margin-bottom: 10px;
+  }
+  .step-header h3 { margin: 0; font-size: 15px; }
+  .step-box {
+    border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 18px 20px; margin-bottom: 20px;
+    background: #f7f8fa;
+  }
+  .note  { border-left: 3px solid #3b82d4; padding: 10px 14px; background: #eff6ff; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #1e40af; }
+  .warn  { border-left: 3px solid #f59e0b; padding: 10px 14px; background: #fffbeb; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #92400e; }
+  .ok    { border-left: 3px solid #22c55e; padding: 10px 14px; background: #f0fdf4; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #166534; }
+  .danger{ border-left: 3px solid #ef4444; padding: 10px 14px; background: #fef2f2; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #991b1b; }
+  table  { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 13px; }
+  th { background: #f0f2f5; text-align: left; padding: 9px 11px; border: 1px solid #e5e7eb; font-weight: 600; }
+  td { padding: 8px 11px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .toc { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px 22px; margin-bottom: 36px; }
+  .toc h3 { margin: 0 0 10px; font-size: 12px; color: #57606a; text-transform: uppercase; letter-spacing: .06em; }
+  .toc ol { margin: 0; }
+  .toc li { margin-bottom: 4px; font-size: 13px; }
+  a { color: #3b82d4; }
+  .explain {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 12px 14px; margin: 10px 0 14px;
+    font-size: 13px; color: #57606a;
+  }
+  .explain strong { color: #1f2328; }
+  .screen-mock {
+    border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 14px 16px; background: #fff;
+    font-size: 12px; margin: 10px 0 14px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    color: #374151;
+  }
+  .screen-mock .label { color: #6b7280; display: block; margin-bottom: 2px; }
+  .screen-mock .field { background: #f9fafb; border: 1px solid #d1d5db; border-radius: 4px; padding: 6px 10px; display: block; margin-bottom: 10px; width: 100%; }
+  .screen-mock .btn { background: #1d4ed8; color: #fff; padding: 7px 18px; border-radius: 4px; font-size: 13px; font-weight: 600; display: inline-block; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-right: 4px; }
+  .tag-required { background: #fee2e2; color: #991b1b; }
+  .tag-optional { background: #d1fae5; color: #065f46; }
+  .tag-free     { background: #dbeafe; color: #1d4ed8; }
+  .tag-paid     { background: #fef3c7; color: #92400e; }
+  .checklist li { list-style: none; padding-left: 0; }
+  .checklist li::before { content: "☐ "; color: #6b7280; }
+  footer { text-align: center; font-size: 12px; color: #57606a; border-top: 1px solid #e5e7eb; padding-top: 18px; margin-top: 48px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Full Deep Guide — How to Register ssss.org</h1>
+  <p class="subtitle">Every step explained in detail — from zero to a live domain pointing at your site</p>
+
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li>What Is a Domain &amp; How It Works (Concept)</li>
+      <li>Do You Need an Email Address First?</li>
+      <li>Choose the Right Registrar</li>
+      <li>Check If ssss.org Is Available</li>
+      <li>Create Your Registrar Account</li>
+      <li>Purchase the Domain — Field by Field</li>
+      <li>What You Own After Purchase</li>
+      <li>Protect Your Domain (Privacy + Security)</li>
+      <li>Point the Domain at Your Hosting (DNS)</li>
+      <li>Connect Domain to Netlify (Frontend)</li>
+      <li>Connect Domain to Railway (Backend API)</li>
+      <li>Verify Everything is Working</li>
+      <li>Renewal — Never Lose Your Domain</li>
+      <li>Full Checklist</li>
+    </ol>
+  </div>
+
+  
+  <h2>1 — What Is a Domain &amp; How It Works</h2>
+
+  <p>Before buying anything, it helps to understand what you are actually purchasing.</p>
+
+  <div class="explain">
+    <strong>A domain name</strong> like <code>ssss.org</code> is a human-readable address that maps to a server's IP address (e.g. <code>75.2.60.5</code>). Without a domain, your visitors would need to type a raw IP number into their browser — which nobody does.<br /><br />
+    <strong>The Domain Name System (DNS)</strong> is a global phone book. When someone types <code>www.ssss.org</code>, their browser asks a DNS server: "What IP is this?" DNS answers, and the browser connects to that IP.<br /><br />
+    <strong>A registrar</strong> is an accredited company (like Namecheap or GoDaddy) that is authorised to sell and manage domain registrations on behalf of ICANN — the global authority that oversees domain names.<br /><br />
+    <strong>.org</strong> is a top-level domain (TLD) historically used by non-profit organisations and societies — which makes it perfect for the Soil Science Society of Syria.
+  </div>
+
+  <p><strong>The chain of ownership looks like this:</strong></p>
+  <pre><code>ICANN (global authority)
+  └─► Public Interest Registry (manages .org TLD)
+        └─► Namecheap / GoDaddy / Porkbun (registrars — sell to you)
+              └─► YOU (domain owner — registrant)
+                    └─► DNS records → point to Netlify + Railway</code></pre>
+
+  
+  <h2>2 — Do You Need an Email Address First?</h2>
+
+  <div class="ok">
+    <strong>Short answer: Yes — but any email works.</strong> You do not need a special or professional email. A Gmail, Outlook, or Yahoo address is perfectly fine to register a domain.
+  </div>
+
+  <p>Here is what the email is used for:</p>
+
+  <table>
+    <tr><th>Purpose</th><th>Required?</th><th>Which email to use</th></tr>
+    <tr>
+      <td>Create your registrar account</td>
+      <td><span class="tag tag-required">Required</span></td>
+      <td>Any email you own — Gmail is fine</td>
+    </tr>
+    <tr>
+      <td>Receive domain purchase receipt</td>
+      <td><span class="tag tag-required">Required</span></td>
+      <td>Same as above</td>
+    </tr>
+    <tr>
+      <td>WHOIS registrant contact (public record)</td>
+      <td><span class="tag tag-required">Required by law</span></td>
+      <td>Use WHOIS Privacy (free) so your real email stays hidden</td>
+    </tr>
+    <tr>
+      <td>Domain renewal reminders</td>
+      <td><span class="tag tag-required">Required</span></td>
+      <td>Must be an address you check regularly</td>
+    </tr>
+    <tr>
+      <td>SSL certificate notifications</td>
+      <td><span class="tag tag-optional">Optional</span></td>
+      <td>Let's Encrypt auto-renews — no manual email needed</td>
+    </tr>
+    <tr>
+      <td>Email @ your domain (e.g. info@ssss.org)</td>
+      <td><span class="tag tag-optional">Optional — later</span></td>
+      <td>Set up after domain is registered, using Google Workspace or Zoho</td>
+    </tr>
+  </table>
+
+  <div class="warn">
+    <strong>Important:</strong> Use an email address you will have access to for years. If you lose access to the email you registered with, recovering domain ownership is very difficult.
+  </div>
+
+  <div class="explain">
+    <strong>About professional email (info@ssss.org):</strong> You do NOT need this before registering. You can create it later. Many organisations use free Gmail during registration and set up a professional email address after the domain is live. The only email you need right now is a personal one to create your registrar account.
+  </div>
+
+  
+  <h2>3 — Choose the Right Registrar</h2>
+
+  <p>A registrar is just a shop where you buy the domain. They all sell the same thing — the difference is price, UI, and support.</p>
+
+  <table>
+    <tr><th>Registrar</th><th>ssss.org price/yr</th><th>WHOIS Privacy</th><th>Best for</th></tr>
+    <tr>
+      <td><strong><a href="https://porkbun.com">Porkbun</a></strong> ⭐ Recommended</td>
+      <td>~$9/yr</td>
+      <td>Free always</td>
+      <td>Best value, clean UI, transparent pricing</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.namecheap.com">Namecheap</a></td>
+      <td>~$10/yr</td>
+      <td>Free always</td>
+      <td>Very popular, excellent DNS management</td>
+    </tr>
+    <tr>
+      <td><a href="https://domains.squarespace.com">Google / Squarespace</a></td>
+      <td>~$12/yr</td>
+      <td>Free always</td>
+      <td>Simplest UI, good for beginners</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.godaddy.com">GoDaddy</a></td>
+      <td>~$2 first yr, then $22/yr</td>
+      <td>Paid ($10/yr)</td>
+      <td>Avoid — low intro price then expensive renewal</td>
+    </tr>
+  </table>
+
+  <div class="note">
+    <strong>Recommendation: Use Porkbun.</strong> It is the cheapest for .org, includes free WHOIS privacy forever, and has a very clean interface. All steps below use Porkbun as the example, but every registrar works the same way.
+  </div>
+
+  
+  <h2>4 — Check If ssss.org Is Available</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">1</span><h3>Search for the domain</h3></div>
+
+    <ol>
+      <li>Open your browser and go to <a href="https://porkbun.com">porkbun.com</a></li>
+      <li>You will see a large search box in the middle of the page</li>
+      <li>Type <code>ssss.org</code> and press Enter or click Search</li>
+    </ol>
+
+    <div class="screen-mock">
+      <span class="label">Search domains</span>
+      <span class="field">ssss.org</span>
+      <span class="btn">Search</span>
+    </div>
+
+    <div class="explain">
+      <strong>What the results mean:</strong><br />
+      • <strong>Green "Add to cart" button</strong> → the domain is available, you can buy it<br />
+      • <strong>Grey "Taken" or "Make Offer"</strong> → someone already owns it<br />
+      • The search also shows alternatives like <code>ssss.com</code>, <code>ssss.net</code> — ignore these, you want <code>.org</code>
+    </div>
+
+    <div class="warn">
+      <strong>If ssss.org is already taken:</strong> Try <code>ssssy.org</code>, <code>soilsyria.org</code>, or <code>ssss-syria.org</code>. The domain must be available to purchase. You cannot buy a domain someone else owns unless you negotiate with them directly.
+    </div>
+  </div>
+
+  
+  <h2>5 — Create Your Registrar Account</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">2</span><h3>Sign up at Porkbun (or your chosen registrar)</h3></div>
+
+    <ol>
+      <li>Click <strong>Sign Up</strong> or <strong>Create Account</strong> at the top of the page</li>
+      <li>Fill in the registration form:</li>
+    </ol>
+
+    <div class="screen-mock">
+      <span class="label">First Name</span>
+      <span class="field">Your first name</span>
+      <span class="label">Last Name</span>
+      <span class="field">Your last name</span>
+      <span class="label">Email Address <em style="color:#ef4444">(use one you own for years)</em></span>
+      <span class="field">yourname@gmail.com</span>
+      <span class="label">Password <em style="color:#ef4444">(use a strong password)</em></span>
+      <span class="field">••••••••••••••••</span>
+      <span class="btn">Create Account</span>
+    </div>
+
+    <ol>
+      <li>Check your inbox for a <strong>verification email</strong> from Porkbun</li>
+      <li>Click the link in the email to confirm your address</li>
+      <li>You are now logged in to your registrar account</li>
+    </ol>
+
+    <div class="explain">
+      <strong>Why verify email?</strong> ICANN rules require that the registrant (you) has a valid, verified email. If you do not verify, the domain may be suspended within 15 days of purchase. Always verify immediately after signing up.
+    </div>
+  </div>
+
+  
+  <h2>6 — Purchase the Domain — Field by Field</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">3</span><h3>Add to cart and check out</h3></div>
+
+    <ol>
+      <li>Go back to the search results for <code>ssss.org</code></li>
+      <li>Click <strong>Add to Cart</strong></li>
+      <li>Click the cart icon and then <strong>Checkout</strong></li>
+    </ol>
+
+    <h3>Registration period</h3>
+    <div class="explain">
+      <strong>How many years should you register for?</strong><br />
+      You can register for 1 to 10 years. Registering for more years:<br />
+      • Locks in the current price (protects against price increases)<br />
+      • Reduces risk of forgetting to renew<br />
+      <strong>Recommendation: Register for 2–3 years.</strong> It costs less per year and gives you time before you need to think about renewal.
+    </div>
+
+    <h3>WHOIS / Registrant Contact Information</h3>
+    <div class="explain">
+      <strong>What is WHOIS?</strong> Every domain has a public record called WHOIS that lists who owns it — your name, email, address, and phone number. This is a legal requirement by ICANN.<br /><br />
+      <strong>This is a privacy risk.</strong> Spammers and data scrapers harvest WHOIS data constantly.<br /><br />
+      <strong>Solution: Enable WHOIS Privacy Protection</strong> (also called Domain Privacy or Private Registration). This replaces your personal details in the public record with the registrar's proxy contact details. Your real information stays private but is still on file with the registrar for legal purposes.<br /><br />
+      At Porkbun, WHOIS Privacy is <strong>always free</strong>. Make sure it is enabled (it is on by default).
+    </div>
+
+    <p>You will be asked to fill in contact details. Even with privacy enabled, fill these in accurately — this is for the registrar's records:</p>
+
+    <table>
+      <tr><th>Field</th><th>What to Enter</th><th>Notes</th></tr>
+      <tr><td>First / Last Name</td><td>Your legal name or organisation representative</td><td>Required</td></tr>
+      <tr><td>Organisation</td><td>Syrian Soil Science Society (SSSS)</td><td>Optional but recommended</td></tr>
+      <tr><td>Email</td><td>Your personal email</td><td>This is your ownership contact</td></tr>
+      <tr><td>Phone</td><td>Your phone number</td><td>International format e.g. +963...</td></tr>
+      <tr><td>Address</td><td>Your organisation's address</td><td>Damascus, Syria</td></tr>
+      <tr><td>City / Country</td><td>Damascus / Syria</td><td></td></tr>
+    </table>
+
+    <h3>Payment</h3>
+    <div class="explain">
+      <strong>Payment methods accepted:</strong> Credit card (Visa/Mastercard), PayPal, cryptocurrency (at Porkbun). Most registrars accept all major credit cards. If you are in Syria and have difficulty with international payments, PayPal or a Visa prepaid card works well. Some organisations use a colleague's card and reimburse them.
+    </div>
+
+    <ol>
+      <li>Review the order summary — confirm the domain name is <code>ssss.org</code> and the period is correct</li>
+      <li>Enter payment details and click <strong>Complete Purchase</strong></li>
+      <li>You will receive a <strong>confirmation email</strong> immediately</li>
+    </ol>
+
+    <div class="ok">
+      <strong>Congratulations — you now own ssss.org.</strong> The domain appears in your registrar dashboard under "My Domains". You are the registrant.
+    </div>
+  </div>
+
+  
+  <h2>7 — What You Own After Purchase</h2>
+
+  <div class="explain">
+    <strong>What "owning a domain" actually means:</strong><br /><br />
+    You do not own the domain like you own a car. You have the <em>exclusive right to use it</em> for the period you paid for (e.g. 2 years). After that period, if you do not renew, anyone else can register it.<br /><br />
+    <strong>What you can do with your domain:</strong><br />
+    • Point it at any server anywhere in the world using DNS records<br />
+    • Create email addresses @ssss.org<br />
+    • Transfer it to another registrar<br />
+    • Sell it or transfer ownership to someone else<br />
+    • Protect it from being transferred by enabling the "registrar lock"<br /><br />
+    <strong>What you cannot do:</strong><br />
+    • You cannot own it forever without paying annual renewal fees<br />
+    • You cannot own the same name under a different TLD automatically (owning ssss.org does NOT give you ssss.com)
+  </div>
+
+  
+  <h2>8 — Protect Your Domain (Privacy + Security)</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">4</span><h3>Enable all security settings</h3></div>
+
+    <p>After purchase, go to your domain's management page and enable these settings:</p>
+
+    <table>
+      <tr><th>Setting</th><th>What It Does</th><th>Cost</th><th>Action</th></tr>
+      <tr>
+        <td><strong>WHOIS Privacy</strong></td>
+        <td>Hides your personal contact details from the public WHOIS database</td>
+        <td><span class="tag tag-free">Free at Porkbun</span></td>
+        <td>Enable — should be on by default</td>
+      </tr>
+      <tr>
+        <td><strong>Registrar Lock</strong> (Transfer Lock)</td>
+        <td>Prevents anyone from transferring your domain to another registrar without your approval</td>
+        <td><span class="tag tag-free">Free</span></td>
+        <td>Enable — must be ON</td>
+      </tr>
+      <tr>
+        <td><strong>Auto-Renew</strong></td>
+        <td>Automatically renews the domain before it expires so you never accidentally lose it</td>
+        <td>Charged to your payment method</td>
+        <td>Enable — very important</td>
+      </tr>
+      <tr>
+        <td><strong>Two-Factor Auth (2FA)</strong> on your registrar account</td>
+        <td>Prevents hackers from logging in to your registrar account and stealing/transferring the domain</td>
+        <td><span class="tag tag-free">Free</span></td>
+        <td>Enable — use an authenticator app</td>
+      </tr>
+    </table>
+
+    <div class="danger">
+      <strong>Domain hijacking is real.</strong> If a hacker logs in to your registrar account, they can transfer your domain to themselves in minutes. Always enable 2FA and a strong unique password on your registrar account.
+    </div>
+  </div>
+
+  
+  <h2>9 — Point the Domain at Your Hosting (DNS)</h2>
+
+  <div class="explain">
+    <strong>What is DNS?</strong><br />
+    DNS (Domain Name System) is where you tell the internet: "When someone visits ssss.org, send them to THIS server." You do this by adding DNS records in your registrar's dashboard.<br /><br />
+    <strong>Types of DNS records you need:</strong><br />
+    • <strong>A record</strong> — points a domain name to an IPv4 address (e.g. <code>ssss.org → 75.2.60.5</code>)<br />
+    • <strong>CNAME record</strong> — points a domain name to another domain name (e.g. <code>www.ssss.org → your-site.netlify.app</code>)<br />
+    • <strong>MX record</strong> — for email routing (only needed if you set up email @ssss.org)<br />
+    • <strong>TXT record</strong> — for verification purposes (Netlify, Google, etc. ask you to add these to prove ownership)<br /><br />
+    <strong>DNS propagation:</strong> After you add or change a DNS record, it takes 5 minutes to 48 hours to "propagate" worldwide. During this time some users may see the old address, others the new one. This is normal.
+  </div>
+
+  
+  <h2>10 — Connect Domain to Netlify (Frontend)</h2>
+
+  <p>Your Next.js frontend is hosted on Netlify. This is where <code>ssss.org</code> and <code>www.ssss.org</code> should point.</p>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">5</span><h3>Add the domain in Netlify</h3></div>
+    <ol>
+      <li>Log in to <a href="https://app.netlify.com">app.netlify.com</a></li>
+      <li>Click on your site (the SSSSY frontend site)</li>
+      <li>Go to <strong>Site Configuration → Domain Management</strong></li>
+      <li>Click <strong>Add a domain</strong></li>
+      <li>Type <code>ssss.org</code> and click <strong>Verify</strong></li>
+      <li>Also add <code>www.ssss.org</code></li>
+      <li>Netlify will show you the DNS records to add — note them down</li>
+    </ol>
+    <div class="explain">
+      Netlify will show you something like:<br /><br />
+      • For <code>ssss.org</code> → add an <strong>A record</strong> pointing to <code>75.2.60.5</code><br />
+      • For <code>www.ssss.org</code> → add a <strong>CNAME record</strong> pointing to <code>your-site-name.netlify.app</code><br /><br />
+      The exact values are shown in your Netlify dashboard — use those exact values.
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">6</span><h3>Add DNS records at your registrar (Porkbun)</h3></div>
+    <ol>
+      <li>Go to <a href="https://porkbun.com">porkbun.com</a> → log in → click <strong>Domain Management</strong></li>
+      <li>Find <code>ssss.org</code> in your list → click <strong>DNS</strong> or <strong>Manage DNS</strong></li>
+      <li>Add the records Netlify gave you:</li>
+    </ol>
+
+    <table>
+      <tr><th>Type</th><th>Host / Name</th><th>Value / Points to</th><th>TTL</th></tr>
+      <tr>
+        <td><strong>A</strong></td>
+        <td><code>@</code> (means root: ssss.org)</td>
+        <td><code>75.2.60.5</code> (Netlify's IP — check your dashboard)</td>
+        <td>300</td>
+      </tr>
+      <tr>
+        <td><strong>CNAME</strong></td>
+        <td><code>www</code> (means www.ssss.org)</td>
+        <td><code>your-site.netlify.app</code></td>
+        <td>300</td>
+      </tr>
+    </table>
+
+    <div class="explain">
+      <strong>What is TTL?</strong> Time To Live — how long (in seconds) DNS resolvers should cache this record. 300 = 5 minutes. A lower TTL means changes propagate faster (useful when setting up), a higher TTL means less DNS traffic (better once stable). You can increase it to 3600 (1 hour) after everything is working.
+    </div>
+
+    <ol>
+      <li>Click <strong>Save</strong> after adding each record</li>
+      <li>Wait 5–30 minutes for DNS to propagate</li>
+    </ol>
+  </div>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">7</span><h3>HTTPS / SSL Certificate — Automatic</h3></div>
+    <div class="explain">
+      Once Netlify detects your DNS records are pointing to it, it will <strong>automatically issue a free SSL certificate</strong> from Let's Encrypt. This gives you the green padlock and <code>https://</code> in the address bar.<br /><br />
+      <strong>You do not need to do anything.</strong> Netlify handles this entirely. It may take up to 1 hour after DNS propagates for the certificate to appear. After that, all HTTP traffic is automatically redirected to HTTPS.
+    </div>
+    <p>You will see the status change to <strong>"Your site is secured with HTTPS"</strong> in the Netlify domain management panel.</p>
+  </div>
+
+  
+  <h2>11 — Connect Domain to Railway (Backend API)</h2>
+
+  <p>Your Spring Boot backend runs on Railway. The frontend calls it at <code>/api/*</code>. You have two options:</p>
+
+  <table>
+    <tr><th>Option</th><th>How</th><th>Requires</th></tr>
+    <tr>
+      <td><strong>Option A (Recommended): Netlify Proxy</strong></td>
+      <td>Add a rewrite in <code>netlify.toml</code> so <code>ssss.org/api/*</code> proxies to Railway. No Railway custom domain needed.</td>
+      <td>Free — already configured in your <code>netlify.toml</code></td>
+    </tr>
+    <tr>
+      <td><strong>Option B: Railway Custom Domain</strong></td>
+      <td>Add <code>api.ssss.org</code> as a custom domain in Railway. Add a CNAME at your registrar pointing <code>api</code> to Railway's URL.</td>
+      <td>Railway Starter plan ($5/mo)</td>
+    </tr>
+  </table>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">8</span><h3>Option A — Netlify Proxy (Free, No Extra DNS)</h3></div>
+    <p>Add these lines to your <code>netlify.toml</code> (already done in your codebase after the earlier update):</p>
+    <pre><code>[[redirects]]
+  from   = "/api/*"
+  to     = "https://ssssy-websit-production.up.railway.app/api/:splat"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/storage/*"
+  to     = "https://ssssy-websit-production.up.railway.app/storage/:splat"
+  status = 200
+  force  = true</code></pre>
+    <div class="explain">
+      <strong>What this does:</strong> When the browser calls <code>https://ssss.org/api/...</code>, Netlify's servers silently forward that request to Railway and return the response. The browser never knows Railway is involved — it sees only ssss.org. This eliminates CORS issues and hides the Railway URL from users.
+    </div>
+    <p>Then set in Netlify Environment Variables:</p>
+    <pre><code>NEXT_PUBLIC_API_URL = https://ssss.org/api</code></pre>
+  </div>
+
+  
+  <h2>12 — Verify Everything is Working</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">9</span><h3>Test your domain end to end</h3></div>
+
+    <h3>A. Check DNS propagation</h3>
+    <p>Go to <a href="https://dnschecker.org">dnschecker.org</a>, enter <code>ssss.org</code> and select record type A. You should see green checkmarks from locations around the world showing the correct IP.</p>
+
+    <h3>B. Check HTTPS is working</h3>
+    <p>Open a browser and go to <code>http://ssss.org</code> — it should redirect to <code>https://ssss.org</code> automatically. You should see the green padlock.</p>
+
+    <h3>C. Check the API is reachable</h3>
+    <p>Open a new browser tab and go to:</p>
+    <pre><code>https://ssss.org/api/public/events/upcoming</code></pre>
+    <p>You should see a JSON response (even an empty array <code>[]</code> is correct — it means the API is responding).</p>
+
+    <h3>D. Check the health endpoint</h3>
+    <pre><code>https://ssss.org/actuator/health</code></pre>
+    <p>Expected response: <code>{"status":"UP"}</code></p>
+
+    <div class="explain">
+      <strong>If you see a browser error or "site not found":</strong><br />
+      1. DNS has not propagated yet — wait 15–30 more minutes and try again<br />
+      2. Check the DNS records in your registrar dashboard — make sure A and CNAME records are saved<br />
+      3. Check Netlify dashboard — under Domain Management, it should say "DNS verified" and "SSL certificate active"<br />
+      4. Check Railway — make sure the backend service is running (green status)
+    </div>
+  </div>
+
+  
+  <h2>13 — Renewal — Never Lose Your Domain</h2>
+
+  <div class="warn">
+    <strong>Domains expire.</strong> If you forget to renew, your domain enters a grace period (usually 30 days) where you can still renew at normal price. After that it enters a "redemption period" (30–60 days) where renewal costs $100–$300. After that, it is released for anyone to register.
+  </div>
+
+  <p>Protect yourself with these steps:</p>
+
+  <ol>
+    <li><strong>Enable Auto-Renew</strong> in your registrar dashboard — this is the most important step</li>
+    <li><strong>Keep your payment method up to date</strong> — if your card expires and auto-renew fails, you could lose the domain</li>
+    <li><strong>Keep your email address active</strong> — the registrar sends renewal reminders 90, 60, 30, 15, and 7 days before expiry</li>
+    <li><strong>Register for multiple years</strong> — buying 2–3 years upfront reduces risk and often costs less per year</li>
+    <li><strong>Add a calendar reminder</strong> — set an annual reminder 60 days before expiry as a backup</li>
+  </ol>
+
+  <div class="explain">
+    <strong>When does ssss.org expire?</strong> Your registrar dashboard shows the exact expiry date. You can find it under "My Domains" → click on <code>ssss.org</code> → look for "Expiry Date" or "Renewal Date". Note it down somewhere safe.
+  </div>
+
+  
+  <h2>14 — Full Checklist</h2>
+
+  <ul class="checklist">
+    <li>Created a registrar account at Porkbun (or Namecheap) with a valid email</li>
+    <li>Verified the registrar account email</li>
+    <li>Searched for ssss.org and confirmed it is available</li>
+    <li>Purchased ssss.org for 1–3 years</li>
+    <li>WHOIS Privacy Protection is enabled</li>
+    <li>Registrar Lock (Transfer Lock) is enabled</li>
+    <li>Auto-Renew is enabled</li>
+    <li>Two-Factor Authentication is enabled on the registrar account</li>
+    <li>Added the domain in Netlify dashboard</li>
+    <li>Added A record at registrar: @ → Netlify IP</li>
+    <li>Added CNAME record at registrar: www → your-site.netlify.app</li>
+    <li>Netlify shows "DNS verified" and "SSL active"</li>
+    <li>https://ssss.org loads the website with green padlock</li>
+    <li>https://ssss.org/api/public/events/upcoming returns JSON</li>
+    <li>Set NEXT_PUBLIC_API_URL=https://ssss.org/api in Netlify env vars</li>
+    <li>Netlify redeployed after env var change</li>
+    <li>Login and admin panel work correctly</li>
+    <li>Calendar reminder set for 60 days before domain expiry</li>
+  </ul>
+
+  <div class="ok" style="margin-top:24px">
+    <strong>Total cost summary:</strong><br />
+    • Domain ssss.org: ~$9–12/year at Porkbun or Namecheap<br />
+    • WHOIS Privacy: Free at Porkbun / Namecheap<br />
+    • SSL Certificate: Free (Let's Encrypt via Netlify)<br />
+    • Netlify Frontend Hosting: Free<br />
+    • Railway Backend: Free trial ($5 credit/mo) or $5/mo Starter<br />
+    <strong>Minimum cost to go live: ~$9/year for the domain alone.</strong>
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

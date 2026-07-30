@@ -29,6 +29,7 @@ public class JwtTokenProvider {
   public String generateAccessToken(UUID userId, String username, String roleName) {
     Date now = new Date();
     return Jwts.builder()
+        .id(UUID.randomUUID().toString())
         .subject(userId.toString())
         .claim("username", username)
         .claim("role", roleName)
@@ -41,6 +42,7 @@ public class JwtTokenProvider {
   public String generateRefreshToken(UUID userId) {
     Date now = new Date();
     return Jwts.builder()
+        .id(UUID.randomUUID().toString())   // unique jti → no duplicate-token collisions
         .subject(userId.toString())
         .claim("type", "refresh")
         .issuedAt(now)
@@ -58,6 +60,19 @@ public class JwtTokenProvider {
     return UUID.fromString(claims.getSubject());
   }
 
+  public String getJtiFromToken(String token) {
+    return parseClaims(token).getId();
+  }
+
+  public Date getExpirationFromToken(String token) {
+    return parseClaims(token).getExpiration();
+  }
+
+  public long getRemainingTtlMs(String token) {
+    Date expiration = getExpirationFromToken(token);
+    return Math.max(0, expiration.getTime() - System.currentTimeMillis());
+  }
+
   public boolean validateToken(String token) {
     try {
       Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
@@ -65,5 +80,13 @@ public class JwtTokenProvider {
     } catch (JwtException | IllegalArgumentException e) {
       return false;
     }
+  }
+
+  private Claims parseClaims(String token) {
+    return Jwts.parser()
+        .verifyWith(secretKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
   }
 }

@@ -1,9 +1,9 @@
 package org.ssssy.backend.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.ssssy.backend.security.ValidPassword;
 
 @Getter @Setter
 public class ChangePasswordRequest {
@@ -11,6 +11,6 @@ public class ChangePasswordRequest {
   @NotBlank
   private String currentPassword;
 
-  @NotBlank @Size(min = 6, max = 100)
+  @NotBlank @ValidPassword
   private String newPassword;
 }

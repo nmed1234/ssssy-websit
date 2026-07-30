@@ -94,7 +94,7 @@ VALUES
   'SSSY Research Team',
   2023,
   'Technical Report',
-  'https://images.unsplash.com/photo-1542601906897-ecd311b5bf3b?q=80&w=400&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=400&auto=format&fit=crop',
   'https://www.fao.org/3/i3144e/i3144e.pdf',
   5600,
   TRUE, 5

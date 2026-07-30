@@ -75,6 +75,30 @@ public class Event {
   @Column(name = "contact_email", length = 320)
   private String contactEmail;
 
+  @Column(name = "is_featured")
+  private Boolean isFeatured;
+
+  @Column(name = "display_order")
+  private Integer displayOrder;
+
+  @Column(name = "og_image", length = 500)
+  private String ogImage;
+
+  @Column(name = "meta_title", length = 255)
+  private String metaTitle;
+
+  @Column(name = "meta_description", columnDefinition = "TEXT")
+  private String metaDescription;
+
+  @Column(name = "registration_form_schema", columnDefinition = "TEXT")
+  private String registrationFormSchema;
+
+  @Column(name = "cancelled_at")
+  private LocalDateTime cancelledAt;
+
+  @Column(name = "cancellation_reason", columnDefinition = "TEXT")
+  private String cancellationReason;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "created_by", nullable = false)
   private User createdBy;

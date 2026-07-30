@@ -1,0 +1,47 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Local development overrides — NOT committed with real secrets in production.
+# Activate with: SPRING_PROFILES_ACTIVE=dev  (or -Dspring.profiles.active=dev)
+# ─────────────────────────────────────────────────────────────────────────────
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ssssy_website
+    username: ssssy
+    password: ssssy_dev_password
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ""
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+app:
+  base-url: http://localhost:8080
+  cors:
+    allowed-origins: http://localhost:3000
+  cookie:
+    secure: false   # HTTP is fine locally; production must be true
+  jwt:
+    # Dev-only fixed secret (32 bytes, hex-encoded). Never use in production.
+    secret: 6465766f6e6c796c6f63616c736563726574666f726465766b6579313233343536
+  swagger:
+    enabled: true
+  storage:
+    type: local
+    local:
+      path: uploads
+
+logging:
+  level:
+    org.ssssy: DEBUG
+    org.springframework.security: INFO

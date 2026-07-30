@@ -29,4 +29,7 @@ public class SiteSectionRequest {
   private String eventsJson;
 
   private String conditionsJson;
+
+  /** DRAFT or PUBLISHED — optional, defaults to DRAFT on create */
+  private String status;
 }

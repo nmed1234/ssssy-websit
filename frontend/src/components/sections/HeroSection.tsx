@@ -60,14 +60,17 @@ export function HeroSection({ config = {} }: HeroSectionProps) {
   const secondaryUrl = (config.secondaryButtonUrl as string) || "/about";
   const backgroundImage = (config.backgroundImage as string) || "";
 
+  // CSS background-image fetches bypass CORS entirely and are blocked by
+  // Cross-Origin-Resource-Policy: same-site (Unsplash, etc.).
+  // Routing through /_next/image makes the fetch server-side, avoiding CORP.
+  const bgStyle = backgroundImage
+    ? `url(/_next/image?url=${encodeURIComponent(backgroundImage)}&w=1920&q=85) center/cover no-repeat`
+    : "linear-gradient(135deg, var(--style-gradient-hero-start) 0%, var(--style-gradient-hero-mid) 50%, var(--style-gradient-hero-end) 100%)";
+
   return (
     <section
       className="relative text-white overflow-hidden"
-      style={{
-        background: backgroundImage
-          ? `url(${backgroundImage}) center/cover no-repeat`
-          : "linear-gradient(135deg, var(--style-gradient-hero-start) 0%, var(--style-gradient-hero-mid) 50%, var(--style-gradient-hero-end) 100%)",
-      }}
+      style={{ background: bgStyle }}
     >
       <ParticleField count={25} color="215, 204, 200" speed={0.2} />
       <div className="absolute inset-0 bg-noise opacity-30" />

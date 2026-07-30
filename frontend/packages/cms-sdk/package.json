@@ -1,0 +1,16 @@
+{
+  "name": "@ssssy/cms-sdk",
+  "version": "1.0.0",
+  "description": "TypeScript SDK for SSSSY CMS — typed client, React hooks, and plugin registry for building CMS extensions.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "private": true,
+  "keywords": ["ssssy", "cms", "sdk", "plugin"],
+  "author": "SSSSY Dev Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "@tanstack/react-query": ">=5.0.0",
+    "axios": ">=1.0.0"
+  }
+}

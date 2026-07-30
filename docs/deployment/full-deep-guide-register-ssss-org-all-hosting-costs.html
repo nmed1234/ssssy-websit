@@ -1,0 +1,551 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Full Deep Guide — Register ssss.org + All Hosting Costs</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.7;
+    background: #ffffff; color: #1f2328;
+    padding: 32px 16px 64px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 32px; }
+  h2 { font-size: 17px; font-weight: 700; margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 14px; font-weight: 700; margin: 20px 0 8px; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 5px; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 12px; background: #f7f8fa;
+    border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px;
+  }
+  pre {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 14px 16px; overflow-x: auto; margin-bottom: 14px;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: 12px; }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #1d4ed8; color: #fff;
+    font-size: 13px; font-weight: 700;
+    margin-right: 10px; flex-shrink: 0;
+  }
+  .step-header { display: flex; align-items: center; margin-bottom: 10px; }
+  .step-header h3 { margin: 0; font-size: 15px; }
+  .step-box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px 20px; margin-bottom: 20px; background: #f7f8fa; }
+  .note   { border-left: 3px solid #3b82d4; padding: 10px 14px; background: #eff6ff; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #1e40af; }
+  .warn   { border-left: 3px solid #f59e0b; padding: 10px 14px; background: #fffbeb; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #92400e; }
+  .ok     { border-left: 3px solid #22c55e; padding: 10px 14px; background: #f0fdf4; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #166534; }
+  .danger { border-left: 3px solid #ef4444; padding: 10px 14px; background: #fef2f2; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #991b1b; }
+  table  { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 13px; }
+  th { background: #f0f2f5; text-align: left; padding: 9px 11px; border: 1px solid #e5e7eb; font-weight: 600; }
+  td { padding: 8px 11px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .toc { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px 22px; margin-bottom: 36px; }
+  .toc h3 { margin: 0 0 10px; font-size: 12px; color: #57606a; text-transform: uppercase; letter-spacing: .06em; }
+  .toc ol { margin: 0; }
+  .toc li { margin-bottom: 4px; font-size: 13px; }
+  a { color: #3b82d4; }
+  .explain { background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; margin: 10px 0 14px; font-size: 13px; color: #57606a; }
+  .explain strong { color: #1f2328; }
+  .screen-mock { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; background: #fff; font-size: 12px; margin: 10px 0 14px; font-family: "SFMono-Regular", Consolas, monospace; color: #374151; }
+  .screen-mock .label { color: #6b7280; display: block; margin-bottom: 2px; }
+  .screen-mock .field { background: #f9fafb; border: 1px solid #d1d5db; border-radius: 4px; padding: 6px 10px; display: block; margin-bottom: 10px; width: 100%; }
+  .screen-mock .btn { background: #1d4ed8; color: #fff; padding: 7px 18px; border-radius: 4px; font-size: 13px; font-weight: 600; display: inline-block; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-right: 4px; }
+  .tag-required { background: #fee2e2; color: #991b1b; }
+  .tag-optional { background: #d1fae5; color: #065f46; }
+  .tag-free     { background: #dbeafe; color: #1d4ed8; }
+  .tag-paid     { background: #fef3c7; color: #92400e; }
+  .tag-rec      { background: #ede9fe; color: #5b21b6; }
+  .checklist li { list-style: none; padding-left: 0; }
+  .checklist li::before { content: "☐  "; color: #6b7280; }
+
+  /* Cost table highlights */
+  .cost-free { background: #f0fdf4; }
+  .cost-low  { background: #fffbeb; }
+  .cost-mid  { background: #fff7ed; }
+
+  /* Scenario cards */
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .scenario-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; background: #f7f8fa; }
+  .scenario-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .scenario-card .price { font-size: 22px; font-weight: 800; color: #1d4ed8; }
+  .scenario-card .price-sub { font-size: 11px; color: #57606a; margin-bottom: 8px; }
+  .scenario-card ul { font-size: 12px; padding-left: 16px; margin: 0; }
+  .scenario-card li { margin-bottom: 3px; }
+
+  footer { text-align: center; font-size: 12px; color: #57606a; border-top: 1px solid #e5e7eb; padding-top: 18px; margin-top: 48px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Full Deep Guide — Register ssss.org + All Hosting Costs</h1>
+  <p class="subtitle">Every step explained in detail — domain registration, DNS, Netlify, Railway, email hosting, and full cost breakdown</p>
+
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li>What Is a Domain &amp; How It Works</li>
+      <li>Do You Need an Email First?</li>
+      <li>Choose the Right Registrar</li>
+      <li>Check If ssss.org Is Available</li>
+      <li>Create Your Registrar Account</li>
+      <li>Purchase the Domain — Field by Field</li>
+      <li>What You Own After Purchase</li>
+      <li>Protect Your Domain</li>
+      <li>Point the Domain at Your Hosting (DNS)</li>
+      <li>Connect Domain to Netlify (Frontend)</li>
+      <li>Connect Domain to Railway (Backend API)</li>
+      <li>Verify Everything is Working</li>
+      <li>Renewal — Never Lose Your Domain</li>
+      <li>Complete Hosting Cost Breakdown</li>
+      <li>Recommended Setup by Budget</li>
+      <li>Full Checklist</li>
+    </ol>
+  </div>
+
+  
+  <h2>1 — What Is a Domain &amp; How It Works</h2>
+
+  <div class="explain">
+    <strong>A domain name</strong> like <code>ssss.org</code> is a human-readable address that maps to a server's IP address (e.g. <code>75.2.60.5</code>). Without a domain, visitors would need to type a raw IP number — which nobody does.<br /><br />
+    <strong>The Domain Name System (DNS)</strong> is a global phone book. When someone types <code>www.ssss.org</code>, their browser asks a DNS server: "What IP is this?" DNS answers, and the browser connects to that IP.<br /><br />
+    <strong>A registrar</strong> is an accredited company (Namecheap, Porkbun, GoDaddy) authorised to sell domain registrations on behalf of ICANN — the global authority that oversees all domain names.<br /><br />
+    <strong>.org</strong> is the TLD historically used by non-profit organisations and societies — perfect for the Soil Science Society of Syria.
+  </div>
+
+  <pre><code>ICANN (global authority)
+  └─► Public Interest Registry (manages .org TLD)
+        └─► Porkbun / Namecheap (registrars — sell to you)
+              └─► YOU (domain owner / registrant)
+                    └─► DNS records → point to Netlify + Railway</code></pre>
+
+  
+  <h2>2 — Do You Need an Email Address First?</h2>
+
+  <div class="ok">
+    <strong>Yes — but any email works.</strong> A Gmail, Outlook, or Yahoo address is perfectly fine to register a domain. You do NOT need a professional email first.
+  </div>
+
+  <table>
+    <tr><th>Purpose</th><th>Required?</th><th>Which email to use</th></tr>
+    <tr><td>Create your registrar account</td><td><span class="tag tag-required">Required</span></td><td>Any email — Gmail is fine</td></tr>
+    <tr><td>Domain purchase receipt</td><td><span class="tag tag-required">Required</span></td><td>Same email as account</td></tr>
+    <tr><td>WHOIS registrant contact</td><td><span class="tag tag-required">Required by law</span></td><td>Enable WHOIS Privacy — hides your real email</td></tr>
+    <tr><td>Domain renewal reminders</td><td><span class="tag tag-required">Critical</span></td><td>An address you check regularly — forever</td></tr>
+    <tr><td>SSL certificate notifications</td><td><span class="tag tag-optional">Optional</span></td><td>Let's Encrypt auto-renews via Netlify</td></tr>
+    <tr><td>Email @ssss.org (info@ssss.org)</td><td><span class="tag tag-optional">Optional — later</span></td><td>Set up after domain is live using Zoho or Google Workspace</td></tr>
+  </table>
+
+  <div class="warn">
+    Use an email you will have access to for years. If you lose access to this email, recovering domain ownership is very difficult and may require legal documentation.
+  </div>
+
+  
+  <h2>3 — Choose the Right Registrar</h2>
+
+  <table>
+    <tr><th>Registrar</th><th>ssss.org/yr</th><th>WHOIS Privacy</th><th>Verdict</th></tr>
+    <tr><td><strong><a href="https://porkbun.com">Porkbun</a></strong></td><td>~$9</td><td>Free always</td><td><span class="tag tag-rec">Recommended</span> — best value, clean UI</td></tr>
+    <tr><td><a href="https://www.namecheap.com">Namecheap</a></td><td>~$10</td><td>Free always</td><td>Very popular, great DNS tools</td></tr>
+    <tr><td><a href="https://domains.squarespace.com">Google / Squarespace</a></td><td>~$12</td><td>Free always</td><td>Simplest UI, good for beginners</td></tr>
+    <tr><td><a href="https://www.godaddy.com">GoDaddy</a></td><td>$2 yr1, then $22/yr</td><td>Paid ($10/yr)</td><td>Avoid — low intro price, expensive renewal</td></tr>
+  </table>
+
+  
+  <h2>4 — Check If ssss.org Is Available</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">1</span><h3>Search for the domain</h3></div>
+    <ol>
+      <li>Open <a href="https://porkbun.com">porkbun.com</a></li>
+      <li>Type <code>ssss.org</code> in the search box and press Enter</li>
+    </ol>
+    <div class="screen-mock">
+      <span class="label">Search domains</span>
+      <span class="field">ssss.org</span>
+      <span class="btn">Search</span>
+    </div>
+    <div class="explain">
+      <strong>Green "Add to cart"</strong> → available, buy it now.<br />
+      <strong>Grey "Taken"</strong> → someone owns it — try <code>ssssy.org</code>, <code>soilsyria.org</code>, or <code>ssss-sy.org</code>.
+    </div>
+  </div>
+
+  
+  <h2>5 — Create Your Registrar Account</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">2</span><h3>Sign up at Porkbun</h3></div>
+    <ol>
+      <li>Click <strong>Sign Up</strong> at the top of porkbun.com</li>
+      <li>Fill in your name, email, and a strong password</li>
+      <li>Check your inbox — click the <strong>verification link</strong> in the email Porkbun sends</li>
+    </ol>
+    <div class="explain">
+      <strong>Why verify email?</strong> ICANN rules require a verified email. If you do not verify within 15 days of purchase, your domain may be suspended. Always verify immediately.
+    </div>
+    <div class="warn">
+      Enable <strong>Two-Factor Authentication (2FA)</strong> on your registrar account immediately after sign-up. Go to Account Settings → Security → Enable 2FA. Use an authenticator app (Google Authenticator, Authy). This prevents domain hijacking.
+    </div>
+  </div>
+
+  
+  <h2>6 — Purchase the Domain — Field by Field</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">3</span><h3>Add to cart and check out</h3></div>
+
+    <ol>
+      <li>Click <strong>Add to Cart</strong> next to <code>ssss.org</code></li>
+      <li>Click the cart → <strong>Checkout</strong></li>
+    </ol>
+
+    <h3>How many years to register?</h3>
+    <div class="explain">
+      You can register for 1–10 years.<br />
+      <strong>Recommendation: 2–3 years.</strong> Locks in current price, reduces risk of forgetting renewal, still affordable upfront (~$18–27).
+    </div>
+
+    <h3>WHOIS / Registrant Contact Information</h3>
+    <div class="explain">
+      <strong>What is WHOIS?</strong> Every domain has a public record listing owner name, email, address, phone. This is legally required by ICANN. Spammers harvest this data constantly.<br /><br />
+      <strong>Solution: WHOIS Privacy Protection</strong> — replaces your real details in the public record with the registrar's proxy details. Your info stays on file with the registrar but is invisible to the public. At Porkbun this is always free and enabled by default.
+    </div>
+
+    <table>
+      <tr><th>Field</th><th>What to Enter</th></tr>
+      <tr><td>First / Last Name</td><td>Your legal name or organisation representative</td></tr>
+      <tr><td>Organisation</td><td>Syrian Soil Science Society (SSSS)</td></tr>
+      <tr><td>Email</td><td>Your personal email (registrar account email)</td></tr>
+      <tr><td>Phone</td><td>International format e.g. +963...</td></tr>
+      <tr><td>Address / City / Country</td><td>Damascus, Syria</td></tr>
+    </table>
+
+    <h3>Payment</h3>
+    <div class="explain">
+      Porkbun accepts Visa/Mastercard, PayPal, and cryptocurrency. If you have difficulty with international payments from Syria, PayPal or a Visa prepaid card works well.
+    </div>
+
+    <ol>
+      <li>Review: confirm domain is <code>ssss.org</code> and years are correct</li>
+      <li>Enter payment and click <strong>Complete Purchase</strong></li>
+      <li>You will receive a confirmation email immediately</li>
+    </ol>
+
+    <div class="ok">
+      <strong>You now own ssss.org.</strong> It appears in your dashboard under "My Domains".
+    </div>
+  </div>
+
+  
+  <h2>7 — What You Own After Purchase</h2>
+
+  <div class="explain">
+    <strong>What "owning a domain" means:</strong> You have the exclusive right to use it for the period you paid for. After that, renew or anyone can take it.<br /><br />
+    <strong>What you can do:</strong> Point it at any server, create email @ssss.org, transfer it to another registrar, sell it.<br /><br />
+    <strong>What you cannot do:</strong> Own it forever without renewal. Owning ssss.org does NOT give you ssss.com automatically.
+  </div>
+
+  
+  <h2>8 — Protect Your Domain</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">4</span><h3>Enable all security settings in your registrar dashboard</h3></div>
+    <table>
+      <tr><th>Setting</th><th>What It Does</th><th>Cost</th></tr>
+      <tr><td><strong>WHOIS Privacy</strong></td><td>Hides your personal contact info from public WHOIS</td><td><span class="tag tag-free">Free (Porkbun)</span></td></tr>
+      <tr><td><strong>Registrar Lock</strong></td><td>Prevents anyone transferring your domain without your approval</td><td><span class="tag tag-free">Free</span></td></tr>
+      <tr><td><strong>Auto-Renew</strong></td><td>Renews before expiry so you never accidentally lose the domain</td><td>Charged to card</td></tr>
+      <tr><td><strong>2FA on account</strong></td><td>Prevents hackers from logging in and stealing your domain</td><td><span class="tag tag-free">Free</span></td></tr>
+    </table>
+    <div class="danger">
+      Domain hijacking is real. A hacker with access to your registrar account can transfer your domain away in minutes. Always use 2FA and a unique strong password.
+    </div>
+  </div>
+
+  
+  <h2>9 — Point the Domain at Your Hosting (DNS)</h2>
+
+  <div class="explain">
+    <strong>What is DNS?</strong> DNS records tell the internet which server to send visitors to when they type your domain.<br /><br />
+    <strong>Record types you need:</strong><br />
+    • <strong>A record</strong> — maps domain → IPv4 address (e.g. <code>ssss.org → 75.2.60.5</code>)<br />
+    • <strong>CNAME record</strong> — maps domain → another domain (e.g. <code>www.ssss.org → your-site.netlify.app</code>)<br />
+    • <strong>MX record</strong> — for email routing (only needed when setting up email @ssss.org)<br />
+    • <strong>TXT record</strong> — for domain verification by Netlify, Google, etc.<br /><br />
+    <strong>DNS propagation:</strong> After adding records, it takes 5 min – 48 hours to propagate worldwide. During this time some visitors may see the old address. This is normal.
+  </div>
+
+  
+  <h2>10 — Connect Domain to Netlify (Frontend)</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">5</span><h3>Add domain in Netlify</h3></div>
+    <ol>
+      <li>Log in at <a href="https://app.netlify.com">app.netlify.com</a></li>
+      <li>Click your site → <strong>Site Configuration → Domain Management</strong></li>
+      <li>Click <strong>Add a domain</strong> → type <code>ssss.org</code> → Verify</li>
+      <li>Also add <code>www.ssss.org</code></li>
+      <li>Netlify shows you the DNS records to add — note them</li>
+    </ol>
+    <div class="explain">
+      Netlify will tell you exactly:<br />
+      • <code>ssss.org</code> → add <strong>A record</strong> pointing to <code>75.2.60.5</code><br />
+      • <code>www.ssss.org</code> → add <strong>CNAME</strong> pointing to <code>your-site.netlify.app</code>
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">6</span><h3>Add DNS records at Porkbun</h3></div>
+    <ol>
+      <li>Porkbun dashboard → click <strong>DNS</strong> next to <code>ssss.org</code></li>
+      <li>Add these two records:</li>
+    </ol>
+    <table>
+      <tr><th>Type</th><th>Host</th><th>Value</th><th>TTL</th></tr>
+      <tr><td><strong>A</strong></td><td><code>@</code></td><td><code>75.2.60.5</code> (Netlify IP from your dashboard)</td><td>300</td></tr>
+      <tr><td><strong>CNAME</strong></td><td><code>www</code></td><td><code>your-site.netlify.app</code></td><td>300</td></tr>
+    </table>
+    <ol>
+      <li>Save — wait 15–30 minutes</li>
+      <li>Netlify auto-issues a free HTTPS certificate — no action needed from you</li>
+    </ol>
+  </div>
+
+  
+  <h2>11 — Connect Domain to Railway (Backend API)</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">7</span><h3>Use Netlify proxy (recommended — free, no extra DNS)</h3></div>
+    <p>Add to <code>netlify.toml</code> so <code>ssss.org/api/*</code> proxies silently to Railway:</p>
+    <pre><code>[[redirects]]
+  from   = "/api/*"
+  to     = "https://ssssy-websit-production.up.railway.app/api/:splat"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/storage/*"
+  to     = "https://ssssy-websit-production.up.railway.app/storage/:splat"
+  status = 200
+  force  = true</code></pre>
+    <p>Then in Netlify Environment Variables set:</p>
+    <pre><code>NEXT_PUBLIC_API_URL = https://ssss.org/api</code></pre>
+    <div class="explain">
+      The browser calls <code>ssss.org/api/...</code>. Netlify's servers forward that to Railway and return the response. The user never sees the Railway URL. No CORS issues, no extra DNS records, no extra cost.
+    </div>
+  </div>
+
+  
+  <h2>12 — Verify Everything is Working</h2>
+
+  <div class="step-box">
+    <div class="step-header"><span class="step-num">8</span><h3>Run these checks after DNS propagates</h3></div>
+    <table>
+      <tr><th>Check</th><th>URL to visit</th><th>Expected result</th></tr>
+      <tr><td>DNS check</td><td><a href="https://dnschecker.org">dnschecker.org</a> → enter ssss.org</td><td>Green checkmarks worldwide</td></tr>
+      <tr><td>HTTPS redirect</td><td><code>http://ssss.org</code></td><td>Redirects to <code>https://ssss.org</code> with padlock</td></tr>
+      <tr><td>Frontend loads</td><td><code>https://ssss.org</code></td><td>Website homepage appears</td></tr>
+      <tr><td>API responds</td><td><code>https://ssss.org/api/public/events/upcoming</code></td><td>JSON response or empty array <code>[]</code></td></tr>
+      <tr><td>Health check</td><td><code>https://ssss.org/actuator/health</code></td><td><code>{"status":"UP"}</code></td></tr>
+    </table>
+  </div>
+
+  
+  <h2>13 — Renewal — Never Lose Your Domain</h2>
+
+  <div class="warn">
+    If you forget to renew, the domain enters a grace period (30 days, normal price), then a redemption period (30–60 days, costs $100–300 to recover), then it is released for anyone to buy.
+  </div>
+  <ul>
+    <li><strong>Enable Auto-Renew</strong> — most important step</li>
+    <li><strong>Keep payment method current</strong> — update card before it expires</li>
+    <li><strong>Keep registrar email active</strong> — renewal reminders come 90/60/30/15/7 days before expiry</li>
+    <li><strong>Register for 2–3 years</strong> — fewer renewal events to worry about</li>
+    <li><strong>Set a calendar reminder</strong> — 60 days before expiry as a backup</li>
+  </ul>
+
+  
+  <h2>14 — Complete Hosting Cost Breakdown</h2>
+
+  <p>Your project uses: <strong>Netlify</strong> (frontend) + <strong>Railway</strong> (backend, PostgreSQL, Redis) + optional email hosting. Here is every cost itemised.</p>
+
+  <h3>A — Domain</h3>
+  <table>
+    <tr><th>Item</th><th>Provider</th><th>Cost</th><th>Notes</th></tr>
+    <tr class="cost-low"><td>ssss.org domain</td><td>Porkbun</td><td>~$9/yr (~$0.75/mo)</td><td>Renews at same price every year</td></tr>
+    <tr class="cost-free"><td>WHOIS Privacy</td><td>Porkbun</td><td>Free</td><td>Always free at Porkbun</td></tr>
+    <tr class="cost-free"><td>SSL Certificate (HTTPS)</td><td>Let's Encrypt via Netlify</td><td>Free</td><td>Auto-issued and auto-renewed</td></tr>
+  </table>
+
+  <h3>B — Frontend Hosting (Netlify)</h3>
+  <table>
+    <tr><th>Plan</th><th>Cost</th><th>Includes</th><th>Limits</th></tr>
+    <tr class="cost-free"><td><strong>Free (Starter)</strong></td><td>$0/mo</td><td>100 GB bandwidth, 300 build min/mo, 125k function calls/mo, custom domain, free HTTPS</td><td>Build minutes can run out (~60 deploys/mo at 5 min each)</td></tr>
+    <tr class="cost-low"><td>Pro</td><td>$19/mo</td><td>1 TB bandwidth, unlimited builds, 1M function calls, team features</td><td>Not needed unless traffic is high</td></tr>
+  </table>
+  <div class="ok">
+    <strong>Free plan is enough</strong> for the SSSSY website. A small society site will not hit 100 GB/month bandwidth or exhaust 300 build minutes.
+  </div>
+
+  <h3>C — Backend Hosting (Railway)</h3>
+  <table>
+    <tr><th>Plan</th><th>Cost</th><th>Includes</th><th>Limits / Problems</th></tr>
+    <tr class="cost-free"><td><strong>Hobby (Trial)</strong></td><td>$0 (then $5 credit/mo)</td><td>$5 free credit, all features</td><td>Services <strong>sleep after inactivity</strong> — first request after sleep takes 10–20 sec to wake up</td></tr>
+    <tr class="cost-low"><td><strong>Starter</strong> ⭐ Recommended</td><td>$5/mo</td><td>$5 usage credit included, no sleep, custom domains, persistent services</td><td>Usage is charged against the $5 credit — light apps may not exceed it</td></tr>
+    <tr class="cost-mid"><td>Pro</td><td>$20/mo</td><td>Team features, more resources, higher limits</td><td>Not needed at this stage</td></tr>
+  </table>
+
+  <div class="explain">
+    <strong>What uses Railway credits?</strong> Each service (backend, PostgreSQL, Redis) uses CPU, RAM, and egress. A typical Spring Boot + PostgreSQL + Redis setup on low traffic uses approximately:<br />
+    • Backend: ~$2–3/mo<br />
+    • PostgreSQL: ~$1–2/mo<br />
+    • Redis: ~$0.50/mo<br />
+    <strong>Total Railway usage: ~$3.50–5.50/mo</strong> — usually within the $5 Starter credit.
+  </div>
+
+  <h3>D — File Storage (MinIO on Railway)</h3>
+  <table>
+    <tr><th>Option</th><th>Cost</th><th>Notes</th></tr>
+    <tr class="cost-free"><td>Railway Volume (persistent disk)</td><td>$0.25/GB/mo</td><td>Needed for MinIO — without it, uploaded files are lost on redeploy</td></tr>
+    <tr class="cost-free"><td><strong>Cloudflare R2</strong> ⭐ Recommended</td><td>Free up to 10 GB storage + 10M operations/mo</td><td>S3-compatible, zero egress cost, easy to configure</td></tr>
+    <tr class="cost-free"><td>Backblaze B2</td><td>Free up to 10 GB</td><td>Also S3-compatible, very cheap beyond free tier</td></tr>
+  </table>
+  <div class="note">
+    <strong>Use Cloudflare R2 for file storage.</strong> It is free for 10 GB, has no egress fees, and works as a drop-in replacement for MinIO with S3-compatible APIs. Your Spring Boot backend can connect to it by changing the MinIO endpoint URL.
+  </div>
+
+  <h3>E — Email Hosting (for @ssss.org addresses)</h3>
+  <p>Your project has a built-in email system for member accounts (e.g. <code>member@ssss.org</code>). You also need at least one admin email (<code>info@ssss.org</code>, <code>admin@ssss.org</code>) for SMTP sending. Options:</p>
+  <table>
+    <tr><th>Option</th><th>Cost</th><th>Best for</th><th>Notes</th></tr>
+    <tr class="cost-free"><td><strong>Zoho Mail Free</strong> ⭐ Recommended</td><td>Free (up to 5 users)</td><td>Admin email: info@ssss.org, admin@ssss.org</td><td>Free plan: 5 accounts, 5 GB/account, no catch-all. Add MX records in Porkbun DNS.</td></tr>
+    <tr class="cost-free"><td>Brevo (ex-Sendinblue)</td><td>Free (300 emails/day)</td><td>Transactional SMTP (password resets, notifications)</td><td>Free SMTP relay — use as SMTP_HOST for Spring Boot</td></tr>
+    <tr class="cost-low"><td>Google Workspace</td><td>$6/user/mo</td><td>Professional Gmail @ssss.org</td><td>Best UX, expensive for many users</td></tr>
+    <tr class="cost-low"><td>Zoho Mail Lite</td><td>$1/user/mo</td><td>More @ssss.org mailboxes</td><td>Good value for small teams</td></tr>
+    <tr class="cost-mid"><td>Self-hosted (Mailcow/Maddy)</td><td>Server cost only</td><td>Member email accounts @ssss.org</td><td>Requires a VPS — complex to maintain, spam risk</td></tr>
+  </table>
+  <div class="explain">
+    <strong>Two separate email needs in your project:</strong><br />
+    1. <strong>Admin/org email</strong> (<code>info@ssss.org</code>) — for receiving contact form replies, newsletter replies, etc. → Use Zoho Mail Free.<br />
+    2. <strong>Transactional SMTP</strong> — for sending automated emails (password resets, notifications, newsletters) from Spring Boot → Use Brevo free SMTP (300/day free) or Zoho SMTP.<br />
+    3. <strong>Member mailboxes</strong> (<code>firstname.lastname@ssss.org</code>) — your app has a built-in email system for this — it uses IMAP/SMTP. This requires a real mail server. For now use Zoho Lite ($1/user/mo) or defer to after launch.
+  </div>
+
+  <h3>F — CDN (Content Delivery Network)</h3>
+  <table>
+    <tr><th>Option</th><th>Cost</th><th>Notes</th></tr>
+    <tr class="cost-free"><td>Netlify CDN</td><td>Free (included)</td><td>Netlify already distributes your static assets globally</td></tr>
+    <tr class="cost-free"><td>Cloudflare Free</td><td>Free</td><td>Put Cloudflare in front of your site for DDoS protection + caching. Just change your Porkbun nameservers to Cloudflare's.</td></tr>
+  </table>
+
+  
+  <h2>15 — Recommended Setup by Budget</h2>
+
+  <div class="scenario-grid">
+    <div class="scenario-card">
+      <h4>Minimum / Launch</h4>
+      <div class="price">~$9</div>
+      <div class="price-sub">per year (~$0.75/mo)</div>
+      <ul>
+        <li>Domain: Porkbun $9/yr</li>
+        <li>Frontend: Netlify Free</li>
+        <li>Backend: Railway $5 trial</li>
+        <li>Storage: Cloudflare R2 Free</li>
+        <li>Email: Zoho Free + Brevo SMTP</li>
+        <li>SSL: Free (Let's Encrypt)</li>
+      </ul>
+    </div>
+    <div class="scenario-card">
+      <h4>Stable / Recommended</h4>
+      <div class="price">~$14</div>
+      <div class="price-sub">per month</div>
+      <ul>
+        <li>Domain: $0.75/mo</li>
+        <li>Frontend: Netlify Free</li>
+        <li>Backend: Railway Starter $5/mo</li>
+        <li>Storage: Cloudflare R2 Free</li>
+        <li>Email (SMTP): Brevo Free</li>
+        <li>Email (@ssss.org): Zoho Lite ~$5/mo (5 users)</li>
+        <li>SSL: Free</li>
+      </ul>
+    </div>
+    <div class="scenario-card">
+      <h4>Self-hosted VPS</h4>
+      <div class="price">~$10</div>
+      <div class="price-sub">per month (all-in)</div>
+      <ul>
+        <li>Domain: $0.75/mo</li>
+        <li>Hetzner VPS CX22: ~$4/mo</li>
+        <li>Includes: all services on one server (Docker)</li>
+        <li>SSL: Free (Let's Encrypt)</li>
+        <li>Storage: included on VPS disk</li>
+        <li>Email: self-hosted or Zoho</li>
+        <li>Requires: technical management</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Complete Monthly Cost Table</h3>
+  <table>
+    <tr><th>Service</th><th>Provider</th><th>Free Plan</th><th>Paid Plan</th><th>Your Cost</th></tr>
+    <tr class="cost-free"><td>Domain ssss.org</td><td>Porkbun</td><td>—</td><td>~$9/yr</td><td><strong>$0.75/mo</strong></td></tr>
+    <tr class="cost-free"><td>SSL Certificate</td><td>Let's Encrypt/Netlify</td><td>Free</td><td>—</td><td><strong>$0</strong></td></tr>
+    <tr class="cost-free"><td>Frontend hosting</td><td>Netlify</td><td>Free</td><td>$19/mo</td><td><strong>$0</strong></td></tr>
+    <tr class="cost-free"><td>Backend (Spring Boot)</td><td>Railway</td><td>$5 credit trial</td><td>Starter $5/mo</td><td><strong>$0–5/mo</strong></td></tr>
+    <tr class="cost-free"><td>PostgreSQL</td><td>Railway</td><td>Included in credit</td><td>~$1–2/mo usage</td><td><strong>Included in Railway</strong></td></tr>
+    <tr class="cost-free"><td>Redis</td><td>Railway</td><td>Included in credit</td><td>~$0.50/mo usage</td><td><strong>Included in Railway</strong></td></tr>
+    <tr class="cost-free"><td>File Storage (media)</td><td>Cloudflare R2</td><td>10 GB free</td><td>$0.015/GB/mo after</td><td><strong>$0</strong> (under 10 GB)</td></tr>
+    <tr class="cost-free"><td>Transactional email (SMTP)</td><td>Brevo</td><td>300 emails/day free</td><td>$25/mo (20k/day)</td><td><strong>$0</strong></td></tr>
+    <tr class="cost-low"><td>Admin email @ssss.org</td><td>Zoho Mail</td><td>5 accounts free</td><td>$1/user/mo</td><td><strong>$0–5/mo</strong></td></tr>
+    <tr class="cost-free"><td>CDN / DDoS protection</td><td>Cloudflare</td><td>Free</td><td>$20/mo</td><td><strong>$0</strong></td></tr>
+    <tr><td colspan="4"><strong>TOTAL minimum (launch)</strong></td><td><strong>~$0.75/mo</strong></td></tr>
+    <tr><td colspan="4"><strong>TOTAL stable (recommended)</strong></td><td><strong>~$9–14/mo</strong></td></tr>
+  </table>
+
+  <div class="ok">
+    <strong>Summary:</strong> You can go live with a real domain and a working production site for as little as <strong>$9/year (~$0.75/month)</strong> using the free tiers. Upgrading to a stable, no-cold-start setup with professional email costs roughly <strong>$9–14/month</strong> total.
+  </div>
+
+  
+  <h2>16 — Full Checklist</h2>
+
+  <ul class="checklist">
+    <li>Created registrar account at Porkbun with a personal email</li>
+    <li>Verified registrar account email</li>
+    <li>Enabled 2FA on registrar account</li>
+    <li>Searched for ssss.org — confirmed available</li>
+    <li>Purchased ssss.org for 2–3 years</li>
+    <li>WHOIS Privacy Protection enabled</li>
+    <li>Registrar Lock (Transfer Lock) enabled</li>
+    <li>Auto-Renew enabled</li>
+    <li>Calendar reminder set for 60 days before domain expiry</li>
+    <li>Added domain in Netlify dashboard (ssss.org + www.ssss.org)</li>
+    <li>Added A record at Porkbun: @ → Netlify IP (75.2.60.5)</li>
+    <li>Added CNAME at Porkbun: www → your-site.netlify.app</li>
+    <li>Netlify shows "DNS verified" and "SSL active"</li>
+    <li>Netlify proxy redirects added to netlify.toml for /api/* and /storage/*</li>
+    <li>NEXT_PUBLIC_API_URL set to https://ssss.org/api in Netlify env vars</li>
+    <li>Netlify redeployed after env var change</li>
+    <li>https://ssss.org loads the site with padlock</li>
+    <li>https://ssss.org/actuator/health returns {"status":"UP"}</li>
+    <li>Created Cloudflare R2 bucket for media storage (optional)</li>
+    <li>Created Zoho Mail account for info@ssss.org (optional)</li>
+    <li>Added MX records in Porkbun for Zoho email (optional)</li>
+    <li>Configured Brevo as SMTP_HOST in Railway env vars</li>
+    <li>Tested login, image upload, and email sending end-to-end</li>
+  </ul>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

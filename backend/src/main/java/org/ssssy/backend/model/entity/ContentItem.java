@@ -28,8 +28,17 @@ public class ContentItem {
   @Column(columnDefinition = "TEXT")
   private String excerpt;
 
-  @Column(columnDefinition = "jsonb")
+  @Column(name = "excerpt_ar", columnDefinition = "TEXT")
+  private String excerptAr;
+
+  @Column(columnDefinition = "TEXT")
   private String body;
+
+  @Column(name = "body_ar", columnDefinition = "TEXT")
+  private String bodyAr;
+
+  @Column(name = "body_en", columnDefinition = "TEXT")
+  private String bodyEn;
 
   @Column(name = "content_type", nullable = false, length = 50)
   private String contentType;

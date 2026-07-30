@@ -1,0 +1,400 @@
+
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>President Message Page — Design Plan</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.6;
+    background: #ffffff; color: #1f2328;
+    padding: 32px 16px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .page-title { font-size: 22px; font-weight: 700; color: #1f2328; margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: #57606a; margin-bottom: 28px; }
+
+  /* ── Sections ── */
+  h2 { font-size: 15px; font-weight: 700; color: #1f2328; margin: 28px 0 10px; border-left: 3px solid #3b82d4; padding-left: 10px; }
+  h3 { font-size: 13px; font-weight: 700; color: #3b82d4; margin: 16px 0 6px; }
+  p, li { font-size: 13px; color: #1f2328; line-height: 1.7; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  strong { color: #1f2328; font-weight: 600; }
+  code { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 3px; padding: 1px 5px; font-size: 12px; color: #57606a; font-family: "Consolas", monospace; }
+
+  /* ── Visual preview blocks ── */
+  .preview-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .preview-label {
+    background: #f7f8fa;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 7px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #57606a;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .preview-body { padding: 14px 16px; }
+
+  /* ── Schematic wireframe ── */
+  .wire { display: flex; gap: 10px; flex-wrap: wrap; }
+  .wire-box {
+    border: 1.5px dashed #bcaaa4;
+    border-radius: 6px;
+    padding: 8px 12px;
+    background: #fff8f0;
+    font-size: 11px;
+    color: #6d4c41;
+    font-weight: 600;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .wire-full { width: 100%; }
+  .wire-photo { width: 120px; min-height: 150px; background: #e8d8c4; display: flex; align-items: center; justify-content: center; }
+  .wire-text { flex: 1; min-width: 200px; }
+
+  /* ── Block spec table ── */
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+  th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; font-weight: 600; color: #57606a; }
+  td { border: 1px solid #e5e7eb; padding: 6px 10px; vertical-align: top; }
+  td:first-child { font-weight: 600; color: #3b82d4; white-space: nowrap; }
+  .badge {
+    display: inline-block; border-radius: 3px; padding: 1px 6px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-new { background: #dbeafe; color: #1d4ed8; }
+  .badge-mod { background: #dcfce7; color: #16a34a; }
+  .badge-exist { background: #f3f4f6; color: #6b7280; }
+
+  /* ── Design mock ── */
+  .mock-hero {
+    background: linear-gradient(135deg, #3E2723 0%, #4E342E 50%, #6D4C41 100%);
+    color: white;
+    padding: 40px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px 6px 0 0;
+  }
+  .mock-hero-title { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #D7CCC8; margin-bottom: 4px; }
+  .mock-hero-h1 { font-size: 20px; font-weight: 700; color: white; margin-bottom: 6px; }
+  .mock-hero-ar { font-size: 16px; color: #BCAAA4; direction: rtl; }
+  .mock-stripe { height: 4px; background: linear-gradient(90deg, #2E7D32, #558B2F, #D7CCC8); }
+
+  .mock-split {
+    display: flex;
+    gap: 0;
+    background: #fff8f0;
+  }
+  .mock-photo-col {
+    width: 220px;
+    min-width: 220px;
+    background: linear-gradient(160deg, #e8d8c4, #d7ccc8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 28px 16px;
+    border-right: 1px solid #e5e7eb;
+  }
+  .mock-avatar {
+    width: 100px;
+    height: 130px;
+    border-radius: 8px;
+    background: linear-gradient(160deg, #bcaaa4, #8d6e63);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    border: 3px solid white;
+    box-shadow: 0 6px 20px rgba(62,39,35,0.25);
+    margin-bottom: 10px;
+    text-align: center;
+    padding: 8px;
+  }
+  .mock-name { font-size: 11px; font-weight: 700; color: #3e2723; text-align: center; }
+  .mock-pos { font-size: 10px; color: #6d4c41; text-align: center; margin-top: 2px; }
+  .mock-sig-line { width: 70px; height: 1.5px; background: #6d4c41; margin: 10px auto; }
+  .mock-sig { font-size: 10px; color: #8d6e63; text-align: center; font-style: italic; }
+
+  .mock-content-col {
+    flex: 1;
+    padding: 28px 20px;
+    background: white;
+  }
+  .mock-quote {
+    border-left: 3px solid #6d4c41;
+    padding: 8px 12px;
+    background: #f9f5f2;
+    border-radius: 0 6px 6px 0;
+    font-size: 11px;
+    color: #4e342e;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+  .mock-para { font-size: 10px; color: #616161; margin-bottom: 6px; line-height: 1.6; }
+  .mock-badge { display: inline-block; background: #2E7D32; color: white; font-size: 9px; padding: 2px 7px; border-radius: 3px; margin-bottom: 8px; }
+
+  /* ── Step list ── */
+  .steps { counter-reset: step; margin: 10px 0; }
+  .step {
+    display: flex; gap: 10px; margin-bottom: 14px; align-items: flex-start;
+  }
+  .step-num {
+    background: #3b82d4; color: white;
+    border-radius: 50%; width: 22px; height: 22px; min-width: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; margin-top: 1px;
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 600; font-size: 13px; color: #1f2328; }
+  .step-desc { font-size: 12px; color: #57606a; margin-top: 2px; }
+
+  /* ── File ref ── */
+  .file-ref {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 4px; padding: 8px 12px;
+    font-size: 12px; color: #57606a; margin: 8px 0;
+    font-family: "Consolas", monospace;
+  }
+
+  /* ── Color palette ── */
+  .palette { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .swatch-color { width: 36px; height: 36px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); }
+  .swatch-name { font-size: 10px; color: #57606a; text-align: center; }
+
+  /* ── Alert ── */
+  .alert {
+    border-left: 3px solid #f59e0b;
+    background: #fffbeb;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: #78350f;
+    margin: 12px 0;
+  }
+
+  .divider { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }
+
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: #bcaaa4;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 16px;
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-title">🎨 President's Message Page — Advanced Design Plan</div>
+  <div class="page-sub">Soil Science Society of Syria (SSSS) · صفحة كلمة رئيس الجمعية · Bilingual AR/EN</div>
+
+  
+  <h2>1. Design Strategy &amp; Philosophy</h2>
+  <p>The page will convey <strong>academic prestige, trust, and warmth</strong> — reflecting the character of a scientific society president. The design uses a split-panel layout that places the president's professional portrait prominently alongside the message text, with elegant typographic hierarchy and subtle soil-palette accents.</p>
+
+  <div class="alert">
+    <strong>Approach:</strong> We enhance the existing <code>president-message-content-section</code> block renderer in <code>BlockRenderer.tsx</code> — completely redesigning its visual output while preserving the same CMS data fields, so no admin re-entry is needed.
+  </div>
+
+  
+  <h2>2. Page Layout — Section-by-Section Wireframe</h2>
+
+  <div class="preview-section">
+    <div class="preview-label">Section 1 — Hero Banner (existing, lightly enhanced)</div>
+    <div class="preview-body">
+      <div class="mock-hero">
+        <div class="mock-hero-title">Soil Science Society of Syria</div>
+        <div class="mock-hero-h1">Message from the President</div>
+        <div class="mock-hero-ar">كلمة رئيس الجمعية</div>
+      </div>
+      <div class="mock-stripe"></div>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div class="preview-label">Section 2 — President Message Content (FULLY REDESIGNED)</div>
+    <div class="preview-body" style="padding:0;overflow:hidden;border-radius:0 0 6px 6px">
+      <div class="mock-split">
+        
+        <div class="mock-photo-col">
+          <div class="mock-avatar">
+            🖼<br />Portrait<br />Photo
+          </div>
+          <div class="mock-name">د. عبد الكريم جعفر</div>
+          <div class="mock-name" style="font-size:10px;color:#6d4c41;margin-top:2px">Dr. Abd Al Karim Jaafar</div>
+          <div class="mock-sig-line"></div>
+          <div class="mock-pos">مؤسس ورئيس الجمعية</div>
+          <div class="mock-pos">Founder &amp; President, SSSS</div>
+          <div style="margin-top:14px;background:#f3ede8;border-radius:5px;padding:8px;font-size:10px;color:#6d4c41;text-align:center;width:100%">
+            📅 Est. 2024<br />🏛 Damascus, Syria
+          </div>
+        </div>
+        
+        <div class="mock-content-col">
+          <div class="mock-badge">كلمة الرئيس · President's Message</div>
+          <div class="mock-quote">
+            "التربة هي أساس الحياة، وعلومها مفتاح مستقبل مستدام."<br />
+            <span style="font-size:9px;font-style:normal">"Soil is the foundation of life; its sciences are the key to a sustainable future."</span>
+          </div>
+          <div class="mock-para">تأسست جمعية علوم التربة السورية انطلاقاً من الحاجة إلى وجود إطار علمي يجمع المختصين...</div>
+          <div class="mock-para">The Soil Science Society of Syria was established in response to the need for a scientific framework...</div>
+          <div class="mock-para" style="color:#9e9e9e">[Further paragraphs...]</div>
+          <div style="border-top:1px solid #e5e7eb;padding-top:10px;margin-top:10px;text-align:right;direction:rtl;font-size:10px;color:#6d4c41">
+            ✍ <strong>د. عبد الكريم جعفر</strong> — مؤسس ورئيس جمعية علوم التربة السورية
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>3. Advanced Visual Effects</h2>
+  <table>
+    <tr><th>Element</th><th>Effect / Technique</th></tr>
+    <tr><td>Portrait photo</td><td>Rounded-rectangle frame (border-radius 12px), multi-layer box-shadow (depth effect), subtle border in soil-sand color, soft inner glow. Uses the 2nd provided image (with the name plaque) as primary.</td></tr>
+    <tr><td>Hero banner</td><td>Enhanced gradient (soil-dark → deep-soil → soil-clay), decorative geometric SVG pattern overlay (soil texture), animated color-shift bottom accent bar in forest-green/sand.</td></tr>
+    <tr><td>Content section background</td><td>Warm off-white (#fff8f0) for photo column, pure white for text column, subtle vertical divider line with gradient fade.</td></tr>
+    <tr><td>Quote block</td><td>Large decorative opening quotation mark (Arabic ‟ / English "), left border accent in soil-clay, warm sand background, italic serif rendering.</td></tr>
+    <tr><td>Paragraph text</td><td>Elegant leading (1.8), optimal measure (65ch), with first-paragraph drop-cap styling. RTL-aware: flip layout for Arabic.</td></tr>
+    <tr><td>Signature block</td><td>Calligraphic-style divider line, name in bold, title in muted color, soft bottom seal element (laurel/emblem SVG).</td></tr>
+    <tr><td>Scroll animation</td><td>CSS-only fade-in-up on content blocks using <code>@keyframes</code> (no JS). Photo slides in from left, text fades up.</td></tr>
+    <tr><td>Responsive</td><td>Mobile: photo stacks above text, portrait becomes circular 120px. Tablet: portrait column 200px. Desktop: portrait column 260px sticky.</td></tr>
+  </table>
+
+  
+  <h2>4. Color Palette</h2>
+  <div class="palette">
+    <div class="swatch"><div class="swatch-color" style="background:#3E2723"></div><div class="swatch-name">soil-dark<br />#3E2723</div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#4E342E"></div><div class="swatch-name">deep-soil<br />#4E342E</div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#6D4C41"></div><div class="swatch-name">soil-clay<br />#6D4C41</div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#8D6E63"></div><div class="swatch-name">soil-rich<br />#8D6E63</div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#D7CCC8"></div><div class="swatch-name">soil-sand<br />#D7CCC8</div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#FFF8E1"></div><div class="swatch-name">soil-cream<br />#FFF8E1</div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#2E7D32"></div><div class="swatch-name">forest<br />#2E7D32</div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#fff8f0;border:1px solid #e5e7eb"></div><div class="swatch-name">bg-warm<br />#fff8f0</div></div>
+  </div>
+
+  
+  <h2>5. Bilingual (AR/EN) Architecture</h2>
+  <table>
+    <tr><th>Component</th><th>Arabic (RTL)</th><th>English (LTR)</th></tr>
+    <tr><td>Photo column position</td><td>Right side (RTL natural)</td><td>Left side (LTR natural)</td></tr>
+    <tr><td>Quote marks</td><td>‟ " Arabic-style</td><td>" " Latin-style</td></tr>
+    <tr><td>Text direction</td><td><code>dir="rtl"</code>, <code>text-right</code></td><td><code>dir="ltr"</code>, <code>text-left</code></td></tr>
+    <tr><td>Font</td><td>Almarai (Arabic-optimized)</td><td>Almarai (bilingual)</td></tr>
+    <tr><td>Paragraph reading</td><td>Right-to-left, larger line-height</td><td>Left-to-right standard</td></tr>
+    <tr><td>President name</td><td>الدكتور عبد الكريم جعفر</td><td>Dr. Abd Al Karim Jaafar</td></tr>
+    <tr><td>Title</td><td>مؤسس ورئيس جمعية علوم التربة السورية</td><td>Founder &amp; President, SSSS</td></tr>
+  </table>
+
+  
+  <h2>6. CMS Block Data Fields</h2>
+  <p>The same <code>president-message-content-section</code> block type is used — all fields already exist. New optional field: <code>photo2</code> (secondary photo for gallery view).</p>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Value</th><th>Status</th></tr>
+    <tr><td>photo</td><td>URL</td><td>Image 2 (with name plaque)</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>presidentNameAr</td><td>String</td><td>الدكتور عبد الكريم جعفر</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>presidentName</td><td>String</td><td>Dr. Abd Al Karim Jaafar</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>presidentTitleAr</td><td>String</td><td>مؤسس ورئيس جمعية علوم التربة السورية</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>presidentTitle</td><td>String</td><td>Founder &amp; President, SSSS</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>quoteAr</td><td>String</td><td>Extracted from message</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>quoteEn</td><td>String</td><td>Extracted from message</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>paragraphs[]</td><td>Array</td><td>5 paragraphs × {textAr, textEn}</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>headingAr</td><td>String</td><td>كلمة رئيس الجمعية</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>heading</td><td>String</td><td>Message from the President</td><td><span class="badge badge-exist">Existing</span></td></tr>
+    <tr><td>photo2</td><td>URL</td><td>Image 3 (real photo, optional)</td><td><span class="badge badge-new">New optional</span></td></tr>
+  </table>
+
+  
+  <h2>7. Photo Display Strategy</h2>
+  <p>Three photos were provided. The recommended approach:</p>
+  <table>
+    <tr><th>Photo</th><th>Description</th><th>Usage</th></tr>
+    <tr><td>Image 1</td><td>Professional portrait in gray suit at desk</td><td>Optional fallback or gallery</td></tr>
+    <tr><td>Image 2 ✅</td><td>Professional portrait in navy suit with name plaque (AR + EN)</td><td><strong>Primary — main content section photo</strong></td></tr>
+    <tr><td>Image 3</td><td>Real passport-style photo</td><td>Admin profile / small thumbnail alongside name</td></tr>
+  </table>
+  <p style="margin-top:8px;font-size:12px;color:#57606a">Image 2 is selected as primary because it already contains the bilingual name plaque, reinforcing the president's identity visually. The portrait will be displayed in a styled card with subtle depth effects — not a simple rounded circle but a proper professional portrait treatment with rounded corners, shadow layers, and a decorative frame.</p>
+
+  
+  <h2>8. Files to Modify</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">BlockRenderer.tsx — Redesign <code>president-message-content-section</code></div>
+        <div class="step-desc">Replace the ~57-line basic layout (lines 2042–2099) with a new 150-line premium design: split-panel layout, enhanced photo card, decorative quote, elegant paragraphs, animated signature block, full RTL support.</div>
+        <div class="file-ref">frontend/src/components/page-builder/BlockRenderer.tsx:2042-2099</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">BlockRenderer.tsx — Enhance <code>president-message-hero-banner</code></div>
+        <div class="step-desc">Add a decorative bottom wave/stripe accent, a subtle geometric pattern overlay, and a hero subtitle in both languages. The hero banner case is shared — we'll add president-specific decoration when the type is exactly "president-message-hero-banner".</div>
+        <div class="file-ref">frontend/src/components/page-builder/BlockRenderer.tsx:1245-1285</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">globals.css — Add animations &amp; new utility classes</div>
+        <div class="step-desc">Add <code>.president-fade-in</code>, <code>.president-slide-left</code>, <code>.president-portrait-card</code> CSS utilities. Also add the decorative quote mark SVG background.</div>
+        <div class="file-ref">frontend/src/app/globals.css</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">CanvasBlockRenderer.tsx — Update admin preview</div>
+        <div class="step-desc">Update the admin builder preview for this block to show the new layout with a placeholder portrait card, so editors see the actual design when building the page.</div>
+        <div class="file-ref">frontend/src/components/page-builder/builder/CanvasBlockRenderer.tsx:675-717</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>9. Responsive Breakpoints</h2>
+  <table>
+    <tr><th>Breakpoint</th><th>Layout</th><th>Photo</th><th>Text</th></tr>
+    <tr><td>Mobile (&lt;768px)</td><td>Single column, stacked</td><td>Centered portrait card, 160px wide</td><td>Full width below photo</td></tr>
+    <tr><td>Tablet (768–1024px)</td><td>Side-by-side</td><td>Left column 200px</td><td>Remaining width</td></tr>
+    <tr><td>Desktop (&gt;1024px)</td><td>Side-by-side</td><td>Left column 260px, sticky top</td><td>Max 72ch, justified</td></tr>
+    <tr><td>Arabic RTL (all)</td><td>Photo column flipped to right</td><td>Same sizing, right-aligned</td><td>Right-to-left text</td></tr>
+  </table>
+
+  
+  <h2>10. Scope — What Remains Unchanged</h2>
+  <ul>
+    <li>CMS admin interface — block type names and data fields stay identical</li>
+    <li>Backend APIs — no backend changes needed</li>
+    <li>All other block types — zero side effects</li>
+    <li>The hero banner for other page types (about, board, contact, etc.) — only president-message-hero-banner gets extra decoration</li>
+    <li>Page routing — still served at <code>/president</code> via dynamic [slug] catch-all</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <div class="alert" style="border-left-color:#2E7D32;background:#f0fdf4;color:#14532d">
+    <strong>✅ Ready to implement.</strong> All 3 files are identified, the design is fully specified, the content is provided (both languages), and the photos are received. Awaiting your approval to proceed with implementation.
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

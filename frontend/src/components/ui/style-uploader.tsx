@@ -105,8 +105,8 @@ export function StyleUploader({
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className="relative flex flex-col items-center justify-center gap-3 p-8 rounded-[var(--style-radius-card)] border-2 border-dashed cursor-pointer min-h-[160px] text-center transition-all duration-[var(--style-anim-hover)] ease-[var(--style-anim-easing)] focus:outline-none focus:ring-[3px] focus:ring-[var(--style-color-primary)]/20"
-        style={{ borderColor, background: bgColor }}
+        className="relative flex flex-col items-center justify-center gap-3 p-8 rounded-[var(--style-radius-card)] border-2 border-dashed cursor-pointer min-h-[160px] text-center transition-all focus:outline-none focus:ring-[3px] focus:ring-[var(--style-color-primary)]/20"
+        style={{ borderColor, background: bgColor, transitionDuration: "var(--style-anim-hover)", transitionTimingFunction: "var(--style-anim-easing)" }}
       >
         <input
           ref={inputRef}

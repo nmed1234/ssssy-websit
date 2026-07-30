@@ -1,20 +1,39 @@
 server:
   port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+    min-response-size: 1024
 
 spring:
   application:
     name: ssssy-backend
 
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      lettuce:
+        pool:
+          min-idle: 2
+          max-idle: 8
+          max-active: 16
+          max-wait: -1ms
 
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ssssy_website}
     username: ${SPRING_DATASOURCE_USERNAME:ssssy}
     password: ${SPRING_DATASOURCE_PASSWORD:ssssy_dev_password}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: SsssyHikariPool
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      auto-commit: true
 
   jpa:
     hibernate:
@@ -24,6 +43,11 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
 
   flyway:
     enabled: true
@@ -32,6 +56,11 @@ spring:
     validate-on-migrate: false
     out-of-order: true
     placeholder-replacement: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 25MB
 
   jackson:
     serialization:
@@ -51,17 +80,57 @@ spring:
             enable: ${SPRING_MAIL_SMTP_STARTTLS:false}
 
 app:
-  base-url: ${APP_BASE_URL:https://ssssy.org.sy}
+  base-url: ${APP_BASE_URL:https://ssssyria.org}
+  security:
+    trusted-proxies: ${TRUSTED_PROXIES:127.0.0.1,::1,0:0:0:0:0:0:0:1}
+    rate-limit:
+      auth:
+        capacity: 5
+        refill: 5
+        window-seconds: 900
+      upload:
+        capacity: 20
+        refill: 20
+        window-seconds: 60
+      public:
+        capacity: 120
+        refill: 120
+        window-seconds: 60
+      default:
+        capacity: 60
+        refill: 60
+        window-seconds: 60
+    clamav:
+      # Set to true and configure host/port when a ClamAV daemon is available.
+      # fail-on-unavailable: reject uploads if ClamAV cannot be reached (default: false = warn and pass through)
+      enabled: ${CLAMAV_ENABLED:false}
+      host: ${CLAMAV_HOST:localhost}
+      port: ${CLAMAV_PORT:3310}
+      fail-on-unavailable: ${CLAMAV_FAIL_ON_UNAVAILABLE:false}
   cors:
+    # PRODUCTION: set APP_CORS_ALLOWED_ORIGINS to the actual domain, e.g. https://ssssy.org
+    # Multiple origins can be comma-separated: https://ssssy.org,https://www.ssssy.org
+    # Wildcard (*) is NOT allowed — credentials (cookies/JWT) require explicit origins.
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000}
   jwt:
-    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    # Production: set JWT_SECRET env var (openssl rand -hex 32).
+    # The fallback value is a dev-only placeholder — it keeps the app startable
+    # locally without env vars. NEVER deploy without setting JWT_SECRET.
+    secret: ${JWT_SECRET:6465766f6e6c796c6f63616c736563726574666f726465766b6579313233343536}
     expiration-ms: 900000
     refresh-expiration-ms: 604800000
+  cookie:
+    # false for local HTTP development (http://localhost); must be true in production (HTTPS).
+    secure: ${APP_COOKIE_SECURE:false}
 
   upload:
-    max-file-size: 50MB
+    # Must match spring.servlet.multipart.max-file-size and MediaService.MAX_FILE_SIZE (10 MB)
+    max-file-size: 10MB
     allowed-types: image/jpeg,image/png,image/webp,image/gif,application/pdf,application/zip
+
+  # Phase 5: Plugin system — directory where uploaded plugin JARs are stored
+  plugins:
+    dir: ${CMS_PLUGINS_DIR:./plugins}
 
   storage:
     type: ${APP_STORAGE_TYPE:local}
@@ -74,11 +143,15 @@ app:
       bucket: ${APP_STORAGE_MINIO_BUCKET:ssssy-media}
 
   email:
-    domain: ${SSSSY_EMAIL_DOMAIN:ssssy.org.sy}
+    domain: ${SSSSY_EMAIL_DOMAIN:ssssyria.org}
     default-quota: ${SSSSY_EMAIL_DEFAULT_QUOTA:1073741824}
     imap:
       host: ${SSSSY_EMAIL_IMAP_HOST:localhost}
       port: ${SSSSY_EMAIL_IMAP_PORT:143}
+
+  swagger:
+    # Disable Swagger/OpenAPI in production. Set to true only in dev/staging.
+    enabled: ${APP_SWAGGER_ENABLED:false}
 
 springdoc:
   api-docs:
@@ -86,11 +159,23 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only expose health and info — never env, beans, heapdump, threaddump in production.
+        include: health,info
+  endpoint:
+    health:
+      # Show details only to authenticated actuator users.
+      show-details: when-authorized
+
 migration:
   legacy-sections:
     enabled: false
 
 logging:
   level:
-    org.ssssy: DEBUG
-    org.springframework.security: INFO
+    # Default level — overridden to DEBUG in application-dev.yml and INFO in application-prod.yml.
+    org.ssssy: INFO
+    org.springframework.security: WARN

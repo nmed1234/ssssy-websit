@@ -2,6 +2,7 @@ package org.ssssy.backend.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.ssssy.backend.model.entity.Page;
 
@@ -10,8 +11,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PageRepository extends JpaRepository<Page, UUID> {
+  // Eager-load author in a single JOIN to avoid N+1 on slug-based public page loads
+  @EntityGraph(attributePaths = {"author", "parent"})
   Optional<Page> findBySlug(String slug);
+
+  @EntityGraph(attributePaths = {"author"})
   List<Page> findByIsPublishedTrueAndDeletedAtIsNull(Sort sort);
+
   Optional<Page> findByIsHomepageTrueAndDeletedAtIsNull();
   boolean existsBySlug(String slug);
   boolean existsBySlugAndIdNot(String slug, UUID id);

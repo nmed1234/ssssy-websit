@@ -45,7 +45,7 @@ public class EmailAccountService {
 
     String username = (user.getFirstNameEn() != null ? user.getFirstNameEn().toLowerCase() : "user")
         + "." + (user.getLastNameEn() != null ? user.getLastNameEn().toLowerCase() : String.valueOf(System.currentTimeMillis()));
-    String domain = "ssssy.org.sy";
+    String domain = "ssssyria.org";
     String emailAddress = username + "@" + domain;
     String tempPassword = UUID.randomUUID().toString().substring(0, 12);
 
@@ -138,7 +138,7 @@ public class EmailAccountService {
     String tempPassword = UUID.randomUUID().toString().substring(0, 12);
     EmailAccount account = EmailAccount.builder()
         .user(user)
-        .emailAddress(username + "@ssssy.org.sy")
+        .emailAddress(username + "@ssssyria.org")
         .username(username)
         .passwordHash(passwordEncoder.encode(tempPassword))
         .displayName((user.getFirstNameEn() != null ? user.getFirstNameEn() : "") + " " + (user.getLastNameEn() != null ? user.getLastNameEn() : ""))

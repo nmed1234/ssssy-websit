@@ -13,6 +13,7 @@ import { LangSwitch } from "@/components/ui/LangSwitch";
 import { Avatar } from "@/components/ui/avatar";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Sun, Moon, Menu } from "lucide-react";
+import { PluginLoader } from "@ssssy/cms-sdk";
 
 function AuthSkeleton() {
   return (
@@ -108,6 +109,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <NotificationBell />
           <Avatar fallback={user?.username?.[0]?.toUpperCase() || "A"} size="sm" className="cursor-pointer" />
         </header>
+
+        {/* Phase 6 — Load active frontend plugin bundles at runtime */}
+        <PluginLoader />
 
         <main id="main-content" className="flex-1 p-4 md:p-8 bg-background overflow-auto pb-16 md:pb-8">
           <motion.div

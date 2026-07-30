@@ -28,6 +28,9 @@ public class MemberProfile {
   @Column(length = 255)
   private String specialization;
 
+  @Column(name = "specialization_detail", length = 255)
+  private String specializationDetail;
+
   @Column(name = "research_interests", columnDefinition = "TEXT")
   private String researchInterests;
 
@@ -54,6 +57,44 @@ public class MemberProfile {
 
   @Column(name = "linkedin_url", length = 500)
   private String linkedinUrl;
+
+  // ── Rich fields added in V72 ────────────────────────────────────────────────
+
+  @Column(name = "name_ar", length = 200)
+  private String nameAr;
+
+  @Column(name = "name_en", length = 200)
+  private String nameEn;
+
+  @Column(name = "title_ar", length = 100)
+  private String titleAr;
+
+  @Column(name = "birth_year")
+  private Integer birthYear;
+
+  @Column(name = "birth_city", length = 100)
+  private String birthCity;
+
+  @Column(name = "nationality", length = 100)
+  private String nationality;
+
+  @Column(name = "marital_status", length = 50)
+  private String maritalStatus;
+
+  @Column(name = "career_summary", columnDefinition = "TEXT")
+  private String careerSummary;
+
+  @Column(columnDefinition = "TEXT")
+  private String memberships;
+
+  @Column(length = 500)
+  private String languages;
+
+  @Column(name = "photo_url", length = 500)
+  private String photoUrl;
+
+  @Column(length = 255, unique = true)
+  private String slug;
 
   @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;

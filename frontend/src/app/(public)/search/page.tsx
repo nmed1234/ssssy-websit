@@ -129,7 +129,7 @@ export default function SearchPage() {
         <div className="absolute inset-0 bg-noise opacity-30" />
       </PageHero>
 
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16" style={{ background: "var(--style-color-bg, #ffffff)" }}>
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="bg-soil-cream/30 rounded-lg p-6 border border-soil-sand/30 mb-8">
             <form onSubmit={handleSearch}>

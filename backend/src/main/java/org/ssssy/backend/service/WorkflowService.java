@@ -10,6 +10,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.ssssy.backend.audit.AuditService;
+import org.ssssy.backend.event.CmsEventBus;
+import org.ssssy.backend.event.ContentPublishedEvent;
+import org.ssssy.backend.event.ContentWorkflowTransitionEvent;
 import org.ssssy.backend.exception.BadRequestException;
 import org.ssssy.backend.exception.ResourceNotFoundException;
 import org.ssssy.backend.exception.WorkflowException;
@@ -38,6 +41,7 @@ public class WorkflowService {
   private final NotificationService notificationService;
   private final AuditService auditService;
   private final JavaMailSender mailSender;
+  private final CmsEventBus cmsEventBus;
 
   private static final Set<String> DRAFT = Set.of("DRAFT");
   private static final Set<String> SUBMITTED = Set.of("SUBMITTED");
@@ -64,6 +68,7 @@ public class WorkflowService {
   public ContentResponse submit(UUID contentId, UUID userId, String comments) {
     ContentItem item = getContent(contentId);
     User user = getUser(userId);
+    String fromState = item.getStatus();
     validateTransition(item, "SUBMITTED");
     validateAuthor(item, user);
     logWorkflow(item, "SUBMIT", user, null, "SUBMITTED", comments);
@@ -75,6 +80,10 @@ public class WorkflowService {
         "Content \"" + item.getTitleEn() + "\" has been submitted for review by "
         + user.getFirstNameEn() + " " + user.getLastNameEn() + ".",
         "/admin/workflow");
+    cmsEventBus.publish(new ContentWorkflowTransitionEvent(
+        item.getId(), item.getContentType(), item.getTitleEn(),
+        "SUBMIT", fromState, "SUBMITTED", comments, userId,
+        item.getReviewer() != null ? item.getReviewer().getId() : null));
     return contentService.toResponse(item);
   }
 
@@ -96,6 +105,7 @@ public class WorkflowService {
   public ContentResponse approve(UUID contentId, UUID userId, String comments) {
     ContentItem item = getContent(contentId);
     User user = getUser(userId);
+    String fromState = item.getStatus();
     validateTransition(item, "APPROVED");
     validateReviewer(item, user);
     logWorkflow(item, "APPROVE", user, null, "APPROVED", comments);
@@ -105,6 +115,9 @@ public class WorkflowService {
     sendWorkflowEmail(item.getAuthor(), "Content Approved",
         "Your content \"" + item.getTitleEn() + "\" has been approved and is ready to publish.",
         "/admin/content/" + item.getId());
+    cmsEventBus.publish(new ContentWorkflowTransitionEvent(
+        item.getId(), item.getContentType(), item.getTitleEn(),
+        "APPROVE", fromState, "APPROVED", comments, userId, item.getAuthor().getId()));
     return contentService.toResponse(item);
   }
 
@@ -112,6 +125,7 @@ public class WorkflowService {
   public ContentResponse reject(UUID contentId, UUID userId, String comments) {
     ContentItem item = getContent(contentId);
     User user = getUser(userId);
+    String fromState = item.getStatus();
     validateTransition(item, "REJECTED");
     validateReviewer(item, user);
     logWorkflow(item, "REJECT", user, null, "REJECTED", comments);
@@ -122,6 +136,9 @@ public class WorkflowService {
         "Your content \"" + item.getTitleEn() + "\" was rejected."
         + (comments != null && !comments.isBlank() ? "\n\nFeedback: " + comments : ""),
         "/admin/content/" + item.getId());
+    cmsEventBus.publish(new ContentWorkflowTransitionEvent(
+        item.getId(), item.getContentType(), item.getTitleEn(),
+        "REJECT", fromState, "REJECTED", comments, userId, item.getAuthor().getId()));
     return contentService.toResponse(item);
   }
 
@@ -148,6 +165,7 @@ public class WorkflowService {
   public ContentResponse publish(UUID contentId, UUID userId, String comments) {
     ContentItem item = getContent(contentId);
     User user = getUser(userId);
+    String fromState = item.getStatus();
     validateTransition(item, "PUBLISHED");
     logWorkflow(item, "PUBLISH", user, null, "PUBLISHED", comments);
     item.setStatus("PUBLISHED");
@@ -156,6 +174,13 @@ public class WorkflowService {
     item = contentItemRepository.save(item);
     saveVersion(item, user, "Published");
     notificationService.notifyWorkflowPublished(item, user);
+    cmsEventBus.publish(new ContentPublishedEvent(
+        item.getId(), item.getContentType(), item.getSlug(),
+        item.getTitleEn(), item.getTitleAr(), item.getPublishedAt(), userId));
+    cmsEventBus.publish(new ContentWorkflowTransitionEvent(
+        item.getId(), item.getContentType(), item.getTitleEn(),
+        "PUBLISH", fromState, "PUBLISHED", comments, userId,
+        item.getAuthor().getId()));
     return contentService.toResponse(item);
   }
 
@@ -318,7 +343,7 @@ public class WorkflowService {
         .build();
   }
 
-  @Async
+  @Async("ssssyTaskExecutor")
   protected void sendWorkflowEmail(User recipient, String subject, String body, String link) {
     if (recipient == null || recipient.getEmail() == null) return;
     try {

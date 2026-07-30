@@ -14,9 +14,13 @@ public class MemberProfileResponse {
   private String email;
   private String photo;
   private String institution;
+  private String department;
+  private String position;
+  private String phone;
   private String membershipType;
   private String membershipNumber;
   private String specialization;
+  private String specializationDetail;
   private String researchInterests;
   private String education;
   private Integer publicationsCount;
@@ -26,6 +30,19 @@ public class MemberProfileResponse {
   private String orcidId;
   private String googleScholarUrl;
   private String linkedinUrl;
+  // Rich fields
+  private String nameAr;
+  private String nameEn;
+  private String titleAr;
+  private Integer birthYear;
+  private String birthCity;
+  private String nationality;
+  private String maritalStatus;
+  private String careerSummary;
+  private String memberships;
+  private String languages;
+  private String photoUrl;
+  private String slug;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

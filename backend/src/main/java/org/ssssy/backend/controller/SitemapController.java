@@ -23,7 +23,7 @@ public class SitemapController {
   private final EventRepository eventRepository;
   private final JobVacancyRepository jobVacancyRepository;
 
-  @Value("${app.base-url:https://ssssy.org.sy}")
+  @Value("${app.base-url:https://ssssyria.org}")
   private String baseUrl;
 
   @GetMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)

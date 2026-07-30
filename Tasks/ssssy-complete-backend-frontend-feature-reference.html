@@ -1,0 +1,454 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>SSSSY – Complete Feature Reference</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.6;background:#fff;color:#1f2328;padding:32px 16px}
+  .page{max-width:760px;margin:0 auto}
+  h1{font-size:24px;font-weight:700;margin-bottom:4px}
+  .meta{font-size:12px;color:#57606a;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #e5e7eb}
+  h2{font-size:16px;font-weight:700;margin:32px 0 10px;padding-bottom:6px;border-bottom:2px solid #3b82d4;color:#1f2328}
+  h3{font-size:13px;font-weight:600;color:#57606a;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+  p{font-size:13px;color:#57606a;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+  thead th{background:#f7f8fa;border:1px solid #e5e7eb;padding:8px 10px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#57606a}
+  tbody td{border:1px solid #e5e7eb;padding:7px 10px;vertical-align:top}
+  tbody tr:hover td{background:#fafbfc}
+  .badge{display:inline-block;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+  .done{background:#dafbe1;color:#1a7f37}
+  .partial{background:#fff8c5;color:#9a6700}
+  .missing{background:#ffebe9;color:#cf222e}
+  code{font-family:ui-monospace,monospace;font-size:11px;background:#f7f8fa;border:1px solid #e5e7eb;border-radius:4px;padding:1px 5px}
+  .note{font-size:12px;color:#57606a}
+  .divider{height:1px;background:#e5e7eb;margin:28px 0}
+
+  /* summary grid */
+  .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+  .stat{background:#f7f8fa;border:1px solid #e5e7eb;border-radius:8px;padding:14px;text-align:center}
+  .stat .num{font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+  .stat .lbl{font-size:11px;color:#57606a}
+  .g .num{color:#1a7f37}
+  .y .num{color:#9a6700}
+  .r .num{color:#cf222e}
+  .b .num{color:#3b82d4}
+
+  /* legend */
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:#57606a}
+  .legend span{display:flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+  .dot-g{background:#dafbe1;border:1px solid #aceebb}
+  .dot-y{background:#fff8c5;border:1px solid #f0e68c}
+  .dot-r{background:#ffebe9;border:1px solid #ffc1bd}
+
+  /* audit notes */
+  .audit-note{font-size:11px;color:#9a6700;background:#fff8c5;border-radius:3px;padding:2px 6px;margin-top:2px;display:inline-block}
+  .audit-fixed{font-size:11px;color:#1a7f37;background:#dafbe1;border-radius:3px;padding:2px 6px;margin-top:2px;display:inline-block}
+
+  footer{margin-top:48px;padding-top:16px;border-top:1px solid #e5e7eb;text-align:center;color:#57606a;font-size:12px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>SSSSY — Complete Implementation Feature Reference</h1>
+<p class="meta">Syrian Soil Science Society Website  ·  Verified against live codebase (297 Java sources, 60+ Next.js pages)  ·  Post Stage-2 Audit Remediation  ·  July 2026</p>
+
+<div class="summary-grid">
+  <div class="stat g"><div class="num">58</div><div class="lbl">Backend Controllers</div></div>
+  <div class="stat b"><div class="num">60+</div><div class="lbl">Frontend Pages</div></div>
+  <div class="stat g"><div class="num">55</div><div class="lbl">DB Migrations</div></div>
+  <div class="stat y"><div class="num">~88%</div><div class="lbl">Overall Compliance</div></div>
+</div>
+
+<div class="legend">
+  <span><span class="dot dot-g"></span> Fully Implemented</span>
+  <span><span class="dot dot-y"></span> Partial / Minor Gap</span>
+  <span><span class="dot dot-r"></span> Still Missing</span>
+</div>
+
+
+<h2>1 · Authentication &amp; User Management</h2>
+<h3>Backend</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>JWT login / logout / refresh token</td><td><span class="badge done">Done</span></td><td class="note"><code>AuthController</code>, <code>AuthService</code>, <code>RefreshToken</code> entity</td></tr>
+    <tr><td>User registration with email verification</td><td><span class="badge done">Done</span></td><td class="note">Token-based email verification flow</td></tr>
+    <tr><td>Password reset (forgot / reset endpoints)</td><td><span class="badge done">Done</span></td><td class="note">Time-limited reset tokens</td></tr>
+    <tr><td>Role-based access control (ADMIN, EDITOR, PUBLISHER, USER, SUPER_ADMIN)</td><td><span class="badge done">Done</span></td><td class="note"><code>@PreAuthorize</code> on all protected endpoints; <code>Role</code>, <code>Permission</code> entities</td></tr>
+    <tr><td>Two-factor authentication (TOTP)</td><td><span class="badge done">Done</span></td><td class="note">V18 adds <code>two_factor_secret</code> column; TOTP endpoints in <code>AuthController</code></td></tr>
+    <tr><td>User profile CRUD (bilingual name fields, avatar)</td><td><span class="badge done">Done</span></td><td class="note"><code>UserController</code>, V9 adds profile fields</td></tr>
+    <tr><td>Admin user management (create, suspend, role assign)</td><td><span class="badge done">Done</span></td><td class="note"><code>UserController</code>, <code>RoleController</code></td></tr>
+    <tr><td>Audit log for user actions</td><td><span class="badge done">Done</span></td><td class="note"><code>AuditLogController</code>, <code>AuditService</code>, <code>AuditAspect</code></td></tr>
+    <tr><td>Session management / account lockout</td><td><span class="badge partial">Partial</span></td><td class="note">JWT expiry enforced; no automatic lockout-after-N-failures counter</td></tr>
+  </tbody>
+</table>
+<h3>Frontend</h3>
+<table>
+  <thead><tr><th style="width:52%">Page / Component</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Login, Register, Forgot Password pages (<code>auth/*</code>)</td><td><span class="badge done">Done</span></td><td class="note">Full form validation, error states, redirect on success</td></tr>
+    <tr><td>Profile settings page (<code>admin/settings</code>)</td><td><span class="badge done">Done</span></td><td class="note">Password change, profile edit, notification preferences</td></tr>
+    <tr><td>Admin Users page (<code>admin/users</code>)</td><td><span class="badge done">Done</span></td><td class="note">List, create, edit, role assignment, suspend</td></tr>
+    <tr><td>Admin Roles page (<code>admin/roles</code>)</td><td><span class="badge done">Done</span></td><td class="note">Role and permission management UI</td></tr>
+    <tr><td>Auth context &amp; protected route guard</td><td><span class="badge done">Done</span></td><td class="note"><code>auth-context.tsx</code>, admin layout redirects unauthenticated users</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>2 · Content Management System</h2>
+<h3>Backend</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Content articles CRUD (bilingual title/body/slug, tags, categories)</td><td><span class="badge done">Done</span></td><td class="note"><code>ContentController</code>, <code>ContentItem</code> entity, V2 schema</td></tr>
+    <tr><td>Categories &amp; Tags management</td><td><span class="badge done">Done</span></td><td class="note"><code>CategoryController</code>, <code>TagController</code></td></tr>
+    <tr><td>Content versioning (snapshot, list, rollback)</td><td><span class="badge done">Done</span></td><td class="note"><code>ContentVersionHistoryController</code> + service; V30/V31 migration. No diff viewer.</td></tr>
+    <tr><td>Content workflow (DRAFT→SUBMITTED→IN_REVIEW→APPROVED→SCHEDULED→PUBLISHED→ARCHIVED)</td><td><span class="badge done">Done</span></td><td class="note"><code>WorkflowController</code> + <code>WorkflowService</code>; email hooks via <code>JavaMailSender</code></td></tr>
+    <tr><td>Content approval log</td><td><span class="badge done">Done</span></td><td class="note"><code>ContentApprovalLogController</code>, paginated list by content ID</td></tr>
+    <tr><td>Publications (research papers, journals)</td><td><span class="badge done">Done</span></td><td class="note"><code>PublicationController</code>, <code>Publication</code> entity, V49 migration</td></tr>
+    <tr><td>Content scheduling (auto-publish at future datetime)</td><td><span class="badge done">Done</span></td><td class="note"><code>ContentSchedulerService</code> @60s cron; handles <code>SCHEDULED</code> → <code>PUBLISHED</code></td></tr>
+    <tr><td>SEO metadata per content item</td><td><span class="badge done">Done</span></td><td class="note"><code>SeoMetadataController</code> GET/PUT/DELETE by entityType+entityId; V16 page fields</td></tr>
+    <tr><td>Content strings (i18n key/value pairs)</td><td><span class="badge done">Done</span></td><td class="note"><code>ContentStringController</code>, V20 migration</td></tr>
+    <tr><td>Configurable workflow definitions</td><td><span class="badge done">Done</span></td><td class="note"><code>ConfigurableWorkflowService</code>, <code>Workflow</code>/<code>WorkflowState</code>/<code>WorkflowTransition</code> entities, V11</td></tr>
+  </tbody>
+</table>
+<h3>Frontend</h3>
+<table>
+  <thead><tr><th style="width:52%">Page / Component</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Content list page with BulkActions (<code>admin/content</code>)</td><td><span class="badge done">Done</span></td><td class="note">Integrated with <code>BulkActions</code> component; delete, approve, reject</td></tr>
+    <tr><td>Content new/edit form (<code>admin/content/[id]</code>)</td><td><span class="badge done">Done</span></td><td class="note">TipTap rich editor, bilingual fields, tag/category picker, status badge</td></tr>
+    <tr><td>Content approval queue (<code>admin/content-approval</code> &amp; <code>admin/workflow</code>)</td><td><span class="badge done">Done</span></td><td class="note">Tabs: submitted / pending / approved; approve/reject modal with comments</td></tr>
+    <tr><td>Version history page (<code>admin/pages/[id]/history</code>)</td><td><span class="badge done">Done</span></td><td class="note"><code>AuditTimeline</code> component; rollback API wired via <code>content-versions.ts</code></td></tr>
+    <tr><td>Side-by-side diff viewer</td><td><span class="badge missing">Missing</span></td><td class="note">No diff UI component exists anywhere in the frontend</td></tr>
+    <tr><td>Categories &amp; Tags admin pages</td><td><span class="badge done">Done</span></td><td class="note"><code>admin/categories</code>, <code>admin/tags</code></td></tr>
+    <tr><td>Publications admin page (<code>admin/publications</code>)</td><td><span class="badge done">Done</span></td><td class="note">CRUD + file upload</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>3 · Page Builder &amp; CMS</h2>
+<h3>Backend</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Pages CRUD with <code>layout_json</code> (block-based)</td><td><span class="badge done">Done</span></td><td class="note"><code>PageController</code>, V38 adds <code>layout_json</code> column</td></tr>
+    <tr><td>Page audit trail &amp; workflow transitions</td><td><span class="badge done">Done</span></td><td class="note"><code>PageAuditController</code>, <code>PageWorkflowController</code>, <code>PageWorkflowEmailService</code></td></tr>
+    <tr><td>Page templates (save/load/list)</td><td><span class="badge done">Done</span></td><td class="note"><code>PageTemplateController</code> + service; V39 CMS foundation</td></tr>
+    <tr><td>Site sections (global reusable sections)</td><td><span class="badge done">Done</span></td><td class="note"><code>SiteSectionController</code>, V22/V23 migrations; <code>eventsJson</code>/<code>conditionsJson</code>/<code>version</code> added V30</td></tr>
+    <tr><td>Page sections (per-page sections)</td><td><span class="badge done">Done</span></td><td class="note"><code>PageSection</code> entity, same extended columns as site_sections</td></tr>
+    <tr><td>Component presets (system + custom, CRUD)</td><td><span class="badge done">Done</span></td><td class="note"><code>ComponentPresetController</code>; 50+ system presets seeded in V36</td></tr>
+    <tr><td>Component templates</td><td><span class="badge done">Done</span></td><td class="note"><code>ComponentTemplateController</code>, V12 migration</td></tr>
+    <tr><td>Preview tokens (temporary public preview links)</td><td><span class="badge done">Done</span></td><td class="note"><code>PreviewController</code>, <code>PreviewService</code>, <code>PreviewToken</code> entity</td></tr>
+    <tr><td>Duplicate page</td><td><span class="badge done">Done</span></td><td class="note"><code>DuplicatePageRequest</code> DTO, endpoint in <code>PageController</code></td></tr>
+    <tr><td>Page SEO / OG fields</td><td><span class="badge done">Done</span></td><td class="note">V16 (meta_title/meta_description) + V17 (OG fields) on <code>pages</code> table</td></tr>
+  </tbody>
+</table>
+<h3>Frontend — Page Builder UI</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Page editor route (<code>admin/pages/[id]</code>) using <code>PageBuilderRoot</code></td><td><span class="badge done">Done</span></td><td class="note">Now uses <code>PageBuilderRoot</code> (dnd-kit) — not the old basic <code>PropertyEditor</code></td></tr>
+    <tr><td>dnd-kit drag-and-drop canvas</td><td><span class="badge done">Done</span></td><td class="note"><code>DndContext</code> in <code>PageBuilderRoot</code>, <code>BuilderCanvas</code> with <code>useDroppable</code>/<code>useSortable</code>, <code>DropZone</code>, <code>PointerSensor</code> + <code>KeyboardSensor</code></td></tr>
+    <tr><td>Component palette sidebar (drag-to-canvas)</td><td><span class="badge done">Done</span></td><td class="note"><code>ComponentPalette</code> + <code>PaletteItemDraggable</code>; 50+ block types</td></tr>
+    <tr><td>Layers panel (tree view, reorder, visibility, duplicate, delete)</td><td><span class="badge done">Done</span></td><td class="note"><code>LayersPanel</code> in <code>builder/</code></td></tr>
+    <tr><td>Property panel with tabs (Content, Style, Layout, BG, Events, Conditions)</td><td><span class="badge done">Done</span></td><td class="note"><code>PropertyPanel</code> in builder; per-block schema driven via <code>block-schema.ts</code></td></tr>
+    <tr><td>Inline text editing on canvas</td><td><span class="badge done">Done</span></td><td class="note"><code>InlineTextField</code>, <code>InlineLeafRenderer</code>, <code>TipTapField</code></td></tr>
+    <tr><td>Undo / redo</td><td><span class="badge done">Done</span></td><td class="note">History stack exposed via <code>PageBuilderHandle</code></td></tr>
+    <tr><td>Preset library modal (system + custom)</td><td><span class="badge done">Done</span></td><td class="note"><code>PresetLibraryModal</code> — system/custom/types tabs, search, API-driven</td></tr>
+    <tr><td>Media library modal (browse &amp; select from uploaded files)</td><td><span class="badge done">Done</span></td><td class="note"><code>MediaLibraryModal</code> integrated into <code>ImageFieldWidget</code> and <code>SectionFieldRenderer</code></td></tr>
+    <tr><td>Icon picker modal (search, categories, color/size/rotation)</td><td><span class="badge done">Done</span></td><td class="note"><code>IconPickerModal</code> — 11 Lucide categories; Heroicons/Tabler/FA packs served from <code>IconLibraryController</code> but rendered client-side</td></tr>
+    <tr><td>Events tab (trigger → action builder)</td><td><span class="badge done">Done</span></td><td class="note"><code>EventsTab</code> — click/hover/scroll/focus triggers; 7 action types</td></tr>
+    <tr><td>Layout presets panel</td><td><span class="badge done">Done</span></td><td class="note"><code>LayoutPresetsPanel</code> component</td></tr>
+    <tr><td>Save as template modal</td><td><span class="badge done">Done</span></td><td class="note"><code>SaveAsTemplateModal</code></td></tr>
+    <tr><td>SEO editor panel</td><td><span class="badge done">Done</span></td><td class="note"><code>SeoEditorPanel</code> with media library for OG image</td></tr>
+    <tr><td>Workflow panel (status transitions inline)</td><td><span class="badge done">Done</span></td><td class="note"><code>WorkflowPanel</code> component</td></tr>
+    <tr><td>Menu placement section</td><td><span class="badge done">Done</span></td><td class="note"><code>MenuPlacementSection</code></td></tr>
+    <tr><td>Layout JSON debug modal</td><td><span class="badge done">Done</span></td><td class="note"><code>LayoutJsonDebugModal</code> for developer inspection</td></tr>
+    <tr><td>Block-level responsive breakpoint overrides at render time</td><td><span class="badge partial">Partial</span></td><td class="note">Mobile/tablet/desktop cols stored in schema; CSS injection at runtime not fully wired</td></tr>
+    <tr><td>inlineCss / customClass applied at render time</td><td><span class="badge partial">Partial</span></td><td class="note">Fields editable and stored; not all block renderers apply them dynamically</td></tr>
+    <tr><td>Pattern background (SVG dot/grid/stripe)</td><td><span class="badge missing">Missing</span></td><td class="note">BackgroundTab covers solid/gradient/image/video; SVG pattern library absent</td></tr>
+    <tr><td>Custom SVG icon upload</td><td><span class="badge missing">Missing</span></td><td class="note">Not implemented in IconPickerModal</td></tr>
+    <tr><td>Interactive gradient stop editor</td><td><span class="badge partial">Partial</span></td><td class="note">6 preset gradients + manual CSS string; no drag-stop editor</td></tr>
+  </tbody>
+</table>
+<h3>Frontend — Theme &amp; Global Design</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Theme settings editor (<code>admin/themes</code>) — colors, fonts, layout, spacing, borders, shadows</td><td><span class="badge done">Done</span></td><td class="note">All 7 groups now present: <code>colors, brand_colors, fonts, layout, spacing, borders, shadows</code>; V37 seeds border/shadow tokens</td></tr>
+    <tr><td>Named theme presets with activate/deactivate (<code>admin/style-themes</code>)</td><td><span class="badge done">Done</span></td><td class="note"><code>ThemeController</code> GET/POST/PUT/DELETE + activate; <code>Theme</code> entity; V35 migration; <code>style-themes.ts</code> client lib</td></tr>
+    <tr><td>Staging toggle in admin header</td><td><span class="badge missing">Missing</span></td><td class="note">No staging mode toggle in <code>AdminSidebar</code> / admin layout header</td></tr>
+    <tr><td>CSS custom properties (HSL variables) in globals.css</td><td><span class="badge done">Done</span></td><td class="note">shadcn/ui convention — <code>--background, --primary</code> etc. in <code>globals.css</code></td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>4 · Media Management</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Media file upload (MinIO/S3)</td><td><span class="badge done">Done</span></td><td class="note"><code>MediaController</code>, <code>AdminMediaController</code>, <code>MediaService</code>; <code>storage/</code> abstraction layer</td></tr>
+    <tr><td>Media folder tree management</td><td><span class="badge done">Done</span></td><td class="note"><code>MediaFolder</code> entity, folder CRUD + tree endpoint; <code>MediaFolderTreeNode</code> DTO</td></tr>
+    <tr><td>Image thumbnails</td><td><span class="badge done">Done</span></td><td class="note"><code>MediaThumbnail</code> entity, V10 migration</td></tr>
+    <tr><td>Metadata update (alt text, caption, tags)</td><td><span class="badge done">Done</span></td><td class="note"><code>MediaMetadataUpdateRequest</code> DTO</td></tr>
+    <tr><td>Gallery system (albums, images, share links, analytics, AI tagging)</td><td><span class="badge done">Done</span></td><td class="note"><code>AdminGalleryController</code>, <code>PublicGalleryController</code>, <code>GalleryService</code>, <code>GalleryAiService</code>, <code>GalleryShareService</code>, <code>GalleryAnalyticsService</code>; V19 migration</td></tr>
+    <tr><td>Gallery admin UI (<code>admin/gallery</code>)</td><td><span class="badge done">Done</span></td><td class="note">Full album + image management page</td></tr>
+    <tr><td>Media admin UI (<code>admin/media</code>)</td><td><span class="badge done">Done</span></td><td class="note">Folder tree sidebar + grid view with upload</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>5 · Events, Jobs &amp; Public Features</h2>
+<h3>Events</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Event CRUD (bilingual, date range, location, capacity)</td><td><span class="badge done">Done</span></td><td class="note"><code>EventController</code>, <code>Event</code> entity, V5</td></tr>
+    <tr><td>Event registration (public form + my events)</td><td><span class="badge done">Done</span></td><td class="note"><code>EventRegistration</code> entity; public endpoint in <code>PublicController</code></td></tr>
+    <tr><td>Public events list &amp; detail pages</td><td><span class="badge done">Done</span></td><td class="note"><code>(public)/events/page.tsx</code>, <code>(public)/events/[slug]/page.tsx</code></td></tr>
+    <tr><td>Admin events page with BulkActions</td><td><span class="badge done">Done</span></td><td class="note"><code>admin/events/page.tsx</code> — BulkActions integrated</td></tr>
+  </tbody>
+</table>
+<h3>Jobs</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Job vacancies CRUD + status tracking</td><td><span class="badge done">Done</span></td><td class="note"><code>JobVacancyController</code>, V5</td></tr>
+    <tr><td>Job applications (submit + admin review)</td><td><span class="badge done">Done</span></td><td class="note"><code>JobApplicationController</code>, <code>JobApplicationService</code></td></tr>
+    <tr><td>Public jobs listing &amp; detail</td><td><span class="badge done">Done</span></td><td class="note"><code>(public)/jobs</code>, <code>(public)/jobs/[slug]</code></td></tr>
+    <tr><td>Admin jobs page</td><td><span class="badge done">Done</span></td><td class="note"><code>admin/jobs</code></td></tr>
+  </tbody>
+</table>
+<h3>Board Members &amp; Members Directory</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Board members CRUD (bilingual bio, position, term, photo)</td><td><span class="badge done">Done</span></td><td class="note"><code>BoardMemberController</code>, V8</td></tr>
+    <tr><td>Member profiles (directory, search, filter)</td><td><span class="badge done">Done</span></td><td class="note"><code>MemberProfileController</code>, V8</td></tr>
+    <tr><td>Public board members page</td><td><span class="badge done">Done</span></td><td class="note">Via <code>PublicController</code></td></tr>
+    <tr><td>Public members directory &amp; profile pages</td><td><span class="badge done">Done</span></td><td class="note"><code>(public)/members/page.tsx</code>, <code>[slug]</code></td></tr>
+    <tr><td>Admin board members &amp; member profiles pages</td><td><span class="badge done">Done</span></td><td class="note"><code>admin/board-members</code>, <code>admin/member-profiles</code></td></tr>
+  </tbody>
+</table>
+<h3>Contact, Newsletter &amp; Comments</h3>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Contact form submission + reply system</td><td><span class="badge done">Done</span></td><td class="note"><code>ContactSubmissionController</code>; reply endpoint sends email</td></tr>
+    <tr><td>Admin contact messages dashboard</td><td><span class="badge done">Done</span></td><td class="note"><code>admin/contact</code></td></tr>
+    <tr><td>Newsletter subscribe/unsubscribe + campaign sending</td><td><span class="badge done">Done</span></td><td class="note"><code>NewsletterController</code>, <code>NewsletterService</code></td></tr>
+    <tr><td>Admin newsletter management</td><td><span class="badge done">Done</span></td><td class="note"><code>admin/newsletter</code></td></tr>
+    <tr><td>Comments with nested replies, moderation, approval workflow</td><td><span class="badge done">Done</span></td><td class="note"><code>CommentController</code>, real-time via WebSocket (<code>CommentWebSocketController</code>)</td></tr>
+    <tr><td>Admin comments moderation page</td><td><span class="badge done">Done</span></td><td class="note"><code>admin/comments</code></td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>6 · Internal Email System</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Email accounts CRUD (SMTP/IMAP config per account)</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailAccountController</code>, <code>EmailAccount</code> entity, V6</td></tr>
+    <tr><td>Email aliases</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailAliasController</code></td></tr>
+    <tr><td>Email folders (inbox, sent, drafts, trash, custom)</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailFolderController</code>, <code>EmailFolder</code> entity</td></tr>
+    <tr><td>Compose / reply / forward / send</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailComposeController</code>, <code>EmailSendService</code></td></tr>
+    <tr><td>IMAP sync (300s poll)</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailSyncService</code> @Scheduled; <code>MimeParser</code> for MIME parsing</td></tr>
+    <tr><td>Email rules engine (auto-move, auto-tag)</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailRuleController</code>, <code>EmailRuleExecutionService</code></td></tr>
+    <tr><td>Scheduled email sending (60s cron)</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailScheduledSendService</code>, <code>EmailScheduledSendController</code></td></tr>
+    <tr><td>Quota tracking &amp; storage reports</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailQuotaLogService</code>, <code>EmailAdminController</code> stats endpoint</td></tr>
+    <tr><td>Email contacts &amp; contact groups</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailContactController</code>, <code>EmailContactGroupController</code></td></tr>
+    <tr><td>Distribution lists</td><td><span class="badge done">Done</span></td><td class="note"><code>DistributionListController</code></td></tr>
+    <tr><td>Email directory (all users)</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailDirectoryController</code></td></tr>
+    <tr><td>Batch actions (mark read, move, delete)</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailBatchActionRequest</code> DTO</td></tr>
+    <tr><td>Frontend email client (<code>email/*</code>)</td><td><span class="badge done">Done</span></td><td class="note">Inbox, compose, drafts, sent, spam, trash, archive, starred, folder, search, thread, scheduled, settings, contacts — 17 routes</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>7 · Notifications &amp; Real-time</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>WebSocket infrastructure</td><td><span class="badge done">Done</span></td><td class="note"><code>WebSocketConfig</code>, STOMP over SockJS; <code>websocket.ts</code> client lib</td></tr>
+    <tr><td>Real-time comment events</td><td><span class="badge done">Done</span></td><td class="note"><code>CommentWebSocketController</code>, <code>CommentWebSocketService</code>, <code>CommentEvent</code></td></tr>
+    <tr><td>In-app notifications (bell icon + list)</td><td><span class="badge done">Done</span></td><td class="note"><code>NotificationController</code>, <code>NotificationBell</code> component, <code>notifications.ts</code></td></tr>
+    <tr><td>Admin notification broadcasts</td><td><span class="badge done">Done</span></td><td class="note"><code>AdminNotificationController</code>, <code>AdminNotificationService</code></td></tr>
+    <tr><td>Notification preferences per user</td><td><span class="badge done">Done</span></td><td class="note"><code>NotificationPreference</code> entity</td></tr>
+    <tr><td>Workflow → email notifications</td><td><span class="badge done">Done</span></td><td class="note"><code>WorkflowService</code> uses <code>JavaMailSender</code> directly for approve/reject/revision emails; <code>PageWorkflowEmailService</code> for page transitions</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>8 · CRM &amp; Contacts</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>CRM contacts (create, search, filter, update, delete)</td><td><span class="badge done">Done</span></td><td class="note"><code>CrmContactController</code>, <code>CrmContactService</code>, V14</td></tr>
+    <tr><td>Contact types, relationship levels, notes</td><td><span class="badge done">Done</span></td><td class="note"><code>CrmContact</code> entity fields</td></tr>
+    <tr><td>Admin CRM page (<code>admin/crm</code>)</td><td><span class="badge done">Done</span></td><td class="note">Search, filter, create/edit modal</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>9 · Menus &amp; Navigation</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Multi-menu system (header, footer, sidebar) with locations</td><td><span class="badge done">Done</span></td><td class="note"><code>MenuController</code>, V21 seeds header menu; V28 unique constraint on location</td></tr>
+    <tr><td>Menu items (bilingual label, URL, icon, nested children)</td><td><span class="badge done">Done</span></td><td class="note"><code>MenuItemRequest/Response</code> DTOs; nested items supported</td></tr>
+    <tr><td>Menu style config (dropdown style per menu)</td><td><span class="badge done">Done</span></td><td class="note">V42/V43 add <code>style_config</code> text column; <code>MenuPlacementRequest</code></td></tr>
+    <tr><td>Admin menus page (<code>admin/menus</code>)</td><td><span class="badge done">Done</span></td><td class="note">Drag-to-reorder menu items, add/edit/delete</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>10 · SEO &amp; Sitemap</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>XML sitemap (<code>/api/public/sitemap.xml</code>)</td><td><span class="badge done">Done</span></td><td class="note"><code>SitemapController</code> — static pages + published content + events</td></tr>
+    <tr><td>robots.txt</td><td><span class="badge done">Done</span></td><td class="note">Static file disallowing <code>/admin</code> and <code>/api</code> paths</td></tr>
+    <tr><td>SEO metadata CRUD per entity</td><td><span class="badge done">Done</span></td><td class="note"><code>SeoMetadataController</code> GET/PUT/DELETE by <code>entityType</code>+<code>entityId</code></td></tr>
+    <tr><td>Open Graph + Twitter card meta tags in layout</td><td><span class="badge done">Done</span></td><td class="note">Root layout injects <code>og:*</code> and <code>twitter:*</code> tags; V17 OG fields on pages</td></tr>
+    <tr><td>schema.org JSON-LD (Organization markup)</td><td><span class="badge done">Done</span></td><td class="note">Injected in public layout</td></tr>
+    <tr><td>URL redirect management</td><td><span class="badge done">Done</span></td><td class="note"><code>UrlRedirect</code> entity exists</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>11 · Staging, Bulk Operations &amp; Workflow</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Staging backend (enable, disable, sync-to-production, preview link)</td><td><span class="badge done">Done</span></td><td class="note"><code>StagingController</code> + <code>StagingSyncService</code>; persists state via <code>SystemConfig</code></td></tr>
+    <tr><td>Staging UI (<code>admin/staging</code>) — connected to real API</td><td><span class="badge done">Done</span></td><td class="note">Calls <code>/admin/staging/status</code>, <code>sync-to-production</code>, <code>preview-link</code>; falls back to mock when API unavailable</td></tr>
+    <tr><td>Staging mode toggle in admin header/sidebar</td><td><span class="badge missing">Missing</span></td><td class="note">No toggle widget in <code>AdminSidebar</code> or <code>AdminLayout</code></td></tr>
+    <tr><td>BulkActions component (select-all, per-row, delete/approve/reject/publish)</td><td><span class="badge done">Done</span></td><td class="note"><code>BulkActions.tsx</code> integrated into <code>admin/content</code>, <code>admin/events</code>, <code>admin/pages</code></td></tr>
+    <tr><td>Bulk edit modal (status, tags, categories, publish date)</td><td><span class="badge missing">Missing</span></td><td class="note">BulkActions only has delete/approve/reject/publish actions</td></tr>
+    <tr><td>Bulk duplicate / archive modals</td><td><span class="badge missing">Missing</span></td><td class="note">Not implemented</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>12 · System Configuration &amp; Dashboard</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>System config key/value store (site name, logo, contact info, etc.)</td><td><span class="badge done">Done</span></td><td class="note"><code>SystemConfigController</code>, V26 seeds global site settings; V41 adds logo setting; V44/V45 bilingual site name + footer copyright</td></tr>
+    <tr><td>Admin dashboard with stats</td><td><span class="badge done">Done</span></td><td class="note"><code>DashboardController</code>, <code>DashboardStatsResponse</code>; <code>admin/page.tsx</code></td></tr>
+    <tr><td>Audit logs page (<code>admin/audit-logs</code>)</td><td><span class="badge done">Done</span></td><td class="note">Full list with filters</td></tr>
+    <tr><td>Admin settings page (<code>admin/settings</code>)</td><td><span class="badge done">Done</span></td><td class="note">Profile, password, notification preferences</td></tr>
+    <tr><td>Spring Boot Actuator health endpoint</td><td><span class="badge done">Done</span></td><td class="note"><code>/actuator/health</code> public</td></tr>
+    <tr><td>OpenAPI / Swagger UI</td><td><span class="badge done">Done</span></td><td class="note"><code>OpenApiConfig</code>; Swagger UI at <code>/swagger-ui.html</code></td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>13 · Public Website Pages</h2>
+<table>
+  <thead><tr><th style="width:52%">Route</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Homepage <code>(public)/page.tsx</code></td><td><span class="badge done">Done</span></td><td class="note">Dynamic sections rendered from DB; hero carousel, stats, features, news feed, events feed, publications carousel, join CTA, newsletter</td></tr>
+    <tr><td>Dynamic slug pages <code>(public)/[slug]</code></td><td><span class="badge done">Done</span></td><td class="note">Block-based page renderer from <code>layout_json</code></td></tr>
+    <tr><td>News list &amp; article detail <code>(public)/news</code></td><td><span class="badge done">Done</span></td><td class="note">Pagination, filtering, bilingual</td></tr>
+    <tr><td>Events list &amp; detail <code>(public)/events</code></td><td><span class="badge done">Done</span></td><td class="note">Calendar view, registration flow</td></tr>
+    <tr><td>Jobs list &amp; detail <code>(public)/jobs</code></td><td><span class="badge done">Done</span></td><td class="note">Application form</td></tr>
+    <tr><td>Members directory &amp; profile <code>(public)/members</code></td><td><span class="badge done">Done</span></td><td class="note">Search &amp; filter</td></tr>
+    <tr><td>Publications list <code>(public)/publications</code></td><td><span class="badge done">Done</span></td><td class="note">PDF download links</td></tr>
+    <tr><td>Search results <code>(public)/search</code></td><td><span class="badge done">Done</span></td><td class="note">Cross-entity search page</td></tr>
+    <tr><td>Responsive Hamburger navigation (public)</td><td><span class="badge done">Done</span></td><td class="note">Mobile-first Tailwind design; hamburger menu in public layout</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>14 · Infrastructure &amp; DevOps</h2>
+<table>
+  <thead><tr><th style="width:52%">Feature</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Docker Compose (PostgreSQL, MinIO, Redis)</td><td><span class="badge done">Done</span></td><td class="note"><code>docker-compose.yml</code>, <code>docker-compose.dev.yml</code>, <code>docker-compose.prod.yml</code></td></tr>
+    <tr><td>Flyway database migrations (V1–V55)</td><td><span class="badge done">Done</span></td><td class="note">55 versioned migration files; V31/V34 are idempotency patches</td></tr>
+    <tr><td>Redis caching (theme settings, other hot-path data)</td><td><span class="badge done">Done</span></td><td class="note"><code>CacheConfig</code>, <code>@Cacheable</code> in <code>ThemeSettingService</code></td></tr>
+    <tr><td>Netlify deployment config</td><td><span class="badge done">Done</span></td><td class="note"><code>netlify.toml</code></td></tr>
+    <tr><td>HtmlSanitizer (XSS protection)</td><td><span class="badge done">Done</span></td><td class="note"><code>HtmlSanitizer.java</code>, <code>LayoutJsonValidator.java</code></td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>15 · Testing</h2>
+<table>
+  <thead><tr><th style="width:52%">Test Area</th><th style="width:14%">Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Auth service unit tests</td><td><span class="badge done">Done</span></td><td class="note"><code>AuthServiceTest.java</code></td></tr>
+    <tr><td>Page service unit tests</td><td><span class="badge done">Done</span></td><td class="note"><code>PageServiceTest.java</code></td></tr>
+    <tr><td>Workflow service unit tests</td><td><span class="badge done">Done</span></td><td class="note"><code>WorkflowServiceTest.java</code>, <code>PageWorkflowServiceTest.java</code></td></tr>
+    <tr><td>ComponentPreset service tests</td><td><span class="badge done">Done</span></td><td class="note"><code>ComponentPresetServiceTest.java</code></td></tr>
+    <tr><td>ContentVersionHistory service tests</td><td><span class="badge done">Done</span></td><td class="note"><code>ContentVersionHistoryServiceTest.java</code></td></tr>
+    <tr><td>ThemeSetting service tests</td><td><span class="badge done">Done</span></td><td class="note"><code>ThemeSettingServiceTest.java</code></td></tr>
+    <tr><td>Email admin controller tests</td><td><span class="badge done">Done</span></td><td class="note"><code>EmailAdminControllerTest.java</code></td></tr>
+    <tr><td>Page controller integration tests</td><td><span class="badge done">Done</span></td><td class="note"><code>PageControllerIntegrationTest.java</code>, <code>PageControllerTest.java</code></td></tr>
+    <tr><td>Layout JSON validator tests</td><td><span class="badge done">Done</span></td><td class="note"><code>LayoutJsonValidatorTest.java</code></td></tr>
+    <tr><td>Cypress E2E tests</td><td><span class="badge missing">Missing</span></td><td class="note">No Cypress test files in project</td></tr>
+    <tr><td>Frontend Jest / React Testing Library</td><td><span class="badge partial">Partial</span></td><td class="note"><code>frontend/src/lib/__tests__/</code> directory exists; coverage limited</td></tr>
+    <tr><td>Accessibility audit tooling (axe / ARIA)</td><td><span class="badge missing">Missing</span></td><td class="note">No automated a11y tooling configured</td></tr>
+  </tbody>
+</table>
+
+<div class="divider"></div>
+
+
+<h2>Outstanding Gaps (Post Stage-2 Remediation)</h2>
+<table>
+  <thead><tr><th style="width:5%">#</th><th style="width:35%">Gap</th><th style="width:15%">Priority</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Side-by-side diff viewer</td><td><span class="badge missing">High</span></td><td class="note">Version rollback exists in API but no UI to compare two versions</td></tr>
+    <tr><td>2</td><td>Staging mode toggle in admin header</td><td><span class="badge partial">Medium</span></td><td class="note">No toggle widget in AdminSidebar / admin layout; users must navigate to <code>/admin/staging</code></td></tr>
+    <tr><td>3</td><td>Bulk edit modal (status/tags/categories/date)</td><td><span class="badge partial">Medium</span></td><td class="note">BulkActions only supports delete, approve, reject, publish</td></tr>
+    <tr><td>4</td><td>Bulk duplicate + archive actions</td><td><span class="badge partial">Medium</span></td><td class="note">Not implemented in BulkActions</td></tr>
+    <tr><td>5</td><td>Pattern backgrounds (SVG dot/grid/stripe)</td><td><span class="badge partial">Low</span></td><td class="note">BackgroundTab covers 4/5 types; SVG pattern library absent</td></tr>
+    <tr><td>6</td><td>Custom SVG icon upload</td><td><span class="badge partial">Low</span></td><td class="note">IconPickerModal serves Lucide; custom upload not built</td></tr>
+    <tr><td>7</td><td>Responsive breakpoint override CSS injection at runtime</td><td><span class="badge partial">Low</span></td><td class="note">Breakpoint cols stored in block schema but renderer doesn't inject dynamic Tailwind classes</td></tr>
+    <tr><td>8</td><td>Cypress E2E test suite</td><td><span class="badge partial">Low</span></td><td class="note">No Cypress files; test infrastructure exists in package.json</td></tr>
+    <tr><td>9</td><td>Accessibility audit (axe/ARIA)</td><td><span class="badge partial">Low</span></td><td class="note">Semantic HTML used but not systematically verified</td></tr>
+    <tr><td>10</td><td>Interactive gradient stop editor</td><td><span class="badge partial">Low</span></td><td class="note">6 preset gradients + manual CSS input; no drag-stop editor</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  <p>Made with IBM Bob  ·  SSSSY Full Feature Reference  ·  Generated July 2026</p>
+</footer>
+</div>
+</body>
+</html>

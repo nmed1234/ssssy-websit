@@ -19,5 +19,8 @@ public class EventRegistrationResponse {
   private String status;
   private LocalDateTime registeredAt;
   private Boolean checkedIn;
+  private LocalDateTime checkedInAt;
+  private String checkInNotes;
+  private Integer waitlistPosition;
   private LocalDateTime createdAt;
 }

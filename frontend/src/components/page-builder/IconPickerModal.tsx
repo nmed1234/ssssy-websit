@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { Search, X, ChevronDown, RotateCcw, FlipHorizontal, FlipVertical } from "lucide-react";
+import { useState, useRef } from "react";
+import { Search, X, RotateCcw, FlipHorizontal, FlipVertical, Upload } from "lucide-react";
 
 // Curated icon library using Lucide (already installed)
-// For a real deployment this would include Heroicons, Tabler, Font Awesome Free
-// Here we use all Lucide icons categorised for the picker
+// Custom SVG icons uploaded by the user are stored in the "Custom" category.
 
 const ICON_CATEGORIES: Record<string, string[]> = {
   "Navigation": ["Home", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "ChevronLeft", "ChevronRight", "ChevronUp", "ChevronDown", "Menu", "X", "ExternalLink", "Link", "Link2", "Map", "MapPin", "Navigation", "Navigation2", "Compass"],
@@ -22,6 +21,15 @@ const ICON_CATEGORIES: Record<string, string[]> = {
 };
 
 const ALL_ICONS = Object.values(ICON_CATEGORIES).flat();
+
+// Custom SVG storage (session-scoped; persisted to sessionStorage for page reloads)
+const CUSTOM_SVG_KEY = "ssssy_custom_svgs";
+function loadCustomSvgs(): Record<string, string> {
+  try { return JSON.parse(sessionStorage.getItem(CUSTOM_SVG_KEY) || "{}"); } catch { return {}; }
+}
+function saveCustomSvgs(svgs: Record<string, string>) {
+  try { sessionStorage.setItem(CUSTOM_SVG_KEY, JSON.stringify(svgs)); } catch { /* noop */ }
+}
 
 interface IconPickerModalProps {
   value?: string;
@@ -40,9 +48,19 @@ export function IconPickerModal({ value, onChange, onClose, color = "currentColo
   const [rotation, setRotation] = useState(0);
   const [flipH, setFlipH] = useState(false);
   const [flipV, setFlipV] = useState(false);
+  // Custom SVG icons uploaded this session
+  const [customSvgs, setCustomSvgs] = useState<Record<string, string>>(() => loadCustomSvgs());
+  const svgInputRef = useRef<HTMLInputElement>(null);
+
+  const customIconNames = Object.keys(customSvgs);
 
   const filteredIcons = (() => {
-    let base = category ? (ICON_CATEGORIES[category] || []) : ALL_ICONS;
+    let base: string[];
+    if (category === "__custom__") {
+      base = customIconNames;
+    } else {
+      base = category ? (ICON_CATEGORIES[category] || []) : ALL_ICONS;
+    }
     if (search.trim()) {
       const q = search.toLowerCase();
       base = base.filter((n) => n.toLowerCase().includes(q));
@@ -50,13 +68,30 @@ export function IconPickerModal({ value, onChange, onClose, color = "currentColo
     return base;
   })();
 
-  const handleSelect = (name: string) => {
-    setSelected(name);
-  };
+  const handleSelect = (name: string) => setSelected(name);
 
   const handleApply = () => {
     if (selected) onChange(selected);
     onClose();
+  };
+
+  const handleSvgUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const svgText = ev.target?.result as string;
+      if (!svgText.includes("<svg")) return;
+      const name = `custom::${file.name.replace(/\.svg$/i, "")}`;
+      const updated = { ...loadCustomSvgs(), [name]: svgText };
+      saveCustomSvgs(updated);
+      setCustomSvgs(updated);
+      setCategory("__custom__");
+      setSelected(name);
+    };
+    reader.readAsText(file);
+    // Reset input so the same file can be re-uploaded
+    e.target.value = "";
   };
 
   return (
@@ -88,6 +123,29 @@ export function IconPickerModal({ value, onChange, onClose, color = "currentColo
                 {cat} ({ICON_CATEGORIES[cat].length})
               </button>
             ))}
+            {/* Custom SVG section */}
+            <div className="mt-2 pt-2 border-t border-gray-200">
+              <button
+                onClick={() => setCategory("__custom__")}
+                className={`w-full text-left px-3 py-1.5 rounded text-sm mb-1 ${category === "__custom__" ? "bg-soil-dark text-white" : "hover:bg-gray-200 text-gray-700"}`}
+              >
+                Custom SVG ({customIconNames.length})
+              </button>
+              {/* Hidden file input */}
+              <input
+                ref={svgInputRef}
+                type="file"
+                accept=".svg,image/svg+xml"
+                className="hidden"
+                onChange={handleSvgUpload}
+              />
+              <button
+                onClick={() => svgInputRef.current?.click()}
+                className="w-full flex items-center gap-1.5 px-3 py-1.5 rounded text-sm text-blue-700 hover:bg-blue-50 border border-dashed border-blue-300"
+              >
+                <Upload className="w-3.5 h-3.5" /> Upload SVG
+              </button>
+            </div>
           </div>
 
           {/* Main content */}
@@ -223,7 +281,7 @@ export function IconPickerModal({ value, onChange, onClose, color = "currentColo
   );
 }
 
-// Dynamic icon renderer using a lookup map
+// Dynamic icon renderer — supports Lucide (first-letter fallback) and custom SVG inline
 function IconDisplay({ name, color, size, rotation = 0, flipH = false, flipV = false }: {
   name: string; color: string; size: number; rotation?: number; flipH?: boolean; flipV?: boolean;
 }) {
@@ -233,7 +291,24 @@ function IconDisplay({ name, color, size, rotation = 0, flipH = false, flipV = f
     flipV ? "scaleY(-1)" : "",
   ].filter(Boolean).join(" ");
 
-  // Use a unicode character as fallback icon indicator since we can't dynamically import lucide
+  // Custom SVG icon — render inline SVG directly
+  if (name.startsWith("custom::")) {
+    const svgs = loadCustomSvgs();
+    const svgText = svgs[name];
+    if (svgText) {
+      return (
+        <span
+          style={{ display:"inline-flex", alignItems:"center", justifyContent:"center",
+            width: size, height: size, transform: transform || undefined, color }}
+          title={name.replace("custom::", "")}
+          dangerouslySetInnerHTML={{ __html: svgText
+            .replace(/<svg([^>]*)>/, `<svg$1 width="${size}" height="${size}" fill="currentColor">`) }}
+        />
+      );
+    }
+  }
+
+  // Lucide icon fallback — first letter indicator
   return (
     <span
       style={{

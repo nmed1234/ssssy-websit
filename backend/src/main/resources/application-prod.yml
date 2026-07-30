@@ -1,0 +1,22 @@
+# Production profile — activated when SPRING_PROFILES_ACTIVE=prod
+# Overrides application.yml defaults that are unsafe or verbose in production.
+
+logging:
+  level:
+    root: WARN
+    org.ssssy: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+
+spring:
+  jpa:
+    show-sql: false
+
+app:
+  swagger:
+    # Swagger is disabled in production. Set APP_SWAGGER_ENABLED=true to re-enable (e.g. staging).
+    enabled: ${APP_SWAGGER_ENABLED:false}
+  cookie:
+    # Cookies must be Secure (HTTPS-only) in production.
+    secure: true

@@ -14,9 +14,10 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@ssssy/cms-sdk": ["./packages/cms-sdk/src/index.ts"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "packages/**/*.ts", "packages/**/*.tsx"],
+  "exclude": ["node_modules", "cypress", "cypress.config.ts"]
 }

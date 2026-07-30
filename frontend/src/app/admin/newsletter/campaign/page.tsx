@@ -24,7 +24,7 @@ export default function NewsletterCampaignPage() {
   const { data: subscribers } = useQuery({
     queryKey: ["newsletter-subscribers"],
     queryFn: async () => {
-      const res = await api.get<ApiResponse<{ content: NewsletterSubscriber[] }>>("/newsletter/subscribers");
+      const res = await api.get<ApiResponse<{ content: NewsletterSubscriber[] }>>("/admin/newsletter/subscribers");
       return res.data.data.content || [];
     },
   });

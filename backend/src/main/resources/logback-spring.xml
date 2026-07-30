@@ -1,17 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
+  <!--
+    Spring Boot default appenders.
+    We extend them to add the correlationId MDC field to every log line.
+  -->
+
+  <!-- Console appender with correlationId in the pattern -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5level [%15.15t] [%X{correlationId:--}] %-40.40logger{39} : %msg%n</pattern>
     </encoder>
   </appender>
 
+  <!-- Rolling file appender — useful in production -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/ssssy-backend.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- Roll daily; keep 30 days of history; cap total size at 1 GB -->
+      <fileNamePattern>logs/ssssy-backend.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy
+          class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>1GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5level [%15.15t] [%X{correlationId:--}] %-40.40logger{39} : %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Application logger — DEBUG in development, INFO in production -->
+  <logger name="org.ssssy" level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Spring Security — INFO level to avoid verbose filter traces -->
+  <logger name="org.springframework.security" level="INFO" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Root logger -->
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
   </root>
 
-  <logger name="org.ssssy" level="DEBUG"/>
-  <logger name="org.springframework.security" level="INFO"/>
 </configuration>

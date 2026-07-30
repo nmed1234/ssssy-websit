@@ -40,6 +40,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning className={almarai.variable}>
+      <head>
+        {/* Preconnect to Google Fonts origins to reduce DNS + TLS latency */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-screen bg-background text-foreground">
         <a
           href="#main-content"

@@ -380,7 +380,7 @@ public class EmailSendService {
   }
 
   private EmailRecipient createRecipient(EmailMessage message, String type, String address) {
-    boolean isInternal = address.toLowerCase().endsWith("@ssssy.org.sy");
+    boolean isInternal = address.toLowerCase().endsWith("@ssssyria.org");
     return EmailRecipient.builder()
         .message(message)
         .recipientType(type)

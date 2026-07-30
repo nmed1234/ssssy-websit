@@ -1,0 +1,183 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Phase 5 — Backend Plugin SPI</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: #1f2328; background: #fff; padding: 32px 16px 48px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 700; border-bottom: 2px solid #7c5cd8; padding-bottom: 8px; margin-bottom: 6px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 24px; }
+  h2 { font-size: 15px; font-weight: 700; background: #f7f8fa; border-left: 4px solid #7c5cd8; padding: 8px 12px; margin: 24px 0 10px; }
+  h3 { font-size: 13px; font-weight: 700; color: #3b82d4; margin: 14px 0 5px; }
+  code { background: #f0f1f3; color: #0e5a8a; font-size: 12px; padding: 1px 5px; border-radius: 3px; font-family: "Cascadia Code", Consolas, monospace; }
+  pre { background: #1f2328; color: #e6edf3; font-size: 12px; padding: 14px; border-radius: 6px; overflow-x: auto; margin: 8px 0 14px; line-height: 1.5; font-family: "Cascadia Code", Consolas, monospace; white-space: pre; }
+  ul { margin: 4px 0 10px 16px; }
+  li { margin-bottom: 3px; font-size: 13px; color: #57606a; }
+  li strong { color: #1f2328; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0 14px; }
+  th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; font-weight: 700; }
+  td { border: 1px solid #e5e7eb; padding: 6px 10px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0; }
+  .card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-size: 13px; }
+  .card strong { display: block; margin-bottom: 4px; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 12px; margin-right: 4px; }
+  .done  { background: #dcfce7; color: #166534; }
+  .next  { background: #ede9fe; color: #6b21a8; }
+  .later { background: #f3f4f6; color: #374151; }
+  .callout { border-left: 3px solid #7c5cd8; background: #faf5ff; padding: 10px 14px; margin: 10px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+  .warn { border-left-color: #f59e0b; background: #fffbeb; }
+  hr { border: none; border-top: 1px solid #e5e7eb; margin: 22px 0; }
+  .arch { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin: 6px 0; }
+  .arch-label { font-size: 11px; font-weight: 700; color: #7c5cd8; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+  footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 12px; color: #57606a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>SSSSY CMS — Phase 5: Backend Plugin SPI</h1>
+<p class="subtitle">The platform extensibility layer — drop a JAR, implement an interface, and the CMS does the rest</p>
+
+<h2>Overall Progress</h2>
+<table>
+  <tr><th>Phase</th><th>Feature</th><th>Status</th></tr>
+  <tr><td>1</td><td>CMS Event Bus</td><td><span class="badge done">✓ Done</span></td></tr>
+  <tr><td>2</td><td>Dynamic Form Engine</td><td><span class="badge done">✓ Done</span></td></tr>
+  <tr><td>3</td><td>Dynamic Content Type Engine</td><td><span class="badge done">✓ Done</span></td></tr>
+  <tr><td>4</td><td>Member Submission Workflow</td><td><span class="badge done">✓ Done</span></td></tr>
+  <tr><td>5</td><td>Backend Plugin SPI</td><td><span class="badge done">✓ Done (this session)</span></td></tr>
+  <tr><td>6</td><td>TypeScript SDK</td><td><span class="badge next">Next</span></td></tr>
+  <tr><td>7</td><td>Admin Plugin Manager UI</td><td><span class="badge done">✓ Done (part of Phase 5)</span></td></tr>
+  <tr><td>8</td><td>Migration + Hardening</td><td><span class="badge later">Later</span></td></tr>
+</table>
+
+<h2>Plugin Architecture — Two Loading Models</h2>
+<div class="arch">
+  <div class="arch-label">Model A — Classpath Plugin (default)</div>
+  <p style="font-size:13px;color:#57606a">A Spring <code>@Component</code> in the main application classpath. Annotate with <code>@CmsPluginMeta</code>. Auto-discovered by <code>PluginRegistry.discoverAndActivateClasspathPlugins()</code> at startup. Can use <code>@EventListener</code> natively. Cannot be uninstalled via UI — requires a redeploy.</p>
+</div>
+<div class="arch">
+  <div class="arch-label">Model B — External JAR Plugin</div>
+  <p style="font-size:13px;color:#57606a">A self-contained JAR file uploaded via <code>POST /api/admin/plugins/upload</code>. Loaded via <code>URLClassLoader</code>. Must contain a <code>plugin.json</code> at the JAR root. Instantiated reflectively. Installed, activated, deactivated, and uninstalled at runtime — no server restart needed.</p>
+</div>
+
+<h2>Files Created</h2>
+<table>
+  <tr><th>Layer</th><th>File</th><th>Purpose</th></tr>
+  <tr><td>SPI</td><td><code>plugin/CmsPlugin.java</code></td><td>Interface every plugin implements — install/onActivate/onDeactivate/onUninstall/getDbMigrations</td></tr>
+  <tr><td>SPI</td><td><code>plugin/CmsPluginMeta.java</code></td><td>@Annotation declaring id, name, version, author, permissions[], autoActivate</td></tr>
+  <tr><td>SPI</td><td><code>plugin/PluginManifest.java</code></td><td>Value object — parsed from @CmsPluginMeta or plugin.json in external JARs</td></tr>
+  <tr><td>Event</td><td><code>event/PluginInstalledEvent.java</code></td><td>Fires on plugin install+activate — other plugins can react</td></tr>
+  <tr><td>Entity</td><td><code>model/entity/InstalledPlugin.java</code></td><td>JPA entity mapping installed_plugins table — tracks full lifecycle</td></tr>
+  <tr><td>DB</td><td><code>V58__plugin_registry.sql</code></td><td>installed_plugins table with status, manifest_json JSONB, config_json JSONB, jar_path</td></tr>
+  <tr><td>Repo</td><td><code>repository/InstalledPluginRepository.java</code></td><td>JPA repository with findByPluginId, findByStatus, findAll</td></tr>
+  <tr><td>Service</td><td><code>plugin/PluginRegistry.java</code></td><td>In-memory activePlugins map, classpath discovery @PostConstruct, activate/deactivate</td></tr>
+  <tr><td>Service</td><td><code>plugin/PluginManager.java</code></td><td>Admin lifecycle — list, installJar, activate, deactivate, uninstall, updateConfig</td></tr>
+  <tr><td>Controller</td><td><code>controller/PluginController.java</code></td><td>REST admin endpoints @PreAuthorize("hasRole('ADMIN')")</td></tr>
+  <tr><td>DTO</td><td><code>model/dto/PluginResponse.java</code></td><td>Full plugin state response</td></tr>
+  <tr><td>DTO</td><td><code>model/dto/PluginConfigRequest.java</code></td><td>Config JSON update payload</td></tr>
+  <tr><td>Example</td><td><code>plugin/example/ExamplePlugin.java</code></td><td>Reference implementation — Spring @Component, logs ContentPublishedEvent</td></tr>
+  <tr><td>Frontend</td><td><code>/admin/plugins/page.tsx</code></td><td>Full admin plugin manager UI</td></tr>
+  <tr><td>Config</td><td><code>application.yml</code></td><td>Added <code>cms.plugins.dir</code> property</td></tr>
+  <tr><td>Sidebar</td><td><code>AdminSidebar.tsx</code></td><td>Added "Plugins" entry with Puzzle icon</td></tr>
+</table>
+
+<h2>REST API Surface</h2>
+<table>
+  <tr><th>Method</th><th>Path</th><th>Auth</th><th>What</th></tr>
+  <tr><td>GET</td><td><code>/api/admin/plugins</code></td><td>ADMIN</td><td>List all installed plugins (not UNINSTALLED)</td></tr>
+  <tr><td>GET</td><td><code>/api/admin/plugins/active</code></td><td>ADMIN</td><td>List only ACTIVE plugins</td></tr>
+  <tr><td>GET</td><td><code>/api/admin/plugins/{id}</code></td><td>ADMIN</td><td>Get plugin by UUID</td></tr>
+  <tr><td>POST</td><td><code>/api/admin/plugins/upload</code></td><td>ADMIN</td><td>Upload .jar/.zip → install (multipart/form-data)</td></tr>
+  <tr><td>POST</td><td><code>/api/admin/plugins/{id}/activate</code></td><td>ADMIN</td><td>Call onActivate() → set status=ACTIVE</td></tr>
+  <tr><td>POST</td><td><code>/api/admin/plugins/{id}/deactivate</code></td><td>ADMIN</td><td>Call onDeactivate() → set status=INACTIVE</td></tr>
+  <tr><td>DELETE</td><td><code>/api/admin/plugins/{id}</code></td><td>ADMIN</td><td>Call onUninstall(), delete JAR, soft-delete row</td></tr>
+  <tr><td>PUT</td><td><code>/api/admin/plugins/{id}/config</code></td><td>ADMIN</td><td>Save admin configuration JSON for plugin</td></tr>
+</table>
+
+<h2>Developer Usage — Writing a Plugin</h2>
+
+<h3>Classpath Plugin (simplest)</h3>
+<pre>@Component  // Makes it a Spring bean — auto-discovered
+@CmsPluginMeta(
+    id          = "my-custom-plugin",
+    name        = "My Custom Plugin",
+    version     = "1.0.0",
+    author      = "Your Name",
+    description = "Does something amazing.",
+    permissions = { "CONTENT_READ", "EMAIL_SEND" },
+    autoActivate = true
+)
+public class MyPlugin implements CmsPlugin {
+
+    @Override
+    public void onActivate(ApplicationContext ctx) {
+        // Register anything dynamic here
+    }
+
+    @EventListener  // Hooks into CMS Event Bus
+    public void onFormSubmitted(FormSubmittedEvent event) {
+        // React to every form submission
+    }
+}</pre>
+
+<h3>External JAR Plugin — plugin.json</h3>
+<pre>{
+  "id": "my-external-plugin",
+  "name": "My External Plugin",
+  "version": "1.2.0",
+  "author": "Third Party Dev",
+  "description": "Adds DOI resolution to research papers.",
+  "entryClass": "com.example.DoiResolverPlugin",
+  "permissions": ["CONTENT_READ", "EMAIL_SEND"],
+  "dbMigrations": [],
+  "autoActivate": true
+}</pre>
+
+<h3>Plugin Lifecycle</h3>
+<table>
+  <tr><th>Status</th><th>Transition</th><th>CmsPlugin method called</th></tr>
+  <tr><td>—</td><td>First install (upload or classpath boot)</td><td><code>install(ctx)</code></td></tr>
+  <tr><td>INSTALLED → ACTIVE</td><td>Admin clicks Activate</td><td><code>onActivate(ctx)</code></td></tr>
+  <tr><td>ACTIVE → INACTIVE</td><td>Admin clicks Deactivate</td><td><code>onDeactivate()</code></td></tr>
+  <tr><td>INACTIVE → ACTIVE</td><td>Admin clicks Activate again</td><td><code>onActivate(ctx)</code></td></tr>
+  <tr><td>ANY → UNINSTALLED</td><td>Admin clicks Uninstall (JAR only)</td><td><code>onUninstall()</code> then JAR deleted</td></tr>
+</table>
+
+<div class="callout warn">
+  <strong>Security note:</strong> JAR plugin loading uses <code>URLClassLoader</code> which shares the parent classloader. Production deployments should add a security manager policy or use OSGi for true isolation. The permissions declared in <code>@CmsPluginMeta</code> are recorded in the DB but runtime enforcement is a Phase 8 hardening task.
+</div>
+
+<h2>Frontend: /admin/plugins</h2>
+<ul>
+  <li><strong>Stats row:</strong> Total installed / Active / Errors counts</li>
+  <li><strong>Plugin cards:</strong> Name, version, status badge, source (CLASSPATH|JAR), description</li>
+  <li><strong>Expanded card:</strong> Permissions chips, installed/activated dates, JSON config editor with save, JAR path, classpath notice</li>
+  <li><strong>Activate/Deactivate buttons:</strong> Inline — POST to backend, invalidates query</li>
+  <li><strong>Upload JAR:</strong> File input (hidden) triggered by label, multipart POST, error banner on failure</li>
+  <li><strong>Uninstall:</strong> Confirm dialog → DELETE, only for JAR plugins</li>
+  <li><strong>How it works callout:</strong> Developer guidance inline</li>
+</ul>
+
+<h2>Validation</h2>
+<ul>
+  <li><strong>Backend:</strong> <code>mvn clean compile</code> — BUILD SUCCESS, 491 source files, zero errors</li>
+  <li><strong>Frontend:</strong> <code>tsc --noEmit</code> — zero errors, zero new warnings</li>
+</ul>
+
+<h2>Next: Phase 6 — TypeScript SDK</h2>
+<ul>
+  <li>Create <code>frontend/packages/cms-sdk/</code> — standalone TypeScript npm package</li>
+  <li><code>CmsClient</code> (typed HTTP client), <code>useContent()</code>, <code>useForms()</code>, <code>useWorkflow()</code>, <code>useAuth()</code> React hooks</li>
+  <li>SDK components: <code>&lt;DynamicForm slug="…" /&gt;</code>, <code>&lt;CmsWorkflowButton /&gt;</code>, <code>&lt;ContentRenderer typeName="…" /&gt;</code></li>
+  <li><code>CmsSDK.registerBlock()</code> — page-builder block extension point</li>
+</ul>
+
+<footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

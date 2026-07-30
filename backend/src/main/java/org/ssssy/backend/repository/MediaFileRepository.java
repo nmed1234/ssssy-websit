@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public interface MediaFileRepository extends JpaRepository<MediaFile, UUID> {
 
+  java.util.Optional<MediaFile> findByUrl(String url);
+
   Page<MediaFile> findByFolderId(UUID folderId, Pageable pageable);
 
   Page<MediaFile> findByUserId(UUID userId, Pageable pageable);

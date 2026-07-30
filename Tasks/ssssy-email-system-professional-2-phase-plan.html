@@ -1,0 +1,756 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>SSSSY Email — Professional 2-Phase Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #1f2328;
+    background: #ffffff;
+    padding: 32px 16px 48px;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 16px; font-weight: 700; margin: 32px 0 10px; color: #1f2328; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 14px; font-weight: 600; margin: 18px 0 6px; color: #1f2328; }
+  h4 { font-size: 13px; font-weight: 600; margin: 12px 0 4px; color: #3b82d4; }
+  p { margin-bottom: 8px; color: #1f2328; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 28px; }
+  .phase-header {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #3b82d4;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 20px 0 14px;
+  }
+  .phase-header.phase2 { border-left-color: #7c5cd8; }
+  .phase-header .phase-tag {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #3b82d4;
+    margin-bottom: 3px;
+  }
+  .phase-header.phase2 .phase-tag { color: #7c5cd8; }
+  .phase-header .phase-title { font-size: 17px; font-weight: 700; }
+  .phase-header .phase-desc { font-size: 13px; color: #57606a; margin-top: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 13px; }
+  th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 7px 10px; text-align: left; font-weight: 600; color: #1f2328; }
+  td { border: 1px solid #e5e7eb; padding: 6px 10px; vertical-align: top; }
+  td:first-child { font-weight: 500; white-space: nowrap; }
+  .yes { color: #1a7f37; font-weight: 600; }
+  .no { color: #cf222e; font-weight: 600; }
+  .partial { color: #9a6700; font-weight: 600; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-done { background: #dafbe1; color: #1a7f37; }
+  .badge-fix { background: #fff8c5; color: #9a6700; }
+  .badge-new { background: #ddf4ff; color: #0969da; }
+  .badge-p2 { background: #f0e5ff; color: #7c5cd8; }
+  pre {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    padding: 12px 14px;
+    font-family: "Consolas", "SFMono-Regular", monospace;
+    font-size: 12px;
+    overflow-x: auto;
+    margin: 8px 0 14px;
+    white-space: pre;
+  }
+  code { font-family: "Consolas", "SFMono-Regular", monospace; font-size: 12px; background: #f7f8fa; padding: 1px 5px; border-radius: 3px; border: 1px solid #e5e7eb; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 3px; }
+  .qa-block {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  .qa-q {
+    background: #f7f8fa;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 13px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #0969da;
+  }
+  .qa-a {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .callout {
+    background: #fff8c5;
+    border: 1px solid #d4a72c;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-size: 13px;
+  }
+  .callout.info { background: #ddf4ff; border-color: #54aeff; }
+  .callout.success { background: #dafbe1; border-color: #4ac26b; }
+  .callout.purple { background: #f0e5ff; border-color: #a371f7; }
+  .step-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+  .step-num {
+    min-width: 24px; height: 24px;
+    background: #3b82d4; color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-num.p2 { background: #7c5cd8; }
+  .step-content { flex: 1; }
+  .cost-table td:last-child { text-align: right; font-weight: 600; }
+  .cost-table tfoot td { background: #f7f8fa; font-weight: 700; }
+  .arch-box {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 14px;
+    margin: 10px 0;
+    font-size: 12px;
+    font-family: "Consolas", "SFMono-Regular", monospace;
+    background: #f7f8fa;
+    line-height: 1.8;
+  }
+  .separator { border: none; border-top: 2px solid #e5e7eb; margin: 36px 0; }
+  footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 12px;
+    color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>SSSSY Email System</h1>
+  <p class="subtitle">Professional 2-Phase Implementation Plan · Syrian Soil Science Society · ssssyria.org</p>
+
+  
+  <h2>Your Question: After Deployment — admin@ssssyria.org and info@ssssyria.org</h2>
+
+  <div class="qa-block">
+    <div class="qa-q">Q: After deployment, do I automatically have admin@ssssyria.org and info@ssssyria.org? How do I access them?</div>
+    <div class="qa-a">
+      <p><strong>Short answer:</strong> NOT automatically — these are two different kinds of addresses that require two different setups.</p>
+
+      <h4>admin@ssssyria.org — Website Admin Login</h4>
+      <p>This is a <strong>user account</strong> in the database (seeded in <code>V1__users_roles.sql</code>). It is the website login only.</p>
+      <ul>
+        <li>Username: <code>admin</code>, Email: <code>admin@ssssyria.org</code>, Password: <code>admin123</code></li>
+        <li>You access this at <code>https://ssssyria.org/auth/login</code> → goes to <code>/admin</code> dashboard</li>
+        <li>This is <strong>NOT</strong> a real email inbox — it's just the email field on your website user account</li>
+        <li>You cannot receive emails sent to <code>admin@ssssyria.org</code> unless you set up Mailcow (Phase 2)</li>
+      </ul>
+
+      <h4>info@ssssyria.org — Contact/Info Email</h4>
+      <p>This address appears in footer and contact settings but it is <strong>just a display string</strong> stored in site settings. It is not a real inbox either.</p>
+      <ul>
+        <li>Right now: shows as contact email on the public website</li>
+        <li>Visitors who email it: nothing happens (no server receives it)</li>
+        <li>To receive emails at <code>info@ssssyria.org</code>: you need Mailcow (Phase 2) OR simply forward DNS MX to Gmail/Google Workspace</li>
+      </ul>
+
+      <h4>How to receive emails at admin@ and info@ WITHOUT Mailcow (Phase 1 workaround):</h4>
+      <ul>
+        <li><strong>Option A — Google Workspace:</strong> Add your domain to Google Workspace ($6/mo), set MX records → you get real Gmail at admin@ssssyria.org</li>
+        <li><strong>Option B — Zoho Mail Free:</strong> Zoho Mail free tier supports 5 users, real IMAP inbox — set MX records to Zoho, get admin@ and info@ for free</li>
+        <li><strong>Option C — Mailcow (Phase 2):</strong> Full self-hosted solution on your own VPS — covered below</li>
+      </ul>
+
+      <div class="callout info">
+        <strong>Recommendation:</strong> In Phase 1, use <strong>Zoho Mail free</strong> for admin@ssssyria.org and info@ssssyria.org. It's free, takes 15 minutes, and you access it via webmail at mail.zoho.com or Outlook/iPhone. Then Phase 2 (Mailcow) handles member email accounts like ahmad.hassan@ssssyria.org.
+      </div>
+    </div>
+  </div>
+
+  <hr class="separator" />
+
+  
+  <h2>Current State Analysis — What Exists Today</h2>
+
+  <h3>Backend (Built ✅)</h3>
+  <table>
+    <thead><tr><th>Component</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>email_accounts table + entity</td><td><span class="yes">✅ Done</span></td><td>Full schema: quota, used_bytes, auto_reply, signature, forward_to, IMAP fields</td></tr>
+      <tr><td>email_folders table (6 system folders)</td><td><span class="yes">✅ Done</span></td><td>Inbox, Sent, Drafts, Trash, Spam, Archive — auto-created on provision</td></tr>
+      <tr><td>email_messages + email_recipients tables</td><td><span class="yes">✅ Done</span></td><td>Threading, delivery_status, bounce_message, is_draft, is_scheduled</td></tr>
+      <tr><td>email_attachments table</td><td><span class="yes">✅ Done</span></td><td>mime_type, size_bytes, storage_path, is_inline</td></tr>
+      <tr><td>email_contacts + groups tables</td><td><span class="yes">✅ Done</span></td><td>Personal address book with groups</td></tr>
+      <tr><td>email_aliases table</td><td><span class="yes">✅ Done</span></td><td>Additional sending addresses per account</td></tr>
+      <tr><td>email_rules table</td><td><span class="yes">✅ Done</span></td><td>JSONB conditions + actions, auto-filter engine</td></tr>
+      <tr><td>email_distribution_lists</td><td><span class="yes">✅ Done</span></td><td>Mailing lists with members, public/private, allow_external</td></tr>
+      <tr><td>email_scheduled_sends</td><td><span class="yes">✅ Done</span></td><td>Schedule emails for future delivery (60s cron)</td></tr>
+      <tr><td>email_quota_logs</td><td><span class="yes">✅ Done</span></td><td>Audit trail for quota changes</td></tr>
+      <tr><td>EmailAccountService (full CRUD)</td><td><span class="yes">✅ Done</span></td><td>provisionAccount, createSystemFolders, quota management, admin operations, bulk ops</td></tr>
+      <tr><td>EmailSendService (send/reply/forward/draft)</td><td><span class="yes">✅ Done</span></td><td>Rate limiting 50/min, internal delivery bypass, SMTP fallback, thread handling</td></tr>
+      <tr><td>Internal delivery (DB-only, no SMTP)</td><td><span class="yes">✅ Done</span></td><td>deliverInternal() — bypasses SMTP for @ssssyria.org addresses</td></tr>
+      <tr><td>EmailFolderService</td><td><span class="yes">✅ Done</span></td><td>Create/rename/delete custom folders</td></tr>
+      <tr><td>EmailMessageService</td><td><span class="yes">✅ Done</span></td><td>Fetch, read, star, flag, search, paginate</td></tr>
+      <tr><td>EmailRuleExecutionService</td><td><span class="yes">✅ Done</span></td><td>Auto-apply rules on message delivery</td></tr>
+      <tr><td>EmailSyncService (IMAP poller)</td><td><span class="yes">✅ Done</span></td><td>5-min cron — ready, waits for real IMAP server</td></tr>
+      <tr><td>EmailScheduledSendService</td><td><span class="yes">✅ Done</span></td><td>60s cron processes scheduled sends</td></tr>
+      <tr><td>EmailAttachmentService</td><td><span class="yes">✅ Done</span></td><td>File attachment upload/download via MinIO</td></tr>
+      <tr><td>All REST API endpoints</td><td><span class="yes">✅ Done</span></td><td>11 controllers: account, compose, messages, folders, aliases, rules, contacts, groups, scheduled, directory, admin</td></tr>
+      <tr><td>Auto-provision on user registration</td><td><span class="partial">⚠️ Gap</span></td><td>EmailAccountService injected in AuthService but <strong>not called</strong> in register()</td></tr>
+      <tr><td>MailcowApiService</td><td><span class="no">❌ Missing</span></td><td>Class does not exist — needed for Phase 2</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Frontend (Built ✅)</h3>
+  <table>
+    <thead><tr><th>Page</th><th>Path</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Admin Email Dashboard</td><td>/admin/email/page.tsx</td><td><span class="yes">✅ Done</span></td></tr>
+      <tr><td>Admin Email Inbox</td><td>/admin/email/inbox/page.tsx</td><td><span class="yes">✅ Done</span></td></tr>
+      <tr><td>Member Inbox (full UI)</td><td>/email/inbox</td><td><span class="no">❌ Not found in codebase</span></td></tr>
+      <tr><td>Member Compose</td><td>/email/compose</td><td><span class="no">❌ Not found in codebase</span></td></tr>
+      <tr><td>Member Sent/Drafts/Trash/Spam</td><td>/email/*</td><td><span class="no">❌ Not found in codebase</span></td></tr>
+      <tr><td>Member Settings (signature, auto-reply)</td><td>/email/settings</td><td><span class="no">❌ Not found in codebase</span></td></tr>
+      <tr><td>Contact Book + Groups</td><td>/email/contacts</td><td><span class="no">❌ Not found in codebase</span></td></tr>
+    </tbody>
+  </table>
+
+  <hr class="separator" />
+
+  
+  <div class="phase-header">
+    <div class="phase-tag">Phase 1</div>
+    <div class="phase-title">Internal Member Email Platform</div>
+    <div class="phase-desc">No external mail server required · All data in PostgreSQL · Members communicate on-platform like LinkedIn messages</div>
+  </div>
+
+  <h3>Phase 1 Goal</h3>
+  <p>Every registered member gets a <code>firstname.lastname@ssssyria.org</code> inbox accessible through the SSSSY website. Members can message each other in real-time. No Mailcow VPS needed — everything runs on the existing Railway backend.</p>
+
+  <h3>What Phase 1 Delivers</h3>
+  <table>
+    <thead><tr><th>Feature</th><th>How it works</th></tr></thead>
+    <tbody>
+      <tr><td>Auto-provisioned inbox on registration</td><td>Fix AuthService.register() to call provisionAccount(). Done in one line.</td></tr>
+      <tr><td>Internal messaging (member → member)</td><td>deliverInternal() writes directly to DB inbox. Zero SMTP needed.</td></tr>
+      <tr><td>Full inbox UI on website</td><td>Build /email/* Next.js pages calling existing APIs.</td></tr>
+      <tr><td>Compose + Reply + Forward + Draft</td><td>All EmailComposeController endpoints ready. Need frontend pages.</td></tr>
+      <tr><td>6 system folders</td><td>Auto-created on provisionAccount: Inbox, Sent, Drafts, Trash, Spam, Archive</td></tr>
+      <tr><td>Custom folders</td><td>POST /api/email/folders — create unlimited custom folders</td></tr>
+      <tr><td>Quota tracking (1 GB default)</td><td>usedBytes updated on every send. GET /api/email/account/quota.</td></tr>
+      <tr><td>File attachments</td><td>Upload to MinIO, stored in email_attachments table.</td></tr>
+      <tr><td>Email rules (auto-filter)</td><td>JSONB conditions engine — move/label messages on arrival.</td></tr>
+      <tr><td>Scheduled sends</td><td>60s cron processes email_scheduled_sends table.</td></tr>
+      <tr><td>Personal address book</td><td>email_contacts + groups tables. Contact search, groups.</td></tr>
+      <tr><td>Email aliases</td><td>Multiple sending addresses per account.</td></tr>
+      <tr><td>Auto-reply (vacation responder)</td><td>auto_reply_enabled, auto_reply_subject, auto_reply_body with date range.</td></tr>
+      <tr><td>Email signature</td><td>signature field on email_accounts, appended on compose.</td></tr>
+      <tr><td>Email forwarding</td><td>forward_to field. Automatically forward to external address.</td></tr>
+      <tr><td>Distribution lists</td><td>Mailing lists. Admin manages. Members can subscribe to public lists.</td></tr>
+      <tr><td>Read receipts + star + flag</td><td>is_read, is_starred, is_flagged columns on email_messages.</td></tr>
+      <tr><td>Thread view</td><td>thread_id groups related messages. GET /api/email/thread/{id}.</td></tr>
+      <tr><td>Message search</td><td>Search by subject, sender, body. Full-text or ILIKE queries.</td></tr>
+      <tr><td>Admin quota management</td><td>Admin sets per-account quotas. Bulk operations. Storage report.</td></tr>
+      <tr><td>Admin account activate/deactivate</td><td>toggleActive(), deactivateAccount() when member leaves.</td></tr>
+      <tr><td>Real-time notifications</td><td>NotificationService called in deliverInternal() — WebSocket push.</td></tr>
+      <tr><td>Rate limiting</td><td>50 sends per minute per account — already enforced in EmailSendService.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Phase 1 — Implementation Tasks</h3>
+
+  <div class="step-row">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <strong>Fix: Auto-provision on Registration</strong> <span class="badge badge-fix">1-line fix</span><br />
+      In <code>AuthService.register()</code> — after <code>userRepository.save(user)</code>, add:<br />
+      <pre>emailAccountService.provisionAccount(user.getId());</pre>
+      This creates the DB email account + 6 system folders automatically on every new registration.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <strong>Provision existing members</strong> <span class="badge badge-fix">Admin SQL</span><br />
+      For existing users who registered before this fix, call the API:<br />
+      <pre>POST /api/email/account/provision  (for each user without an email account)</pre>
+      Or write a <code>@PostConstruct</code> one-time migration service that provisions all users missing an email account.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <strong>Build Member Inbox UI — /email/inbox</strong> <span class="badge badge-new">Frontend</span><br />
+      A Gmail-style layout: left sidebar (folders + unread counts), message list (sender, subject, preview, date), reading pane.
+      Calls: <code>GET /api/email/folders</code>, <code>GET /api/email/messages?folderId=</code>, <code>PUT /api/email/messages/{id}/read</code>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <strong>Build Compose Page — /email/compose</strong> <span class="badge badge-new">Frontend</span><br />
+      To/Cc/Bcc fields with address autocomplete (from contacts + directory), subject, rich text body, attachment upload, scheduled send option.
+      Calls: <code>POST /api/email/compose/send</code>, <code>POST /api/email/compose/draft</code>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <strong>Build Message View + Thread — /email/message/[id]</strong> <span class="badge badge-new">Frontend</span><br />
+      Full message display: sender avatar, HTML body rendered safely, attachments list, reply/reply-all/forward buttons, thread chain view.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">6</div>
+    <div class="step-content">
+      <strong>Build Folder Pages — Sent, Drafts, Trash, Spam, Archive, Starred, Scheduled</strong> <span class="badge badge-new">Frontend</span><br />
+      Reuse the inbox list component with different <code>folderId</code> or special filter (is_starred, is_draft, is_scheduled). 7 pages, most share the same component.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">7</div>
+    <div class="step-content">
+      <strong>Build Email Settings — /email/settings</strong> <span class="badge badge-new">Frontend</span><br />
+      Tabs: Display Name · Password · Signature (rich text) · Auto-Reply (enable/disable, date range, message) · Forwarding · Aliases.
+      Calls: <code>PUT /api/email/account</code>, <code>POST /api/email/aliases</code>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">8</div>
+    <div class="step-content">
+      <strong>Build Contact Book — /email/contacts</strong> <span class="badge badge-new">Frontend</span><br />
+      Personal address book with add/edit/delete, groups management, import from member directory.
+      Calls: <code>GET/POST/DELETE /api/email/contacts</code>, <code>GET /api/email/contact-groups</code>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">9</div>
+    <div class="step-content">
+      <strong>Build Email Rules — /email/settings/rules</strong> <span class="badge badge-new">Frontend</span><br />
+      Visual rule builder: IF [from contains X] OR [subject contains Y] THEN [move to folder Z / mark as read / star].
+      Calls: <code>GET/POST/PUT/DELETE /api/email/rules</code>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">10</div>
+    <div class="step-content">
+      <strong>Real-time Inbox Updates</strong> <span class="badge badge-fix">Enhancement</span><br />
+      WebSocket is already built in the backend. Subscribe to inbox events on the /email pages.
+      When a new message arrives via <code>deliverInternal()</code>, push update → inbox count badge updates live.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">11</div>
+    <div class="step-content">
+      <strong>Admin Email Account Management UI (already exists, enhance)</strong> <span class="badge badge-fix">Enhancement</span><br />
+      The admin panel at <code>/admin/email/page.tsx</code> exists. Add: bulk operations (activate/deactivate/set quota), password reset, storage report chart, mailing list management.
+    </div>
+  </div>
+
+  <h3>Phase 1 — Architecture</h3>
+  <div class="arch-box">Member Registration
+  │
+  ├─► AuthService.register()
+  │    └─► emailAccountService.provisionAccount(userId)
+  │         ├─► INSERT into email_accounts (address, quota, password_hash)
+  │         └─► INSERT 6 rows into email_folders (Inbox, Sent, Drafts, Trash, Spam, Archive)
+  │
+  └─► Member accesses https://ssssyria.org/email/inbox
+       │
+       ├─► GET /api/email/folders        → sidebar folder list with unread counts
+       ├─► GET /api/email/messages?      → paginated message list
+       ├─► GET /api/email/messages/{id}  → read full message (marks as read)
+       │
+       └─► Compose New Message
+            ├─► POST /api/email/compose/send
+            │    ├─► Save to Sent folder (DB)
+            │    ├─► IF recipient is @ssssyria.org:
+            │    │    └─► deliverInternal() → INSERT into recipient's Inbox (DB)
+            │    │        └─► WebSocket push → recipient's UI updates live
+            │    └─► IF recipient is @gmail.com:
+            │         └─► sendViaSmtpInternal() → Spring Mail → Brevo SMTP
+            │             (works in Phase 1, but delivery depends on SPF — may land in spam)
+            │
+            └─► POST /api/email/compose/draft → saves to Drafts folder</div>
+
+  <h3>Phase 1 — What you cannot do (honest limits)</h3>
+  <table>
+    <thead><tr><th>Limitation</th><th>Workaround in Phase 1</th></tr></thead>
+    <tbody>
+      <tr><td>Receive email from Gmail/Outlook</td><td>Not possible. Use Zoho Mail for admin@ and info@ addresses (see above).</td></tr>
+      <tr><td>Access inbox via Outlook/iPhone/Thunderbird</td><td>Not possible. Web UI on website only.</td></tr>
+      <tr><td>Send to Gmail reliably (no spam filtering issues)</td><td>Using Brevo SMTP works for transactional mail. Member-to-member mail uses internal delivery.</td></tr>
+      <tr><td>IMAP sync</td><td>Not needed in Phase 1 — all internal delivery is DB-only.</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="separator" />
+
+  
+  <div class="phase-header phase2">
+    <div class="phase-tag">Phase 2</div>
+    <div class="phase-title">Real Mail Server — Mailcow Integration</div>
+    <div class="phase-desc">Deploy Mailcow on Hetzner VPS · Real IMAP/SMTP for all members · External email send/receive · Outlook/iPhone support</div>
+  </div>
+
+  <h3>Phase 2 Goal</h3>
+  <p>Every member's <code>@ssssyria.org</code> inbox becomes a <strong>real mailbox</strong>. Members can receive emails from Gmail, send to Outlook, and access their inbox via Outlook, iPhone, or Thunderbird. The DB still stores a copy of every message for the website inbox UI.</p>
+
+  <h3>Phase 2 New Capabilities</h3>
+  <table>
+    <thead><tr><th>Feature</th><th>How it works in Phase 2</th></tr></thead>
+    <tbody>
+      <tr><td>Receive email from Gmail/Outlook/world</td><td>MX record → Mailcow server receives → IMAP sync → DB inbox on website</td></tr>
+      <tr><td>Send to Gmail/Outlook reliably</td><td>Mailcow SMTP with SPF, DKIM, DMARC — authenticated, non-spam</td></tr>
+      <tr><td>Access via Outlook/Thunderbird/iPhone</td><td>IMAP at mail.ssssyria.org:993, SMTP at mail.ssssyria.org:587</td></tr>
+      <tr><td>Auto-create Mailcow mailbox on member registration</td><td>MailcowApiService.createMailbox() called in provisionAccount()</td></tr>
+      <tr><td>Virus scanning (ClamAV)</td><td>Mailcow bundles ClamAV — automatically scans attachments</td></tr>
+      <tr><td>Spam filtering (rspamd)</td><td>Mailcow bundles rspamd — AI spam scoring, auto-quarantine</td></tr>
+      <tr><td>DKIM signature (email authentication)</td><td>Mailcow auto-generates DKIM keys — set DNS TXT record</td></tr>
+      <tr><td>admin@ssssyria.org real inbox</td><td>Create mailbox manually in Mailcow admin UI at mail.ssssyria.org/admin</td></tr>
+      <tr><td>info@ssssyria.org real inbox</td><td>Create mailbox in Mailcow admin UI. Or create alias → forwards to admin@</td></tr>
+      <tr><td>Mailing list via Mailcow SOGo</td><td>Native mailing list support in Mailcow</td></tr>
+      <tr><td>Webmail fallback</td><td>Mailcow includes SOGo webmail at mail.ssssyria.org — alternative to SSSSY website UI</td></tr>
+      <tr><td>IMAP sync (website inbox from external email)</td><td>EmailSyncService polls IMAP every 5 min, syncs messages to DB for website inbox UI</td></tr>
+      <tr><td>Quota enforced both on server + website</td><td>Mailcow enforces per-mailbox quota, website tracks usedBytes in DB</td></tr>
+      <tr><td>Password sync</td><td>On password change in website, MailcowApiService.updatePassword() calls Mailcow API</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Phase 2 — Implementation Tasks</h3>
+
+  <div class="step-row">
+    <div class="step-num p2">1</div>
+    <div class="step-content">
+      <strong>Deploy Mailcow on Hetzner CX22 VPS</strong> <span class="badge badge-p2">Infrastructure</span><br />
+      Hetzner CX22: 2 vCPU, 4 GB RAM, 40 GB SSD — ~$4-6/mo. Mailcow minimum requirement: 6 GB RAM (use CX32 at ~$8/mo for safety).
+      <pre>git clone https://github.com/mailcow/mailcow-dockerized
+cd mailcow-dockerized
+./generate_config.sh  # MAILCOW_HOSTNAME=mail.ssssyria.org
+docker compose pull &amp;&amp; docker compose up -d</pre>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">2</div>
+    <div class="step-content">
+      <strong>Configure DNS Records</strong> <span class="badge badge-p2">DNS</span><br />
+      Add these records to your domain registrar (Namecheap, Cloudflare, etc.):
+      <pre>Type    Name                  Value
+──────────────────────────────────────────────────────
+A       mail                  [Hetzner VPS IP]
+MX      @                     mail.ssssyria.org  (Priority 10)
+TXT     @                     v=spf1 mx -all
+TXT     dkim._domainkey       [value from Mailcow admin panel]
+TXT     _dmarc                v=DMARC1; p=quarantine; rua=mailto:admin@ssssyria.org
+CNAME   autoconfig            mail.ssssyria.org   (auto-config for Outlook/Thunderbird)
+CNAME   autodiscover          mail.ssssyria.org   (auto-config for Outlook)</pre>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">3</div>
+    <div class="step-content">
+      <strong>Create admin@ and info@ mailboxes in Mailcow UI</strong> <span class="badge badge-p2">Manual Setup</span><br />
+      Go to <code>https://mail.ssssyria.org/admin</code> → Mailboxes → Add Mailbox.
+      Create: <code>admin@ssssyria.org</code> and <code>info@ssssyria.org</code>.
+      Access via: <code>https://mail.ssssyria.org</code> (SOGo webmail) or configure in Outlook/iPhone using IMAP settings.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">4</div>
+    <div class="step-content">
+      <strong>Create MailcowApiService.java</strong> <span class="badge badge-p2">Backend</span><br />
+      New Spring service wrapping the Mailcow REST API. Key methods:
+      <pre>@Service
+public class MailcowApiService {
+    // POST /api/v1/add/mailbox
+    public void createMailbox(String address, String password, long quotaMB) { }
+    // POST /api/v1/edit/mailbox — change password
+    public void updatePassword(String address, String newPassword) { }
+    // POST /api/v1/delete/mailbox
+    public void deleteMailbox(String address) { }
+    // GET /api/v1/get/mailbox/{address} — check if exists
+    public MailcowMailboxInfo getMailbox(String address) { }
+    // POST /api/v1/add/alias
+    public void createAlias(String alias, String target) { }
+    // GET /api/v1/get/quota/{address}
+    public long getQuotaUsed(String address) { }
+}</pre>
+      Config: <code>MAILCOW_API_URL</code>, <code>MAILCOW_API_KEY</code> in environment variables.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">5</div>
+    <div class="step-content">
+      <strong>Integrate Mailcow into EmailAccountService.provisionAccount()</strong> <span class="badge badge-p2">Backend</span><br />
+      After saving the DB record, call Mailcow API:
+      <pre>// After emailAccountRepository.save(account):
+if (mailcowEnabled) {
+    mailcowApiService.createMailbox(
+        emailAddress,
+        tempPassword,          // same password as DB
+        defaultQuota / 1024 / 1024  // convert bytes → MB
+    );
+}</pre>
+      Use a feature flag <code>MAILCOW_ENABLED=true</code> so Phase 1 still works without Mailcow.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">6</div>
+    <div class="step-content">
+      <strong>Update IMAP Sync to use Mailcow server</strong> <span class="badge badge-p2">Backend</span><br />
+      Change environment variables:
+      <pre>SSSSY_EMAIL_IMAP_HOST=mail.ssssyria.org
+SSSSY_EMAIL_IMAP_PORT=993
+SSSSY_EMAIL_IMAP_SSL=true</pre>
+      EmailSyncService will now poll the real mailboxes every 5 minutes and copy incoming external emails to the PostgreSQL DB for the website inbox UI.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">7</div>
+    <div class="step-content">
+      <strong>Update Outgoing SMTP to use Mailcow</strong> <span class="badge badge-p2">Backend</span><br />
+      For member-to-external emails, switch from Brevo to Mailcow SMTP:
+      <pre>SPRING_MAIL_HOST=mail.ssssyria.org
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=admin@ssssyria.org  # relay account
+SPRING_MAIL_PASSWORD=[mailcow password]</pre>
+      Keep Brevo for transactional emails (password reset, notifications) separately.
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">8</div>
+    <div class="step-content">
+      <strong>Migrate existing members to Mailcow mailboxes</strong> <span class="badge badge-p2">Migration</span><br />
+      Write a one-time migration endpoint or Spring Boot @PostConstruct bean that:
+      <ul>
+        <li>Fetches all existing email_accounts where Mailcow account does not yet exist</li>
+        <li>Calls <code>mailcowApiService.createMailbox()</code> for each</li>
+        <li>Generates new temp password, stores in DB, sends email to member with their IMAP credentials</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">9</div>
+    <div class="step-content">
+      <strong>Add IMAP Credentials Display on Email Settings Page</strong> <span class="badge badge-p2">Frontend</span><br />
+      Show in /email/settings — "Configure in Outlook/iPhone":
+      <pre>Incoming Mail (IMAP):  mail.ssssyria.org  Port: 993  SSL: Yes
+Outgoing Mail (SMTP):  mail.ssssyria.org  Port: 587  STARTTLS: Yes
+Username:              ahmad.hassan@ssssyria.org
+Password:              [your email password]</pre>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">10</div>
+    <div class="step-content">
+      <strong>Sync Quota Between Mailcow and DB</strong> <span class="badge badge-p2">Backend</span><br />
+      Add a daily cron task that calls <code>mailcowApiService.getQuotaUsed(address)</code> for each account and updates <code>email_accounts.used_bytes</code> in DB. This keeps the website quota display accurate when mail arrives from outside (not via internal delivery).
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num p2">11</div>
+    <div class="step-content">
+      <strong>Enable ClamAV Antivirus</strong> <span class="badge badge-p2">Security</span><br />
+      Mailcow bundles ClamAV. After confirming it runs on the VPS:
+      <pre>CLAMAV_ENABLED=true
+CLAMAV_HOST=mail.ssssyria.org
+CLAMAV_PORT=3310</pre>
+      EmailAttachmentService already has ClamAV scanning logic — just needs the server address.
+    </div>
+  </div>
+
+  <h3>Phase 2 — Architecture</h3>
+  <div class="arch-box">Member Registration (Phase 2)
+  │
+  ├─► AuthService.register()
+  │    └─► emailAccountService.provisionAccount(userId)
+  │         ├─► INSERT into email_accounts (DB)
+  │         ├─► createSystemFolders() (DB)
+  │         └─► mailcowApiService.createMailbox() ──────► Mailcow REST API
+  │                                                         └─► Real mailbox created on mail server
+  │
+  Member receives external email (Gmail → Ahmad):
+  │
+  ├─► Gmail sends to ahmad.hassan@ssssyria.org
+  ├─► DNS MX record → mail.ssssyria.org (Mailcow server)
+  ├─► Mailcow receives, rspamd spam check, ClamAV virus check
+  ├─► Stored in Mailcow Dovecot (IMAP server)
+  │
+  └─► EmailSyncService (every 5 min via IMAP)
+       ├─► Connects to mail.ssssyria.org:993 (IMAP SSL)
+       ├─► Fetches new messages for each active account
+       └─► INSERT into email_messages (DB)
+           └─► WebSocket push → Ahmad's website inbox updates live
+
+  Member sends to external (Ahmad → Gmail):
+  │
+  ├─► POST /api/email/compose/send
+  ├─► IF external recipient:
+  │    └─► sendViaSmtpInternal()
+  │         └─► Spring Mail → mail.ssssyria.org:587 (Mailcow SMTP)
+  │              └─► Mailcow adds DKIM signature
+  │                  └─► Delivered to Gmail inbox (not spam, authenticated)
+  │
+  └─► COPY saved to Ahmad's Sent folder (DB)</div>
+
+  <hr class="separator" />
+
+  
+  <h2>Cost Breakdown &amp; Timeline</h2>
+
+  <h3>Phase 1 Costs (No New Infrastructure)</h3>
+  <table class="cost-table">
+    <thead><tr><th>Item</th><th>Cost/mo</th></tr></thead>
+    <tbody>
+      <tr><td>Railway (Backend + PostgreSQL)</td><td>$5</td></tr>
+      <tr><td>Netlify / Vercel (Frontend)</td><td>$0</td></tr>
+      <tr><td>Brevo SMTP (transactional email)</td><td>$0 (300/day free)</td></tr>
+      <tr><td>Zoho Mail (admin@ + info@ real inboxes)</td><td>$0 (5 users free)</td></tr>
+      <tr><td>Domain (ssssyria.org)</td><td>~$0.75</td></tr>
+    </tbody>
+    <tfoot><tr><td>Phase 1 Total</td><td>~$5.75/mo</td></tr></tfoot>
+  </table>
+
+  <h3>Phase 2 Additional Costs</h3>
+  <table class="cost-table">
+    <thead><tr><th>Item</th><th>Cost/mo</th></tr></thead>
+    <tbody>
+      <tr><td>Hetzner CX32 VPS (Mailcow: 4 vCPU, 8 GB RAM)</td><td>~$8</td></tr>
+      <tr><td>Hetzner Floating IP (static IP for MX)</td><td>~$3</td></tr>
+      <tr><td>Phase 1 costs</td><td>$5.75</td></tr>
+    </tbody>
+    <tfoot><tr><td>Phase 2 Total</td><td>~$17/mo</td></tr></tfoot>
+  </table>
+
+  <h3>Timeline Estimate</h3>
+  <table>
+    <thead><tr><th>Task</th><th>Effort</th></tr></thead>
+    <tbody>
+      <tr><td>Phase 1: Fix auto-provision (Step 1)</td><td>30 minutes</td></tr>
+      <tr><td>Phase 1: Build Inbox + Compose UI (Steps 3-5)</td><td>2-3 days</td></tr>
+      <tr><td>Phase 1: Build all folder pages (Step 6)</td><td>1 day</td></tr>
+      <tr><td>Phase 1: Settings + Contacts + Rules (Steps 7-9)</td><td>2 days</td></tr>
+      <tr><td>Phase 1: Real-time + Admin enhancements (Steps 10-11)</td><td>1 day</td></tr>
+      <tr><td><strong>Phase 1 Total</strong></td><td><strong>~1 week</strong></td></tr>
+      <tr><td>Phase 2: Deploy Mailcow + DNS setup</td><td>2-4 hours</td></tr>
+      <tr><td>Phase 2: Build MailcowApiService (Steps 4-7)</td><td>1-2 days</td></tr>
+      <tr><td>Phase 2: Migration + sync + quota (Steps 8-10)</td><td>1 day</td></tr>
+      <tr><td>Phase 2: Frontend IMAP settings + testing</td><td>1 day</td></tr>
+      <tr><td><strong>Phase 2 Total</strong></td><td><strong>~4-5 days</strong></td></tr>
+    </tbody>
+  </table>
+
+  <hr class="separator" />
+
+  
+  <h2>How to Access admin@ and info@ — Step by Step</h2>
+
+  <h3>Option A: Zoho Mail Free (Recommended for Phase 1)</h3>
+  <ol>
+    <li>Go to <strong>mail.zoho.com</strong> → "Add my domain" → enter <code>ssssyria.org</code></li>
+    <li>Zoho will give you TXT record to verify domain ownership — add it in your domain registrar DNS</li>
+    <li>Add MX records: <code>mx.zoho.com</code> (priority 10), <code>mx2.zoho.com</code> (priority 20)</li>
+    <li>Create accounts: <code>admin@ssssyria.org</code> and <code>info@ssssyria.org</code></li>
+    <li>Access via browser: <code>https://mail.zoho.com</code> — login with your Zoho account</li>
+    <li>Or configure in Outlook/iPhone: IMAP <code>imap.zoho.com:993</code>, SMTP <code>smtp.zoho.com:465</code></li>
+  </ol>
+  <div class="callout success">Cost: $0/month. 5 mailboxes. 5 GB per mailbox. No credit card needed.</div>
+
+  <h3>Option B: Mailcow (Phase 2 — Self-hosted)</h3>
+  <ol>
+    <li>Deploy Mailcow on Hetzner VPS (as described in Phase 2 Step 1)</li>
+    <li>Open <code>https://mail.ssssyria.org/admin</code> — Mailcow admin panel</li>
+    <li>Go to Mailboxes → Add Mailbox → create <code>admin@ssssyria.org</code> and <code>info@ssssyria.org</code></li>
+    <li>Access webmail at <code>https://mail.ssssyria.org</code> (SOGo)</li>
+    <li>Or use Outlook: IMAP <code>mail.ssssyria.org:993</code>, SMTP <code>mail.ssssyria.org:587</code></li>
+  </ol>
+  <div class="callout purple">Cost: ~$11/mo for VPS. All member @ssssyria.org addresses also become real. Best long-term solution.</div>
+
+  <hr class="separator" />
+
+  
+  <h2>Complete Email Feature Inventory</h2>
+
+  <table>
+    <thead><tr><th>Feature</th><th>Phase 1</th><th>Phase 2</th></tr></thead>
+    <tbody>
+      <tr><td>Auto-provisioned @ssssyria.org address on registration</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Internal member-to-member messaging (on-platform)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Website inbox UI (read, list, folder)</td><td><span class="badge badge-new">Build</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Compose, reply, reply-all, forward</td><td><span class="badge badge-new">Build UI</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Draft save and send later</td><td><span class="badge badge-new">Build UI</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Scheduled sends</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>File attachments (via MinIO)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>6 system folders + custom folders</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Thread view (conversation grouping)</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Star, flag, mark read/unread</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Full-text search</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Quota tracking + display</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Signature (HTML)</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Auto-reply (vacation responder)</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Email forwarding to external address</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Email aliases (multiple send addresses)</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Inbox filter rules (JSONB conditions)</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Personal contact book</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Contact groups</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Distribution mailing lists</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Rate limiting (50 sends/min)</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Real-time inbox notification (WebSocket)</td><td><span class="yes">✅ wired</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Admin: manage all accounts, quotas, passwords</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Admin: bulk activate/deactivate/set quota</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Admin: storage usage report</td><td><span class="yes">✅ API ready</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Quota audit log</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Receive email from Gmail/Outlook</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Send to Gmail/Outlook (SPF/DKIM signed)</td><td><span class="partial">⚠️ via Brevo only</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Access via Outlook/iPhone/Thunderbird (IMAP)</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>IMAP sync (external email → website UI)</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+      <tr><td>Spam filtering (rspamd)</td><td><span class="no">❌</span></td><td><span class="yes">✅ Mailcow bundled</span></td></tr>
+      <tr><td>Virus scanning (ClamAV)</td><td><span class="no">❌</span></td><td><span class="yes">✅ Mailcow bundled</span></td></tr>
+      <tr><td>DKIM email authentication</td><td><span class="no">❌</span></td><td><span class="yes">✅ Mailcow auto</span></td></tr>
+      <tr><td>SOGo webmail (alternative to SSSSY UI)</td><td><span class="no">❌</span></td><td><span class="yes">✅ at mail.ssssyria.org</span></td></tr>
+      <tr><td>Mailcow admin panel for mailbox management</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Start here:</strong> Say "Build Phase 1" and I will immediately fix the auto-provision gap in AuthService and build all the frontend email inbox pages — inbox UI, compose, message view, folders, settings, contacts, and rules — ready in one session.
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

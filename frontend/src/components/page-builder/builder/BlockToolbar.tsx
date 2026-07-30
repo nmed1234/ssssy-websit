@@ -12,7 +12,6 @@ import { GripVertical, Copy, Trash2, Plus, MoreHorizontal } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { getBlockSchema } from "@/components/page-builder/schema/block-schema";
-import { useAuth } from "@/lib/auth-context";
 import { InlineComponentPicker } from "./InlineComponentPicker";
 import type { Block } from "@/types/block";
 
@@ -42,7 +41,6 @@ interface SaveAsPresetPopoverProps {
 }
 
 function SaveAsPresetPopover({ block, onClose }: SaveAsPresetPopoverProps) {
-  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [nameEn, setNameEn] = useState("");
   const [nameAr, setNameAr] = useState("");
@@ -67,7 +65,6 @@ function SaveAsPresetPopover({ block, onClose }: SaveAsPresetPopoverProps) {
     }
     setSaving(true);
     try {
-      const token = user?.accessToken;
       const body = {
         nameEn: nameEn.trim(),
         nameAr: nameAr.trim(),
@@ -76,14 +73,13 @@ function SaveAsPresetPopover({ block, onClose }: SaveAsPresetPopoverProps) {
         dataJson: { ...block.props, children: block.children },
         stylingJson: {},
       };
+      // Use credentials: "include" so the httpOnly accessToken cookie is sent.
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL ?? "/api"}/component-presets`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(body),
         }
       );

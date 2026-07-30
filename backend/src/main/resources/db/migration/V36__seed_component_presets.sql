@@ -134,7 +134,7 @@ VALUES
 
 ('Contact Info Block',      'كتلة معلومات التواصل',      'contact-info',
   '{}'::jsonb,
-  '{"titleEn":"Contact Information","address":"Damascus, Syria","phone":"+963 11 XXX XXXX","email":"info@ssssy.org.sy"}'::jsonb,
+  '{"titleEn":"Contact Information","address":"Damascus, Syria","phone":"+963 11 XXX XXXX","email":"info@ssssyria.org"}'::jsonb,
   '{"bgType":"solid","backgroundColor":"#3E2723","color":"#FFF8E1","padding":"py-16"}'::jsonb),
 
 -- ── NEWSLETTER ───────────────────────────────────────────────────────────────

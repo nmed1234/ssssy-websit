@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/language-context";
 import { useSiteName } from "@/lib/SiteSettingsContext";
@@ -17,8 +18,10 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [logoLightboxOpen, setLogoLightboxOpen] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t, direction, language } = useLanguage();
   const siteName = useSiteName(language);
   const siteNameEn = "Soil Science Society of Syria (SSSS)";
@@ -30,7 +33,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login({ username, password });
-      router.push("/admin");
+      // Honour ?redirect= param so protected-page links work after login.
+      const redirectTo = searchParams.get("redirect") || "/admin";
+      router.replace(redirectTo);
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -64,15 +69,24 @@ export default function LoginPage() {
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center text-center px-12 max-w-lg">
-          {/* Logo */}
+          {/* Logo — click to open lightbox */}
           <div className="mb-8 drop-shadow-2xl">
-            <img
-              src="/logo.svg"
-              alt={siteName}
-              width={160}
-              height={160}
-              className="w-40 h-40 object-contain filter drop-shadow-lg"
-            />
+            <button
+              type="button"
+              onClick={() => setLogoLightboxOpen(true)}
+              className="group relative block cursor-zoom-in focus:outline-none"
+              title="View full logo"
+            >
+              <img
+                src="/logo.png"
+                alt={siteName}
+                width={160}
+                height={160}
+                className="w-40 h-40 object-contain filter drop-shadow-lg transition-transform duration-300 group-hover:scale-105"
+              />
+              {/* glow ring on hover */}
+              <span className="absolute inset-0 rounded-full ring-0 group-hover:ring-4 group-hover:ring-white/30 transition-all duration-300" />
+            </button>
           </div>
 
           {/* Organization name */}
@@ -141,14 +155,28 @@ export default function LoginPage() {
 
           {/* Mobile-only logo */}
           <div className="lg:hidden flex flex-col items-center mb-8">
-            <img src="/logo.svg" alt="Logo" className="w-16 h-16 object-contain mb-2" />
+            <button
+              type="button"
+              onClick={() => setLogoLightboxOpen(true)}
+              className="group relative cursor-zoom-in focus:outline-none mb-2"
+            >
+              <img src="/logo.png" alt="Logo" className="w-16 h-16 object-contain transition-transform duration-200 group-hover:scale-110" />
+              <span className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/5 transition-colors duration-200" />
+            </button>
             <p className="text-sm font-semibold text-soil-dark">{siteName}</p>
           </div>
 
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-2.5 mb-6">
-              <img src="/logo.svg" alt="Logo" className="hidden lg:block w-10 h-10 object-contain" />
+              <button
+                type="button"
+                onClick={() => setLogoLightboxOpen(true)}
+                className="group hidden lg:block relative cursor-zoom-in focus:outline-none rounded-lg overflow-hidden"
+              >
+                <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain transition-transform duration-200 group-hover:scale-110" />
+                <span className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-200 rounded-lg" />
+              </button>
               <span className="hidden lg:block text-sm font-semibold text-soil-dark">
                 {t("SSSS Admin", "إدارة الجمعية")}
               </span>
@@ -257,6 +285,72 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+
+      {/* ── Logo lightbox ─────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {logoLightboxOpen && (
+          <motion.div
+            key="logo-lightbox"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
+            onClick={() => setLogoLightboxOpen(false)}
+          >
+            {/* blurred backdrop */}
+            <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" />
+
+            {/* panel */}
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0, y: 32 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", stiffness: 360, damping: 26 }}
+              className="relative z-10 bg-white rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5 max-w-xs w-full mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* close × */}
+              <button
+                type="button"
+                onClick={() => setLogoLightboxOpen(false)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"
+                aria-label="Close"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                {siteName}
+              </p>
+
+              <img
+                src="/logo.png"
+                alt={siteName}
+                className="w-52 h-52 object-contain drop-shadow-md"
+              />
+
+              <a
+                href="/logo.png"
+                download="logo.png"
+                className="inline-flex items-center gap-2 px-5 py-2 bg-soil-clay text-white rounded-full text-sm font-medium hover:bg-soil-dark transition-colors shadow-sm"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                {t("Download Logo", "تنزيل الشعار")}
+              </a>
+            </motion.div>
+
+            <p className="relative z-10 mt-4 text-xs text-white/40">
+              {t("Click outside to close", "انقر خارج الصورة للإغلاق")}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

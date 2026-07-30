@@ -1,0 +1,529 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SSSSY — Domain Registration &amp; Deployment Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    background: #ffffff;
+    color: #1f2328;
+    padding: 32px 16px 64px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 32px; }
+  h2 {
+    font-size: 16px; font-weight: 700;
+    margin: 40px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e5e7eb;
+    color: #1f2328;
+  }
+  h3 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: #1f2328; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 12px;
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  pre {
+    background: #f7f8fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin-bottom: 14px;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: 12px; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .badge-step { background: #dbeafe; color: #1d4ed8; }
+  .badge-warn { background: #fef3c7; color: #92400e; }
+  .badge-ok   { background: #d1fae5; color: #065f46; }
+  .badge-info { background: #ede9fe; color: #5b21b6; }
+  .step-box {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    background: #f7f8fa;
+  }
+  .step-box h3 { margin-top: 0; }
+  .note {
+    border-left: 3px solid #3b82d4;
+    padding: 8px 12px;
+    background: #eff6ff;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #1e40af;
+  }
+  .warn {
+    border-left: 3px solid #f59e0b;
+    padding: 8px 12px;
+    background: #fffbeb;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #92400e;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  th {
+    background: #f7f8fa;
+    text-align: left;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 10px;
+    border: 1px solid #e5e7eb;
+    vertical-align: top;
+  }
+  .toc { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+  .toc h3 { margin-top: 0; font-size: 13px; color: #57606a; text-transform: uppercase; letter-spacing: .05em; }
+  .toc ol { margin: 0; }
+  .toc li { margin-bottom: 3px; font-size: 13px; }
+  a { color: #3b82d4; }
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: #57606a;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 18px;
+    margin-top: 48px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>SSSSY — Domain Registration &amp; Full Deployment Guide</h1>
+  <p class="subtitle">Reserve your domain → provision a server → deploy with Docker, Nginx, and HTTPS</p>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li>Choose &amp; Register the Domain</li>
+      <li>Choose a Hosting Provider &amp; Provision a Server</li>
+      <li>Point DNS to Your Server</li>
+      <li>Prepare the Server</li>
+      <li>Upload the Project Code</li>
+      <li>Configure Environment Secrets</li>
+      <li>Obtain an SSL Certificate (HTTPS)</li>
+      <li>Deploy with Docker Compose</li>
+      <li>Verify Everything is Running</li>
+      <li>Set Up Auto-Deploy via GitHub Actions (CI/CD)</li>
+      <li>Ongoing Maintenance</li>
+    </ol>
+  </div>
+
+  
+  <h2>Part 1 — Choose &amp; Register the Domain</h2>
+
+  <div class="note">Your project already uses <code>ssssy.org.sy</code> throughout the codebase (nginx.conf, docker-compose.prod.yml, .env.example). Register that domain or adapt the steps below to any name you choose.</div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 1</span> Check Domain Availability</h3>
+    <p>Go to one of these registrars and search for your domain:</p>
+    <table>
+      <tr><th>Registrar</th><th>Notes</th><th>Approx. .org Price/yr</th></tr>
+      <tr><td><a href="https://www.namecheap.com">Namecheap</a></td><td>Best balance of price + UI</td><td>$9–$13</td></tr>
+      <tr><td><a href="https://porkbun.com">Porkbun</a></td><td>Cheapest, free WHOIS privacy</td><td>$8–$11</td></tr>
+      <tr><td><a href="https://domains.squarespace.com">Google / Squarespace</a></td><td>Clean UI, simple DNS</td><td>$12–$15</td></tr>
+      <tr><td><a href="https://www.godaddy.com">GoDaddy</a></td><td>Widely known, upsells heavily</td><td>$12–$20</td></tr>
+    </table>
+    <p><strong>Syrian .sy domain:</strong> For <code>ssssy.org.sy</code>, registration goes through the Syrian NIC (<a href="https://tld.sy">tld.sy</a>). You may need a local contact or use an international registrar that resells .sy domains. Alternatively, register <code>ssssy.org</code> via any global registrar — it is simpler and works the same way.</p>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 2</span> Purchase the Domain</h3>
+    <ol>
+      <li>Create an account on your chosen registrar.</li>
+      <li>Add the domain to cart and complete payment.</li>
+      <li>Fill in registrant contact details (name, email, address).</li>
+      <li>Enable <strong>WHOIS Privacy Protection</strong> — usually free or $1/yr.</li>
+      <li>Enable <strong>auto-renew</strong> so the domain does not expire.</li>
+    </ol>
+  </div>
+
+  
+  <h2>Part 2 — Choose a Hosting Provider &amp; Provision a Server</h2>
+
+  <p>The project runs as Docker containers. You need a Linux VPS with at least:</p>
+  <table>
+    <tr><th>Resource</th><th>Minimum</th><th>Recommended</th></tr>
+    <tr><td>CPU</td><td>2 vCPUs</td><td>4 vCPUs</td></tr>
+    <tr><td>RAM</td><td>2 GB</td><td>4 GB</td></tr>
+    <tr><td>Disk</td><td>20 GB SSD</td><td>50 GB SSD</td></tr>
+    <tr><td>OS</td><td>Ubuntu 22.04 LTS</td><td>Ubuntu 24.04 LTS</td></tr>
+  </table>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 3</span> Choose a VPS Provider</h3>
+    <table>
+      <tr><th>Provider</th><th>Starting Price</th><th>Notes</th></tr>
+      <tr><td><a href="https://www.digitalocean.com">DigitalOcean</a></td><td>~$12/mo</td><td>Easy UI, great docs, Droplets</td></tr>
+      <tr><td><a href="https://www.hetzner.com">Hetzner Cloud</a></td><td>~$4/mo</td><td>Best value, EU data centers</td></tr>
+      <tr><td><a href="https://www.vultr.com">Vultr</a></td><td>~$6/mo</td><td>Good locations, hourly billing</td></tr>
+      <tr><td><a href="https://www.linode.com">Linode / Akamai</a></td><td>~$12/mo</td><td>Reliable, good support</td></tr>
+      <tr><td><a href="https://aws.amazon.com/ec2">AWS EC2</a></td><td>~$15/mo</td><td>Most powerful, complex pricing</td></tr>
+    </table>
+    <ol>
+      <li>Create an account and spin up a <strong>Ubuntu 22.04 LTS</strong> server.</li>
+      <li>Choose a data center region close to your audience (Europe/Middle East).</li>
+      <li>Add your SSH public key during server creation.</li>
+      <li>Note down the server's <strong>public IPv4 address</strong> (e.g. <code>185.20.x.x</code>).</li>
+    </ol>
+  </div>
+
+  
+  <h2>Part 3 — Point DNS to Your Server</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 4</span> Add DNS Records at Your Registrar</h3>
+    <p>Go to your domain registrar's DNS management panel and add these records (replace <code>185.20.x.x</code> with your real server IP):</p>
+    <table>
+      <tr><th>Type</th><th>Name</th><th>Value</th><th>TTL</th></tr>
+      <tr><td>A</td><td><code>@</code> (root)</td><td><code>185.20.x.x</code></td><td>300</td></tr>
+      <tr><td>A</td><td><code>www</code></td><td><code>185.20.x.x</code></td><td>300</td></tr>
+    </table>
+    <p>DNS propagation takes <strong>5 minutes to 48 hours</strong>. You can check with:</p>
+    <pre><code>nslookup ssssy.org.sy
+# or
+dig ssssy.org.sy +short</code></pre>
+  </div>
+
+  
+  <h2>Part 4 — Prepare the Server</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 5</span> SSH into the Server &amp; Install Prerequisites</h3>
+    <pre><code># Connect via SSH
+ssh root@185.20.x.x
+
+# Update system
+apt update &amp;&amp; apt upgrade -y
+
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+
+# Install Docker Compose plugin
+apt install -y docker-compose-plugin
+
+# Verify
+docker --version
+docker compose version</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 6</span> Create a Deployment User (Recommended)</h3>
+    <pre><code># Create a non-root user for deployments
+adduser ssssy
+usermod -aG sudo ssssy
+usermod -aG docker ssssy
+
+# Switch to the new user
+su - ssssy</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 7</span> Open Firewall Ports</h3>
+    <pre><code># Allow SSH, HTTP, and HTTPS
+ufw allow OpenSSH
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw enable
+ufw status</code></pre>
+  </div>
+
+  
+  <h2>Part 5 — Upload the Project Code</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 8</span> Clone the Repository onto the Server</h3>
+    <pre><code># On the server
+mkdir -p /opt/ssssy
+cd /opt/ssssy
+
+# Clone from GitHub (replace with your repo URL)
+git clone https://github.com/YOUR_ORG/YOUR_REPO.git .
+
+# Confirm key files exist
+ls docker-compose.yml docker-compose.prod.yml nginx/nginx.conf</code></pre>
+  </div>
+
+  
+  <h2>Part 6 — Configure Environment Secrets</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 9</span> Create the <code>.env</code> File</h3>
+    <p>Copy the example and fill in every <code>CHANGE_ME</code> value:</p>
+    <pre><code>cp backend/.env.example .env
+nano .env</code></pre>
+    <p>Key values to set (replace <code>ssssy.org.sy</code> with your actual domain):</p>
+    <pre><code># Database
+DB_PASSWORD=a_strong_random_password_here
+
+# JWT — generate with: openssl rand -hex 32
+JWT_SECRET=paste_64_char_hex_here
+
+# Redis
+REDIS_PASSWORD=another_random_password
+
+# MinIO storage
+MINIO_ACCESS_KEY=minio_admin
+MINIO_SECRET_KEY=another_random_password
+
+# Your domain
+APP_BASE_URL=https://ssssy.org.sy
+APP_CORS_ALLOWED_ORIGINS=https://ssssy.org.sy,https://www.ssssy.org.sy
+
+# SMTP (your email provider)
+SMTP_HOST=smtp.yourprovider.com
+SMTP_PORT=587
+SMTP_USERNAME=noreply@ssssy.org.sy
+SMTP_PASSWORD=your_smtp_password
+
+# Frontend URLs (baked into Next.js at build time)
+NEXT_PUBLIC_API_URL=https://ssssy.org.sy/api
+NEXT_PUBLIC_APP_URL=https://ssssy.org.sy
+NEXT_PUBLIC_STORAGE_URL=https://ssssy.org.sy/storage</code></pre>
+    <div class="warn">Never commit the <code>.env</code> file to Git. It is already in <code>.gitignore</code>.</div>
+  </div>
+
+  
+  <h2>Part 7 — Obtain an SSL Certificate (HTTPS)</h2>
+
+  <div class="note">The <code>nginx/nginx.conf</code> already includes Let's Encrypt and certbot configuration. Certificates are free and auto-renew every 90 days.</div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 10</span> Update nginx.conf with Your Domain</h3>
+    <p>Open <code>nginx/nginx.conf</code> and replace <code>ssssy.org.sy</code> with your actual domain in two places:</p>
+    <pre><code># Line 77 — server_name directive
+server_name yourdomain.org www.yourdomain.org;
+
+# Lines 80–81 — SSL certificate paths
+ssl_certificate     /etc/letsencrypt/live/yourdomain.org/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/yourdomain.org/privkey.pem;</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 11</span> Temporarily Start nginx on HTTP Only</h3>
+    <p>Before you have a certificate, comment out the SSL server block and run certbot's HTTP challenge:</p>
+    <pre><code># Start just nginx + certbot volumes (no HTTPS yet)
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d nginx certbot</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 12</span> Issue the Certificate</h3>
+    <pre><code>docker compose -f docker-compose.prod.yml run --rm certbot certonly \
+  --webroot -w /var/www/certbot \
+  -d yourdomain.org \
+  -d www.yourdomain.org \
+  --email admin@yourdomain.org \
+  --agree-tos \
+  --no-eff-email</code></pre>
+    <p>On success you will see: <em>"Congratulations! Your certificate and chain have been saved..."</em></p>
+  </div>
+
+  
+  <h2>Part 8 — Deploy with Docker Compose</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 13</span> Build &amp; Start All Services</h3>
+    <pre><code>cd /opt/ssssy
+
+# Build images and start all containers
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.prod.yml \
+  --env-file .env \
+  up -d --build
+
+# Watch logs
+docker compose -f docker-compose.prod.yml logs -f</code></pre>
+    <p>This starts 6 services: <code>postgres</code>, <code>redis</code>, <code>minio</code>, <code>backend</code>, <code>frontend</code>, <code>nginx</code>, <code>certbot</code>.</p>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 14</span> Run Database Migrations</h3>
+    <p>Flyway migrations run automatically when the backend starts. Confirm in logs:</p>
+    <pre><code>docker logs ssssy-backend 2&gt;&amp;1 | grep -i flyway
+# Expected: Successfully applied N migration(s)</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 15</span> Create the Admin User</h3>
+    <pre><code># Connect to PostgreSQL inside the container
+docker exec -it ssssy-postgres psql -U ssssy -d ssssy_website
+
+-- Inside psql: insert your admin user
+INSERT INTO users (
+  id, username, email, password, role,
+  first_name_en, last_name_en,
+  is_active, is_email_verified, created_at, updated_at
+) VALUES (
+  gen_random_uuid(), 'admin', 'admin@ssssy.org.sy',
+  -- bcrypt hash of your password (generate at bcrypt-generator.com)
+  '$2a$12$REPLACE_WITH_REAL_BCRYPT_HASH',
+  'ADMIN', 'Admin', 'User',
+  true, true, now(), now()
+);
+
+\q</code></pre>
+  </div>
+
+  
+  <h2>Part 9 — Verify Everything is Running</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 16</span> Check Container Health</h3>
+    <pre><code>docker ps --format "table {{.Names}}\t{{.Status}}"
+
+# Expected output:
+# ssssy-nginx       Up 2 minutes
+# ssssy-frontend    Up 2 minutes
+# ssssy-backend     Up 2 minutes (healthy)
+# ssssy-postgres    Up 2 minutes (healthy)
+# ssssy-redis       Up 2 minutes (healthy)
+# ssssy-minio       Up 2 minutes (healthy)</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 17</span> Test the Endpoints</h3>
+    <pre><code># Health check (Spring Boot Actuator)
+curl https://yourdomain.org/actuator/health
+# Expected: {"status":"UP"}
+
+# Public API
+curl https://yourdomain.org/api/public/events/upcoming
+# Expected: JSON array
+
+# Frontend
+curl -I https://yourdomain.org
+# Expected: HTTP/2 200</code></pre>
+  </div>
+
+  
+  <h2>Part 10 — Auto-Deploy via GitHub Actions (CI/CD)</h2>
+
+  <p>The project already has <code>.github/workflows/ci.yml</code> configured. On every push to <code>main</code>, it builds Docker images, pushes to GitHub Container Registry (GHCR), and SSH-deploys to your server.</p>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 18</span> Add GitHub Repository Secrets</h3>
+    <p>Go to your GitHub repo → <strong>Settings → Secrets and variables → Actions → New repository secret</strong>:</p>
+    <table>
+      <tr><th>Secret Name</th><th>Value</th></tr>
+      <tr><td><code>DEPLOY_HOST</code></td><td>Your server IP (<code>185.20.x.x</code>)</td></tr>
+      <tr><td><code>DEPLOY_USER</code></td><td><code>ssssy</code> (the deploy user)</td></tr>
+      <tr><td><code>DEPLOY_SSH_KEY</code></td><td>Your private SSH key (<code>~/.ssh/id_rsa</code>)</td></tr>
+      <tr><td><code>DEPLOY_PORT</code></td><td><code>22</code></td></tr>
+      <tr><td><code>DEPLOY_PATH</code></td><td><code>/opt/ssssy</code></td></tr>
+    </table>
+    <p>Also add optional repository <strong>Variables</strong> (not secrets) if you want to override the default domain:</p>
+    <table>
+      <tr><th>Variable Name</th><th>Value</th></tr>
+      <tr><td><code>NEXT_PUBLIC_API_URL</code></td><td><code>https://yourdomain.org/api</code></td></tr>
+      <tr><td><code>NEXT_PUBLIC_APP_URL</code></td><td><code>https://yourdomain.org</code></td></tr>
+      <tr><td><code>NEXT_PUBLIC_STORAGE_URL</code></td><td><code>https://yourdomain.org/storage</code></td></tr>
+    </table>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 19</span> Add the Server's SSH Key to Authorized Keys</h3>
+    <pre><code># On your local machine: copy your public key to the server
+ssh-copy-id ssssy@185.20.x.x
+
+# Or manually on the server:
+echo "YOUR_PUBLIC_KEY" &gt;&gt; ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 20</span> Trigger a Deployment</h3>
+    <pre><code># Push to main branch — CI/CD will run automatically
+git push origin main
+
+# Monitor progress at:
+# https://github.com/YOUR_ORG/YOUR_REPO/actions</code></pre>
+  </div>
+
+  
+  <h2>Part 11 — Ongoing Maintenance</h2>
+
+  <div class="step-box">
+    <h3>Backup the Database</h3>
+    <pre><code># Run daily backup (add to cron)
+docker exec ssssy-postgres pg_dump -U ssssy ssssy_website \
+  | gzip &gt; /opt/ssssy/backups/backup_$(date +%Y%m%d_%H%M%S).sql.gz</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3>Renew SSL Certificate</h3>
+    <p>The <code>certbot</code> container renews automatically every 12 hours. To renew manually:</p>
+    <pre><code>docker compose -f docker-compose.prod.yml run --rm certbot renew
+docker compose -f docker-compose.prod.yml restart nginx</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3>View Logs</h3>
+    <pre><code># All services
+docker compose -f docker-compose.prod.yml logs --tail=100 -f
+
+# Specific service
+docker logs ssssy-backend --tail=200 -f
+docker logs ssssy-nginx --tail=200 -f</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3>Update the Application</h3>
+    <pre><code>cd /opt/ssssy
+git pull origin main
+
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.prod.yml \
+  --env-file .env \
+  up -d --build --remove-orphans
+
+docker image prune -f</code></pre>
+  </div>
+
+  <h2>Quick Reference: Services &amp; Ports</h2>
+  <table>
+    <tr><th>Service</th><th>Internal Port</th><th>Public?</th><th>Notes</th></tr>
+    <tr><td>nginx</td><td>80, 443</td><td>Yes</td><td>Only public entry point</td></tr>
+    <tr><td>frontend (Next.js)</td><td>3000</td><td>No</td><td>Behind nginx</td></tr>
+    <tr><td>backend (Spring Boot)</td><td>8080</td><td>No</td><td>Behind nginx</td></tr>
+    <tr><td>postgres</td><td>5432</td><td>No</td><td>Internal only</td></tr>
+    <tr><td>redis</td><td>6379</td><td>No</td><td>Internal only</td></tr>
+    <tr><td>minio</td><td>9000 (API), 9001 (console)</td><td>127.0.0.1 only</td><td>Console bound to localhost</td></tr>
+  </table>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

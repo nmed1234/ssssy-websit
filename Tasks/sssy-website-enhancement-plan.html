@@ -1,0 +1,369 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>SSSY Enhancement Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #1f2328;
+    background: #fff;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 36px 24px 60px; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #1f2328; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 32px; }
+
+  h2 { font-size: 16px; font-weight: 700; margin: 32px 0 10px; color: #1f2328; border-left: 3px solid #3b82d4; padding-left: 10px; }
+  h3 { font-size: 14px; font-weight: 700; margin: 18px 0 6px; color: #3b82d4; }
+  h4 { font-size: 13px; font-weight: 600; margin: 12px 0 4px; color: #7c5cd8; }
+
+  p { margin-bottom: 8px; color: #1f2328; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; color: #1f2328; }
+  li strong { color: #1f2328; }
+
+  .section { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+  .highlight { background: #fff8f0; border: 1px solid #f0c070; border-radius: 6px; padding: 12px 16px; margin: 12px 0; }
+  .issue { background: #fff5f5; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px 14px; margin: 8px 0; font-size: 13px; }
+  .fix { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 10px 14px; margin: 8px 0; font-size: 13px; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin: 2px; }
+  .tag-blue { background: #dbeafe; color: #1d4ed8; }
+  .tag-green { background: #dcfce7; color: #15803d; }
+  .tag-purple { background: #ede9fe; color: #7c3aed; }
+  .tag-orange { background: #ffedd5; color: #c2410c; }
+  .tag-gray { background: #f3f4f6; color: #4b5563; }
+
+  .step-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+  @media (max-width: 540px) { .step-grid { grid-template-columns: 1fr; } }
+
+  .step-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; }
+  .step-num { font-size: 11px; font-weight: 700; color: #57606a; text-transform: uppercase; letter-spacing: .05em; }
+  .step-title { font-size: 14px; font-weight: 700; margin: 4px 0; color: #1f2328; }
+  .step-desc { font-size: 12px; color: #57606a; }
+
+  .diff-row { display: flex; gap: 12px; margin: 8px 0; }
+  .diff-old { flex: 1; background: #fff5f5; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px 12px; font-size: 12px; }
+  .diff-new { flex: 1; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 10px 12px; font-size: 12px; }
+  .diff-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #57606a; margin-bottom: 4px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-weight: 600; }
+  td { border: 1px solid #e5e7eb; padding: 8px 10px; vertical-align: top; }
+
+  .priority-high { color: #b91c1c; font-weight: 700; }
+  .priority-med { color: #c2410c; font-weight: 600; }
+  .priority-low { color: #15803d; }
+
+  .file-path { font-family: "SFMono-Regular", Consolas, monospace; font-size: 11.5px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; color: #7c5cd8; }
+
+  .divider { border: none; border-top: 1px solid #e5e7eb; margin: 28px 0; }
+
+  footer { text-align: center; font-size: 12px; color: #57606a; border-top: 1px solid #e5e7eb; padding-top: 18px; margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>🌱 SSSY Website — Full Enhancement Plan</h1>
+  <p class="subtitle">Deep analysis of current state · Identified issues · Complete implementation roadmap for admin panel &amp; public news pages</p>
+
+  
+  <h2>1 · Current State Deep Analysis</h2>
+
+  <div class="section">
+    <h3>What the Screenshots Show</h3>
+    <p>From the 5 attached screenshots (homepage news section, /news listing, /admin/content list, /admin/content/new, /admin/content/[id] edit), the following is clear:</p>
+
+    <h4>Public: News Listing Page (/news)</h4>
+    <div class="issue">❌ No featured image renders — only a <code>Newspaper</code> icon placeholder (no actual content images loaded)</div>
+    <div class="issue">❌ Cards are generic grey boxes with no visual hierarchy or brand character</div>
+    <div class="issue">❌ The category filter tabs (All / Announcements / Articles) are purely visual — they do NOT actually filter the API results, only client-side already-fetched data</div>
+    <div class="issue">❌ No bilingual awareness: cards always show English title even when the user is in Arabic mode</div>
+    <div class="issue">❌ Date is formatted only in English even in Arabic locale</div>
+    <div class="issue">❌ No reading time shown on the listing card</div>
+    <div class="issue">❌ No content type badge (News vs Article vs Announcement) on card</div>
+    <div class="issue">❌ Pagination only shows "Previous / Page X of Y / Next" — no numbered pages</div>
+
+    <h4>Public: News Detail Page (/news/[slug])</h4>
+    <div class="issue">❌ Article body text direction is always LTR — Arabic content renders incorrectly</div>
+    <div class="issue">❌ "Back to News" always in English regardless of language</div>
+    <div class="issue">❌ No related articles section at bottom</div>
+    <div class="issue">❌ No table of contents for long articles</div>
+    <div class="issue">❌ No print / copy-link buttons</div>
+
+    <h4>Admin: Content List (/admin/content)</h4>
+    <div class="issue">❌ Title column shows only Arabic title — missing fallback logic showing EN when AR is empty (and vice versa)</div>
+    <div class="issue">❌ Clicking a title navigates to edit page but the link is hard to distinguish (no visual cue like external/open icon)</div>
+    <div class="issue">❌ No "Preview on site" link from the list</div>
+    <div class="issue">❌ No type filter (can't filter by ARTICLE / NEWS / PUBLICATION)</div>
+    <div class="issue">❌ Pagination hardcoded to <code>size: 50</code> — no server-side pagination</div>
+    <div class="issue">❌ Status badges have only 3 colour variants (green/yellow/gray) — IN_REVIEW, APPROVED, REJECTED, SCHEDULED all render gray</div>
+    <div class="issue">❌ No statistics bar (how many published / draft / review etc.)</div>
+    <div class="issue">❌ No featured image thumbnail in the row</div>
+    <div class="issue">❌ View count column missing</div>
+
+    <h4>Admin: New / Edit Content Form</h4>
+    <div class="issue">❌ Featured image upload missing — only an OG Image URL text field; no actual media picker</div>
+    <div class="issue">❌ Slug is auto-generated from Arabic title but produces Arabic characters in slug (bad for SEO) — needs transliteration</div>
+    <div class="issue">❌ The excerpt field is a plain &lt;textarea&gt; with no character counter</div>
+    <div class="issue">❌ Scheduled publish date field missing in the form</div>
+    <div class="issue">❌ No "Save as Draft" vs "Save &amp; Submit" split button</div>
+    <div class="issue">❌ Content body and excerpt fields have no language toggle (editing Arabic body vs English body is not split)</div>
+    <div class="issue">❌ Tags field shows no visual selected count or "clear all" option</div>
+    <div class="issue">❌ Form has no unsaved-changes warning on navigation away</div>
+    <div class="issue">❌ SEO section has no preview of how the page will look in Google search results</div>
+  </div>
+
+  
+  <h2>2 · Enhancement Goals</h2>
+  <div class="section">
+    <table>
+      <tr>
+        <th>Goal</th><th>Why</th><th>Priority</th>
+      </tr>
+      <tr>
+        <td>Full bilingual rendering (AR/EN) on public news pages</td>
+        <td>Users switch language and content must respond correctly in title, date, body direction</td>
+        <td class="priority-high">HIGH</td>
+      </tr>
+      <tr>
+        <td>Beautiful, image-rich news card grid with brand identity</td>
+        <td>Homepage and /news currently show ugly icon placeholders</td>
+        <td class="priority-high">HIGH</td>
+      </tr>
+      <tr>
+        <td>Admin content list: statistics bar + full status colours + type filter</td>
+        <td>Editor needs quick situational overview and filtering power</td>
+        <td class="priority-high">HIGH</td>
+      </tr>
+      <tr>
+        <td>Admin edit form: media picker for featured image, scheduled date, body language tabs, slug transliteration</td>
+        <td>Missing critical CMS fields that block proper content management</td>
+        <td class="priority-high">HIGH</td>
+      </tr>
+      <tr>
+        <td>SEO Preview (Google snippet preview) in SEO tab</td>
+        <td>Editor needs to visualise how content looks in search results</td>
+        <td class="priority-med">MED</td>
+      </tr>
+      <tr>
+        <td>Related articles section on news detail page</td>
+        <td>Increases engagement and time on site</td>
+        <td class="priority-med">MED</td>
+      </tr>
+      <tr>
+        <td>Save-draft warning when leaving edit form with unsaved changes</td>
+        <td>Prevents accidental data loss</td>
+        <td class="priority-med">MED</td>
+      </tr>
+      <tr>
+        <td>Preview on site link from admin content list &amp; edit page</td>
+        <td>Editor needs to verify live appearance quickly</td>
+        <td class="priority-med">MED</td>
+      </tr>
+      <tr>
+        <td>Numbered pagination on /news</td>
+        <td>Better UX for navigating large content libraries</td>
+        <td class="priority-low">LOW</td>
+      </tr>
+    </table>
+  </div>
+
+  
+  <h2>3 · Detailed Design Decisions</h2>
+
+  <div class="section">
+    <h3>A · Public News Page — Visual Redesign</h3>
+
+    <h4>Card Layout</h4>
+    <div class="diff-row">
+      <div class="diff-old"><div class="diff-label">Current (bad)</div>
+        Fixed 192px grey box with icon fallback · title always EN · no badge · no reading time
+      </div>
+      <div class="diff-new"><div class="diff-label">Enhanced</div>
+        Gradient placeholder with soil palette when no image · bilingual title (AR when locale=ar, EN otherwise) · content type badge (color-coded) · reading time from word count · date in locale format (ar-SY or en-US)
+      </div>
+    </div>
+
+    <h4>Category Tabs</h4>
+    <p>Current tabs only filter client-side the first 9 items. Enhancement: map tab to API content type param, refetch on change. Add animated underline indicator, count badge per category.</p>
+
+    <h4>Bilingual Article Detail</h4>
+    <p>Add <code>dir="auto"</code> on the prose container and choose <code>titleAr</code> vs <code>titleEn</code> based on <code>useLanguage()</code> direction. Format date with <code>ar-SY</code> locale when Arabic. "Back to News" / "العودة للأخبار" based on language.</p>
+
+    <h4>Related Articles</h4>
+    <p>Fetch same content type filtered by same category via <code>serverGetContentByType</code>, exclude current slug, show 3 in a grid below the article. SSR with revalidate:300.</p>
+  </div>
+
+  <div class="section">
+    <h3>B · Admin Content List — Power Upgrades</h3>
+
+    <h4>Statistics Bar</h4>
+    <p>Row of stat cards above the table: <strong>Total · Published · Draft · In Review · Archived</strong>. Each is a clickable filter shortcut. Derived from the already-fetched data client-side.</p>
+
+    <h4>Full Status Colour Palette</h4>
+    <table>
+      <tr><th>Status</th><th>Badge Colour</th></tr>
+      <tr><td>PUBLISHED</td><td><span class="tag tag-green">emerald bg</span></td></tr>
+      <tr><td>DRAFT</td><td><span class="tag tag-gray">yellow bg</span></td></tr>
+      <tr><td>IN_REVIEW / REVIEW</td><td><span class="tag tag-blue">blue bg</span></td></tr>
+      <tr><td>APPROVED</td><td><span class="tag tag-green">teal bg</span></td></tr>
+      <tr><td>REJECTED</td><td><span class="tag" style="background:#fee2e2;color:#b91c1c">red bg</span></td></tr>
+      <tr><td>SCHEDULED</td><td><span class="tag tag-purple">purple bg</span></td></tr>
+      <tr><td>ARCHIVED</td><td><span class="tag tag-gray">gray bg</span></td></tr>
+    </table>
+
+    <h4>Type Filter Dropdown</h4>
+    <p>Add a second filter next to the status filter: <strong>All Types / ARTICLE / NEWS / PUBLICATION / PAGE</strong>. Applies client-side. Also show type badge with proper translated label.</p>
+
+    <h4>Thumbnail Column</h4>
+    <p>32×32 px rounded thumbnail before the title link. Shows featured image or a soil-coloured initial square.</p>
+
+    <h4>Preview Link</h4>
+    <p>Each row: external link icon → <code>/news/[slug]</code> or <code>/content/[type]/[slug]</code> in a new tab. Visible on row hover only to reduce clutter.</p>
+
+    <h4>View Count Column</h4>
+    <p>Add <code>viewCount</code> column (sortable). Shows formatted number with an eye icon.</p>
+  </div>
+
+  <div class="section">
+    <h3>C · Admin New / Edit Form — Advanced Options</h3>
+
+    <h4>Featured Image Upload (Media Picker)</h4>
+    <p>Replace the plain <code>ogImageUrl</code> text field for featured image with a media picker button. Opens a modal with the existing <span class="file-path">MediaLibraryModal</span> component (already in codebase). Sets <code>featuredImage</code> field. Show thumbnail preview below.</p>
+
+    <h4>Bilingual Body Tabs</h4>
+    <p>The RichTextEditor is a single-language field. Add a <strong>Language Tabs</strong> switcher above the body: <code>AR | EN</code>. Each tab has its own body value (<code>body</code> for Arabic, <code>bodyEn</code> for English). On public render, choose based on locale.</p>
+    <div class="highlight">⚠️ Note: The backend <code>ContentItem</code> currently only has one <code>body</code> field. For Phase 1 of this enhancement we will keep one body but add the <strong>lang toggle inside the editor</strong> so editors can write in either language and see the direction change. True dual-body requires a backend migration — schedule as Phase 2.</div>
+
+    <h4>Slug Auto-generation with Transliteration</h4>
+    <p>Current code: <code>e.target.value.replace(/\s+/g, "-").toLowerCase()</code> — this leaves Arabic letters in the slug. Fix: add a simple Arabic-to-Latin transliteration function that converts common Arabic characters to phonetic equivalents, or simply strip non-ASCII and use the English title as slug source when available.</p>
+
+    <h4>Scheduled Publish Date</h4>
+    <p>Add a datetime-local input for <code>scheduledAt</code> field. Only visible / active when content type allows scheduling. When set, the "Save" button changes to "Schedule".</p>
+
+    <h4>Excerpt Character Counter</h4>
+    <p>Add a <code>X / 300 characters</code> counter below the excerpt textarea. Turns red above 300.</p>
+
+    <h4>Split Action Button</h4>
+    <p>Replace the single "Save" button with a split button: primary = "Save as Draft" · dropdown arrow → "Save &amp; Submit for Review". On edit, primary = "Save" · dropdown → "Save &amp; Publish" (if APPROVED).</p>
+
+    <h4>Unsaved Changes Guard</h4>
+    <p>Track <code>isDirty</code> boolean (form !== original data). On navigate-away (<code>useBeforeUnload</code> + <code>router.beforePopState</code>): show confirm dialog "You have unsaved changes. Leave anyway?"</p>
+
+    <h4>SEO Google Preview</h4>
+    <p>In the SEO tab, below the meta fields, add a live-updating visual preview of how the page appears as a Google search result: site domain + URL · blue title · green URL · grey description. Updates as user types meta title/description.</p>
+  </div>
+
+  
+  <h2>4 · Implementation Plan — Step by Step</h2>
+
+  <div class="section">
+    <div class="step-grid">
+
+      <div class="step-card">
+        <div class="step-num">Step 1 · Admin List</div>
+        <div class="step-title">Stats Bar + Status Colours + Type Filter</div>
+        <div class="step-desc">Enhance <span class="file-path">admin/content/page.tsx</span>: add stats row, full colour map for all statuses, type filter dropdown, thumbnail column, preview link, view count.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">Step 2 · Admin New Form</div>
+        <div class="step-title">Media Picker + Slug Fix + Scheduled Date + Excerpt Counter</div>
+        <div class="step-desc">Enhance <span class="file-path">admin/content/new/page.tsx</span>: media picker for featuredImage, slug transliteration, scheduledAt datetime, excerpt counter, split save button, unsaved-changes guard.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">Step 3 · Admin Edit Form</div>
+        <div class="step-title">All New Form features + SEO Preview + Preview Link</div>
+        <div class="step-desc">Enhance <span class="file-path">admin/content/[id]/page.tsx</span>: same new-form upgrades, SEO Google-snippet preview in the SEO tab, site preview button in header.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">Step 4 · Public News Page</div>
+        <div class="step-title">Bilingual Cards + Category Filtering + Rich Design</div>
+        <div class="step-desc">Rewrite <span class="file-path">NewsPageClient.tsx</span>: bilingual title/date, gradient placeholder, type badge, reading time, real API category filter, numbered pagination.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">Step 5 · News Detail Page</div>
+        <div class="step-title">RTL body direction + Bilingual UI + Related Articles</div>
+        <div class="step-desc">Enhance <span class="file-path">NewsDetailClient.tsx</span>: dir="auto" on prose, bilingual back-link &amp; metadata labels, related articles SSR section.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">Step 6 · Lint &amp; Type Check</div>
+        <div class="step-title">Validation</div>
+        <div class="step-desc">Run <code>npm run build</code> and <code>npx tsc --noEmit</code> to verify zero new errors or warnings.</div>
+      </div>
+
+    </div>
+  </div>
+
+  
+  <h2>5 · File Change Manifest</h2>
+  <div class="section">
+    <table>
+      <tr><th>File</th><th>Change Type</th><th>Key Changes</th></tr>
+      <tr>
+        <td><span class="file-path">admin/content/page.tsx</span></td>
+        <td><span class="tag tag-orange">MAJOR EDIT</span></td>
+        <td>Stats bar, full status colour map, type filter, thumbnail, preview link, view count column</td>
+      </tr>
+      <tr>
+        <td><span class="file-path">admin/content/new/page.tsx</span></td>
+        <td><span class="tag tag-orange">MAJOR EDIT</span></td>
+        <td>Media picker, slug fix, scheduledAt, excerpt counter, split button, dirty guard</td>
+      </tr>
+      <tr>
+        <td><span class="file-path">admin/content/[id]/page.tsx</span></td>
+        <td><span class="tag tag-orange">MAJOR EDIT</span></td>
+        <td>Same as new + SEO preview, preview link in header, view count display</td>
+      </tr>
+      <tr>
+        <td><span class="file-path">(public)/news/NewsPageClient.tsx</span></td>
+        <td><span class="tag tag-orange">MAJOR EDIT</span></td>
+        <td>Bilingual cards, gradient placeholder, badge, reading time, real category filter, numbered pagination</td>
+      </tr>
+      <tr>
+        <td><span class="file-path">(public)/news/[slug]/NewsDetailClient.tsx</span></td>
+        <td><span class="tag tag-blue">EDIT</span></td>
+        <td>dir="auto" on prose, bilingual UI labels, related articles section</td>
+      </tr>
+      <tr>
+        <td><span class="file-path">(public)/news/[slug]/page.tsx</span></td>
+        <td><span class="tag tag-blue">EDIT</span></td>
+        <td>Pass related articles as prop (fetched server-side)</td>
+      </tr>
+    </table>
+  </div>
+
+  
+  <h2>6 · Out of Scope (Phase 1)</h2>
+  <div class="section">
+    <ul>
+      <li>Dual-language body fields — requires backend DB migration (schedule as Phase 2)</li>
+      <li>Admin sidebar navigation structure — not in scope per user's focus</li>
+      <li>Backend API — all changes are frontend-only, no Java changes needed</li>
+      <li>Other admin sections (events, jobs, members, etc.) — addressed in later enhancement passes</li>
+      <li>Page builder — separate system, untouched</li>
+    </ul>
+  </div>
+
+  
+  <h2>7 · Approval Request</h2>
+  <div class="highlight">
+    <strong>This plan is ready for your review.</strong> Once you approve, implementation begins immediately following Steps 1 → 6 in order. Each step is committed independently for easy review and rollback.
+    <br /><br />
+    <strong>Estimated scope:</strong> ~6 file edits · ~800 lines changed · No backend changes · No new dependencies
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

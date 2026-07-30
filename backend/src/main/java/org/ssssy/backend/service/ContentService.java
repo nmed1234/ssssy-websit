@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.ssssy.backend.common.HtmlSanitizer;
+import org.ssssy.backend.event.CmsEventBus;
+import org.ssssy.backend.event.ContentCreatedEvent;
+import org.ssssy.backend.event.ContentUpdatedEvent;
 import org.ssssy.backend.exception.BadRequestException;
 import org.ssssy.backend.exception.ResourceNotFoundException;
 import org.ssssy.backend.model.dto.ContentRequest;
@@ -29,6 +32,7 @@ public class ContentService {
   private final TagRepository tagRepository;
   private final UserRepository userRepository;
   private final WorkflowActionRepository workflowActionRepository;
+  private final CmsEventBus cmsEventBus;
   public Page<ContentResponse> getAllContent(String contentType, String status, Pageable pageable) {
     Page<ContentItem> items;
     if (contentType != null && status != null) {
@@ -56,14 +60,19 @@ public class ContentService {
     User author = userRepository.findById(authorId)
         .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
 
-    String sanitizedBody = HtmlSanitizer.sanitize(request.getBody());
+    String sanitizedBody   = HtmlSanitizer.sanitize(request.getBody());
+    String sanitizedBodyAr = HtmlSanitizer.sanitize(request.getBodyAr());
+    String sanitizedBodyEn = HtmlSanitizer.sanitize(request.getBodyEn());
 
     ContentItem item = ContentItem.builder()
         .titleAr(request.getTitleAr())
         .titleEn(request.getTitleEn())
         .slug(request.getSlug())
         .excerpt(request.getExcerpt())
+        .excerptAr(request.getExcerptAr())
         .body(sanitizedBody)
+        .bodyAr(sanitizedBodyAr)
+        .bodyEn(sanitizedBodyEn)
         .contentType(request.getContentType() != null ? request.getContentType() : "ARTICLE")
         .status("DRAFT")
         .author(author)
@@ -86,6 +95,9 @@ public class ContentService {
 
     item = contentItemRepository.save(item);
     createVersion(item, author, "Created");
+    cmsEventBus.publish(new ContentCreatedEvent(
+        item.getId(), item.getContentType(), item.getSlug(),
+        item.getTitleEn(), item.getStatus(), authorId));
     return toResponse(item);
   }
 
@@ -96,13 +108,18 @@ public class ContentService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-    String sanitizedBody = HtmlSanitizer.sanitize(request.getBody());
+    String sanitizedBody   = HtmlSanitizer.sanitize(request.getBody());
+    String sanitizedBodyAr = HtmlSanitizer.sanitize(request.getBodyAr());
+    String sanitizedBodyEn = HtmlSanitizer.sanitize(request.getBodyEn());
 
     item.setTitleAr(request.getTitleAr());
     item.setTitleEn(request.getTitleEn());
     item.setSlug(request.getSlug());
     item.setExcerpt(request.getExcerpt());
+    item.setExcerptAr(request.getExcerptAr());
     item.setBody(sanitizedBody);
+    item.setBodyAr(sanitizedBodyAr);
+    item.setBodyEn(sanitizedBodyEn);
     item.setContentType(request.getContentType());
     item.setFeaturedImage(request.getFeaturedImage());
     item.setIsFeatured(request.getIsFeatured() != null && request.getIsFeatured());
@@ -123,6 +140,9 @@ public class ContentService {
     item.setVersion(item.getVersion() != null ? item.getVersion() + 1 : 1);
     item = contentItemRepository.save(item);
     createVersion(item, user, "Updated");
+    cmsEventBus.publish(new ContentUpdatedEvent(
+        item.getId(), item.getContentType(), item.getSlug(),
+        item.getTitleEn(), item.getStatus(), item.getVersion(), userId));
     return toResponse(item);
   }
 
@@ -255,7 +275,10 @@ public class ContentService {
         .titleEn(item.getTitleEn())
         .slug(item.getSlug())
         .excerpt(item.getExcerpt())
+        .excerptAr(item.getExcerptAr())
         .body(item.getBody())
+        .bodyAr(item.getBodyAr())
+        .bodyEn(item.getBodyEn())
         .contentType(item.getContentType())
         .status(item.getStatus())
         .authorId(item.getAuthor().getId())

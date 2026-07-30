@@ -1,16 +1,5 @@
 import api from "./api";
 
-function setCookie(name: string, value: string, days: number = 7) {
-  if (typeof document === "undefined") return;
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
-}
-
-function removeCookie(name: string) {
-  if (typeof document === "undefined") return;
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
-}
-
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
@@ -47,8 +36,10 @@ export async function register(data: RegisterRequest): Promise<AuthResponse> {
   return response.data.data;
 }
 
-export async function refreshToken(token: string): Promise<AuthResponse> {
-  const response = await api.post("/auth/refresh", { refreshToken: token });
+export async function refreshToken(): Promise<AuthResponse> {
+  // The httpOnly refreshToken cookie is sent automatically via withCredentials.
+  // No need to pass it in the body.
+  const response = await api.post("/auth/refresh", {});
   return response.data.data;
 }
 
@@ -56,20 +47,17 @@ export async function logout(): Promise<void> {
   await api.post("/auth/logout");
 }
 
+/**
+ * Persist the non-sensitive user profile (userId, username, role) to
+ * localStorage so the UI can display user info without a round-trip.
+ * Token storage is handled exclusively by httpOnly cookies set by the backend.
+ */
 export function storeAuth(auth: AuthResponse): void {
-  localStorage.setItem("accessToken", auth.accessToken);
-  localStorage.setItem("refreshToken", auth.refreshToken);
   localStorage.setItem("user", JSON.stringify(auth));
-  setCookie("accessToken", auth.accessToken);
-  setCookie("refreshToken", auth.refreshToken);
 }
 
 export function clearAuth(): void {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
-  removeCookie("accessToken");
-  removeCookie("refreshToken");
 }
 
 export function getStoredUser(): AuthResponse | null {
@@ -78,7 +66,12 @@ export function getStoredUser(): AuthResponse | null {
   return user ? JSON.parse(user) : null;
 }
 
+/**
+ * A user is considered authenticated client-side if the user profile object
+ * is present in localStorage. The actual auth gate is the httpOnly accessToken
+ * cookie validated by the backend on every request.
+ */
 export function isAuthenticated(): boolean {
   if (typeof window === "undefined") return false;
-  return !!localStorage.getItem("accessToken");
+  return !!localStorage.getItem("user");
 }

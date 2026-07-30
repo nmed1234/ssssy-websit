@@ -2,6 +2,8 @@ package org.ssssy.backend.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -39,6 +41,7 @@ public class PageAuditTrail {
      * Only changed fields are included; unchanged fields are omitted.
      * Stored as PostgreSQL JSONB.
      */
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "changed_fields", nullable = false, columnDefinition = "jsonb")
     private String changedFields;
 

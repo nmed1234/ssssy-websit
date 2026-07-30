@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/admin/SearchBar";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -14,6 +12,8 @@ interface FilterChip {
 interface AdvancedFiltersProps {
   chips?: FilterChip[];
   statusOptions?: string[];
+  /** Optional display label for each status key. Falls back to formatted key. */
+  statusLabels?: Record<string, string>;
   dateRange?: boolean;
   searchPlaceholder?: string;
   search: string;
@@ -29,6 +29,7 @@ interface AdvancedFiltersProps {
 export function AdvancedFilters({
   chips = [],
   statusOptions = [],
+  statusLabels = {},
   dateRange = false,
   searchPlaceholder = "Search...",
   search,
@@ -67,7 +68,7 @@ export function AdvancedFilters({
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
               >
-                {opt === "ALL" ? "All" : opt.charAt(0) + opt.slice(1).toLowerCase()}
+                {statusLabels[opt] ?? (opt === "ALL" ? "All" : opt.charAt(0) + opt.slice(1).toLowerCase())}
               </button>
             ))}
           </div>

@@ -19,4 +19,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
   Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrFirstNameArContainingIgnoreCaseOrLastNameArContainingIgnoreCase(
       String username, String email, String firstNameAr, String lastNameAr, Pageable pageable);
+
+  /** Find all active users with the given role name (e.g. "EDITOR", "ADMIN"). */
+  @org.springframework.data.jpa.repository.Query(
+      "SELECT u FROM User u WHERE u.role.name = :roleName AND u.isActive = true AND u.deletedAt IS NULL")
+  java.util.List<User> findActiveUsersByRoleName(@org.springframework.data.repository.query.Param("roleName") String roleName);
 }

@@ -1,0 +1,425 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mailcow Integration Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.7;
+    background: #ffffff; color: #1f2328;
+    padding: 32px 16px 64px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 32px; }
+  h2 { font-size: 16px; font-weight: 700; margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 14px; font-weight: 700; margin: 18px 0 8px; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin-bottom: 5px; }
+  code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 12px; background: #f7f8fa;
+    border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px;
+  }
+  pre {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 14px 16px; overflow-x: auto; margin-bottom: 14px;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: 12px; }
+  .note   { border-left: 3px solid #3b82d4; padding: 10px 14px; background: #eff6ff; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #1e40af; }
+  .warn   { border-left: 3px solid #f59e0b; padding: 10px 14px; background: #fffbeb; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #92400e; }
+  .ok     { border-left: 3px solid #22c55e; padding: 10px 14px; background: #f0fdf4; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #166534; }
+  .danger { border-left: 3px solid #ef4444; padding: 10px 14px; background: #fef2f2; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 13px; color: #991b1b; }
+  table  { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 13px; }
+  th { background: #f0f2f5; text-align: left; padding: 9px 11px; border: 1px solid #e5e7eb; font-weight: 600; }
+  td { padding: 8px 11px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .toc { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+  .toc h3 { margin: 0 0 8px; font-size: 12px; color: #57606a; text-transform: uppercase; letter-spacing: .06em; }
+  .toc ol { margin: 0; }
+  .toc li { margin-bottom: 3px; font-size: 13px; }
+  a { color: #3b82d4; }
+  .phase-box {
+    border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 16px 18px; margin-bottom: 16px;
+  }
+  .phase-box.now  { border-left: 4px solid #22c55e; }
+  .phase-box.later{ border-left: 4px solid #3b82d4; }
+  .phase-box h3   { margin-top: 0; }
+  .phase-label {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 10px; margin-bottom: 8px;
+  }
+  .label-now   { background: #d1fae5; color: #065f46; }
+  .label-later { background: #dbeafe; color: #1d4ed8; }
+  .label-never { background: #fee2e2; color: #991b1b; }
+  .security-row-ok   { background: #f0fdf4; }
+  .security-row-warn { background: #fffbeb; }
+  .security-row-bad  { background: #fef2f2; }
+  .flow-box {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 14px 16px; font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 12px; margin: 12px 0; line-height: 1.8;
+  }
+  footer { text-align: center; font-size: 12px; color: #57606a; border-top: 1px solid #e5e7eb; padding-top: 18px; margin-top: 48px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Mailcow Integration — Auto Email on Member Creation</h1>
+  <p class="subtitle">Current state analysis · Safety review · What works now · Exact Mailcow integration plan for later</p>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li>Direct Answer — Yes, You Can Do It Later</li>
+      <li>What the Codebase Already Does Today</li>
+      <li>What Is Missing (the Mailcow Gap)</li>
+      <li>Is Mailcow Safe? Full Security Review</li>
+      <li>Architecture: How Mailcow Connects to Your System</li>
+      <li>Phase Plan — Now vs Later</li>
+      <li>When You Are Ready: Exact Integration Steps</li>
+      <li>Cost of Adding a Mailcow VPS</li>
+    </ol>
+  </div>
+
+  
+  <h2>1 — Direct Answer</h2>
+
+  <div class="ok">
+    <strong>Yes — 100% you can add Mailcow later. The codebase is already designed for it.</strong><br /><br />
+    Your Spring Boot backend has a complete <code>EmailAccountService</code>, <code>EmailSyncService</code> (IMAP polling), and <code>EmailSendService</code> (SMTP). All the database tables, API endpoints, and sync logic are built. The only thing missing is a <em>real mail server</em> behind them — and that is exactly what Mailcow provides. Adding Mailcow later requires no redesign, only a new service and a configuration change.
+  </div>
+
+  <div class="note">
+    <strong>Right now</strong>, when a member is created, the system provisions an email account record in PostgreSQL (username, address, folders, quota) but no real mailbox exists on an actual mail server — it is stored internally only. Once you connect Mailcow, the provisioning step will also call Mailcow's API to create a real mailbox. This is a clean, additive change.
+  </div>
+
+  
+  <h2>2 — What the Codebase Already Does Today</h2>
+
+  <p>Reading <code>EmailAccountService.java</code> and <code>EmailSyncService.java</code>, here is exactly what is already built:</p>
+
+  <table>
+    <tr><th>Feature</th><th>Status</th><th>File</th></tr>
+    <tr><td>Provision email account record in DB on member creation</td><td>✅ Done</td><td><code>EmailAccountService.provisionAccount()</code></td></tr>
+    <tr><td>Auto-generate address: <code>firstname.lastname@ssss.org</code></td><td>✅ Done</td><td><code>EmailAccountService.java:48</code></td></tr>
+    <tr><td>Create system folders (Inbox, Sent, Drafts, Trash, Spam, Archive)</td><td>✅ Done</td><td><code>EmailAccountService.createSystemFolders()</code></td></tr>
+    <tr><td>Quota management per account</td><td>✅ Done</td><td><code>EmailAccountService.setQuota()</code></td></tr>
+    <tr><td>Admin: create / disable / reset password / bulk ops</td><td>✅ Done</td><td><code>EmailAccountService</code> + <code>EmailAdminController</code></td></tr>
+    <tr><td>IMAP sync — polls server every 5 minutes</td><td>✅ Done — waits for real server</td><td><code>EmailSyncService.syncAllAccounts()</code></td></tr>
+    <tr><td>SMTP send via Spring Mail</td><td>✅ Done — waits for real server</td><td><code>EmailSendService.java</code></td></tr>
+    <tr><td>Internal vs external address detection</td><td>✅ Done</td><td><code>EmailSendService.java:383</code></td></tr>
+    <tr><td>Email aliases, rules engine, scheduled sends</td><td>✅ Done</td><td><code>EmailAliasService</code>, <code>EmailRuleService</code></td></tr>
+    <tr><td>Auto-provision on member registration</td><td>⚠️ Not yet — currently manual</td><td>Needs hook in <code>AuthService.register()</code></td></tr>
+    <tr><td>Create real mailbox on Mailcow via API</td><td>❌ Not built — Phase 2</td><td>New <code>MailcowApiService</code> needed</td></tr>
+  </table>
+
+  <div class="warn">
+    <strong>Important finding:</strong> Looking at <code>AuthService.register()</code> — when a member registers, it saves the user and publishes a <code>UserRegisteredEvent</code>, but does NOT automatically call <code>provisionAccount()</code>. The email account provisioning is currently a separate manual step (<code>POST /api/email/account/provision</code>). This is easy to fix — one line added to the register flow — but it is separate from the Mailcow question.
+  </div>
+
+  
+  <h2>3 — What Is Missing (the Mailcow Gap)</h2>
+
+  <p>The gap between "email record in DB" and "real working email on a mail server" is exactly one service class:</p>
+
+  <div class="flow-box">
+TODAY (without Mailcow):
+  Member registers
+    → User saved in PostgreSQL
+    → EmailAccount record created in DB (address, folders, quota)
+    → BUT: no real mailbox exists anywhere
+    → IMAP sync tries to connect → fails (no server)
+    → Emails stored only in the app's own DB tables
+
+LATER (with Mailcow):
+  Member registers
+    → User saved in PostgreSQL
+    → EmailAccount record created in DB
+    → NEW: MailcowApiService.createMailbox("ahmad", "ssss.org", password)
+    → Real IMAP mailbox created on Mailcow VPS
+    → IMAP sync connects to Mailcow → works
+    → Emails flow in/out via real SMTP/IMAP
+  </div>
+
+  
+  <h2>4 — Is Mailcow Safe? Full Security Review</h2>
+
+  <table>
+    <tr><th>Security Aspect</th><th>Mailcow Position</th><th>Verdict</th></tr>
+    <tr class="security-row-ok">
+      <td><strong>Open Source</strong></td>
+      <td>Fully open source (MIT/GPL). Code is audited publicly. No backdoors.</td>
+      <td>✅ Safe</td>
+    </tr>
+    <tr class="security-row-ok">
+      <td><strong>TLS / SSL</strong></td>
+      <td>Auto-issues Let's Encrypt certificates for IMAP, SMTP, and webmail. All connections encrypted by default.</td>
+      <td>✅ Safe</td>
+    </tr>
+    <tr class="security-row-ok">
+      <td><strong>DKIM, SPF, DMARC</strong></td>
+      <td>Built-in. Mailcow generates DKIM keys, guides you through SPF/DMARC DNS records. Prevents your emails being marked as spam and prevents spoofing.</td>
+      <td>✅ Required — Mailcow handles it</td>
+    </tr>
+    <tr class="security-row-ok">
+      <td><strong>Anti-spam (Rspamd)</strong></td>
+      <td>Ships with Rspamd — one of the best open-source spam filters. Scores and filters incoming spam automatically.</td>
+      <td>✅ Very good</td>
+    </tr>
+    <tr class="security-row-ok">
+      <td><strong>Antivirus (ClamAV)</strong></td>
+      <td>Ships with ClamAV for attachment scanning. Your backend also has ClamAV support (<code>CLAMAV_ENABLED</code> env var).</td>
+      <td>✅ Double protection</td>
+    </tr>
+    <tr class="security-row-ok">
+      <td><strong>Admin API</strong></td>
+      <td>REST API with API key authentication. Key is stored in your backend env vars only — never exposed to users.</td>
+      <td>✅ Safe if key is secret</td>
+    </tr>
+    <tr class="security-row-ok">
+      <td><strong>Runs in Docker</strong></td>
+      <td>All Mailcow services run in isolated Docker containers. Compromise of one service does not affect others.</td>
+      <td>✅ Good isolation</td>
+    </tr>
+    <tr class="security-row-warn">
+      <td><strong>Requires dedicated VPS</strong></td>
+      <td>Mail servers need a fixed IP with good reputation. A new VPS IP may be on spam blacklists initially — needs warm-up period.</td>
+      <td>⚠️ Manageable — check IP reputation before launch</td>
+    </tr>
+    <tr class="security-row-warn">
+      <td><strong>Requires port 25 open</strong></td>
+      <td>Port 25 (SMTP) must be open for receiving external email. Some VPS providers block it by default — request it from provider.</td>
+      <td>⚠️ Check with VPS provider first</td>
+    </tr>
+    <tr class="security-row-warn">
+      <td><strong>Maintenance burden</strong></td>
+      <td>You are responsible for OS updates, Mailcow updates, backups, and monitoring. Unlike Gmail, there is no support team.</td>
+      <td>⚠️ Requires regular attention (~monthly updates)</td>
+    </tr>
+    <tr class="security-row-ok">
+      <td><strong>Data sovereignty</strong></td>
+      <td>All member emails stay on YOUR server. No third party (Google, Microsoft) can read them.</td>
+      <td>✅ Maximum privacy</td>
+    </tr>
+  </table>
+
+  <div class="ok">
+    <strong>Overall safety verdict: Mailcow is safe and the right choice for this use case.</strong> It is the most widely used self-hosted email server solution, used by thousands of organisations. The security stack (TLS, DKIM, SPF, DMARC, Rspamd, ClamAV) matches or exceeds commercial providers. The main risks are operational (maintenance, IP reputation) not architectural.
+  </div>
+
+  
+  <h2>5 — Architecture: How Mailcow Connects to Your System</h2>
+
+  <div class="flow-box">
+┌─────────────────────────────────────────────────────┐
+│  Netlify (Frontend — Next.js)                        │
+│  ssss.org                                           │
+└────────────────┬────────────────────────────────────┘
+                 │ HTTPS /api/*
+┌────────────────▼────────────────────────────────────┐
+│  Railway (Spring Boot Backend)                       │
+│                                                     │
+│  EmailAccountService  ──────────────────────────►  │
+│  MailcowApiService (NEW)  ──── REST API ──────────► │
+│  EmailSyncService  ──── IMAP :993 ───────────────►  │
+│  EmailSendService  ──── SMTP :587 ───────────────►  │
+└─────────────────────────────────────────────────────┘
+                 │ Mailcow Admin API (HTTPS, API key)
+                 │ IMAP/SMTP (TLS)
+┌────────────────▼────────────────────────────────────┐
+│  Mailcow VPS (Ubuntu 22.04, Docker)                 │
+│                                                     │
+│  Postfix (SMTP :25, :587)                           │
+│  Dovecot (IMAP :993)                                │
+│  Rspamd (anti-spam)                                 │
+│  ClamAV (antivirus)                                 │
+│  SOGo (optional webmail)                            │
+│  Mailcow Admin Panel (https://mail.ssss.org)        │
+└─────────────────────────────────────────────────────┘
+  </div>
+
+  <p><strong>DNS records needed on ssss.org when Mailcow is active:</strong></p>
+  <table>
+    <tr><th>Type</th><th>Name</th><th>Value</th><th>Purpose</th></tr>
+    <tr><td>A</td><td><code>mail</code></td><td>Mailcow VPS IP</td><td>mail.ssss.org → Mailcow</td></tr>
+    <tr><td>MX</td><td><code>@</code></td><td><code>mail.ssss.org</code> (priority 10)</td><td>Incoming email routing</td></tr>
+    <tr><td>TXT</td><td><code>@</code></td><td><code>v=spf1 mx ~all</code></td><td>SPF — authorise your server to send</td></tr>
+    <tr><td>TXT</td><td><code>dkim._domainkey</code></td><td>Generated by Mailcow</td><td>DKIM signing</td></tr>
+    <tr><td>TXT</td><td><code>_dmarc</code></td><td><code>v=DMARC1; p=quarantine</code></td><td>DMARC policy</td></tr>
+  </table>
+
+  
+  <h2>6 — Phase Plan</h2>
+
+  <div class="phase-box now">
+    <span class="phase-label label-now">NOW — Phase 1 (Current / Launch)</span>
+    <h3>Railway + Netlify, no Mailcow</h3>
+    <ul>
+      <li>Site goes live at ssss.org</li>
+      <li>Member email accounts are provisioned as DB records (address assigned, folders created)</li>
+      <li>IMAP sync and SMTP are configured but point to nothing yet (or Zoho for admin email)</li>
+      <li>Members get their <code>ahmad@ssss.org</code> address assigned and visible in their profile — but it is not a real live mailbox yet</li>
+      <li>Transactional emails (password reset, notifications) sent via Brevo SMTP free tier</li>
+      <li>Auto-provision on registration: one small fix needed in <code>AuthService</code> (see below)</li>
+    </ul>
+  </div>
+
+  <div class="phase-box later">
+    <span class="phase-label label-later">LATER — Phase 2 (Mailcow VPS)</span>
+    <h3>Add a Mailcow VPS alongside Railway + Netlify</h3>
+    <ul>
+      <li>Rent a dedicated VPS (Hetzner CX22 ~$4/mo) — separate from Railway</li>
+      <li>Install Mailcow on it (30 min, Docker-based)</li>
+      <li>Add DNS records: MX, SPF, DKIM, DMARC</li>
+      <li>Add <code>MailcowApiService</code> to Spring Boot — calls Mailcow REST API when a member is provisioned</li>
+      <li>Update <code>EmailSyncService</code> to point IMAP to <code>mail.ssss.org:993</code></li>
+      <li>Update <code>EmailSendService</code> SMTP to point to <code>mail.ssss.org:587</code></li>
+      <li>All existing members' DB records stay — just add real mailboxes for them on Mailcow</li>
+      <li>Members can now send/receive real email from <code>ahmad@ssss.org</code></li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <strong>The transition from Phase 1 to Phase 2 does not break anything.</strong> The DB schema stays the same. The frontend stays the same. Only the backend gains one new service class and two config values change (IMAP host, SMTP host).
+  </div>
+
+  
+  <h2>7 — When You Are Ready: Exact Integration Steps</h2>
+
+  <h3>Step A — Fix: Auto-Provision Email on Member Registration (do now)</h3>
+  <p>Currently <code>AuthService.register()</code> creates the user but does not call <code>provisionAccount()</code>. This one-line fix makes email addresses auto-assigned at registration:</p>
+  <pre><code>// In AuthService.java — add EmailAccountService dependency
+// and call it after user is saved:
+
+user = userRepository.save(user);
+
+// Auto-provision email account (address stored in DB, real mailbox created later)
+try {
+    emailAccountService.provisionAccount(user.getId());
+} catch (Exception e) {
+    // Non-fatal — user registration still succeeds
+    log.warn("Could not provision email account for user {}: {}", user.getId(), e.getMessage());
+}</code></pre>
+
+  <h3>Step B — Install Mailcow on a VPS (do later)</h3>
+  <pre><code># On a fresh Ubuntu 22.04 VPS (Hetzner CX22 recommended)
+# Port 25 must be open — confirm with your VPS provider first
+
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+
+# Install Mailcow
+cd /opt
+git clone https://github.com/mailcow/mailcow-dockerized
+cd mailcow-dockerized
+
+# Generate config (sets your domain)
+./generate_config.sh
+# Enter: mail.ssss.org when asked for hostname
+
+# Start Mailcow
+docker compose pull
+docker compose up -d
+
+# Issue SSL certificate (runs certbot inside Mailcow)
+# Access admin panel at https://mail.ssss.org (admin / moohoo default — change immediately)</code></pre>
+
+  <h3>Step C — Add MailcowApiService to Spring Boot (do later)</h3>
+  <p>When Mailcow is running, add this new service. It calls the Mailcow REST API to create/delete real mailboxes whenever your backend provisions/deprovisions an email account:</p>
+  <pre><code>// New file: MailcowApiService.java
+@Service
+public class MailcowApiService {
+
+    @Value("${mailcow.api.url:}")        // https://mail.ssss.org/api/v1
+    private String mailcowApiUrl;
+
+    @Value("${mailcow.api.key:}")        // API key from Mailcow admin panel
+    private String mailcowApiKey;
+
+    // Called from EmailAccountService.provisionAccount()
+    public void createMailbox(String username, String domain, String password, long quotaMb) {
+        // POST /api/v1/add/mailbox
+        // Body: { "local_part": username, "domain": domain,
+        //         "password": password, "quota": quotaMb }
+        // Header: X-API-Key: mailcowApiKey
+    }
+
+    // Called from EmailAccountService.deleteAccountByAdmin()
+    public void deleteMailbox(String emailAddress) {
+        // DELETE /api/v1/delete/mailbox
+    }
+
+    // Called from EmailAccountService.updateAccountByAdmin() when isActive changes
+    public void setMailboxActive(String emailAddress, boolean active) {
+        // POST /api/v1/edit/mailbox
+        // Body: { "attr": { "active": active ? "1" : "0" } }
+    }
+}</code></pre>
+
+  <h3>Step D — Update Environment Variables on Railway (do later)</h3>
+  <pre><code># Add to Railway backend environment variables:
+
+# Mailcow integration
+MAILCOW_API_URL=https://mail.ssss.org/api/v1
+MAILCOW_API_KEY=your_mailcow_api_key_here
+
+# Point IMAP sync to Mailcow
+SSSSY_EMAIL_IMAP_HOST=mail.ssss.org
+SSSSY_EMAIL_IMAP_PORT=993
+
+# Point SMTP to Mailcow
+SPRING_MAIL_HOST=mail.ssss.org
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=noreply@ssss.org
+SPRING_MAIL_PASSWORD=your_noreply_mailbox_password</code></pre>
+
+  <h3>Step E — Migrate Existing Members (do later, one-time)</h3>
+  <pre><code>-- After Mailcow is running, create real mailboxes for all existing members
+-- Run this query to get all provisioned accounts, then call MailcowApiService for each
+
+SELECT email_address, username FROM email_accounts WHERE is_active = true;
+
+-- Your admin panel already has a "bulk operation" API you can trigger,
+-- or write a one-time migration script in Spring Boot</code></pre>
+
+  
+  <h2>8 — Cost of Adding a Mailcow VPS</h2>
+
+  <table>
+    <tr><th>Item</th><th>Provider</th><th>Cost</th><th>Notes</th></tr>
+    <tr><td><strong>Mailcow VPS</strong> (dedicated)</td><td>Hetzner CX22</td><td>~$4–6/mo</td><td>2 vCPU, 4 GB RAM, 40 GB SSD — minimum for Mailcow</td></tr>
+    <tr><td>Or: Contabo VPS S</td><td>Contabo</td><td>~$5/mo</td><td>4 vCPU, 8 GB RAM, 200 GB — very generous for mail</td></tr>
+    <tr><td>SSL for mail.ssss.org</td><td>Let's Encrypt (Mailcow built-in)</td><td>Free</td><td>Auto-issued and auto-renewed</td></tr>
+    <tr><td>Extra domain DNS records</td><td>Porkbun (your registrar)</td><td>Free</td><td>MX, SPF, DKIM, DMARC — all free DNS records</td></tr>
+    <tr><td>Mailcow software</td><td>Open source</td><td>Free</td><td>Forever free, actively maintained</td></tr>
+  </table>
+
+  <div class="ok">
+    <strong>Total extra cost for adding Mailcow: ~$4–6/month</strong><br />
+    Added to your existing ~$9–14/month = <strong>~$13–20/month total</strong> for a complete, professional, self-hosted system with real member email addresses @ssss.org — which is exceptionally good value for an institutional mail platform.
+  </div>
+
+  <h3>Minimum VPS requirements for Mailcow</h3>
+  <table>
+    <tr><th>Resource</th><th>Minimum</th><th>Recommended</th></tr>
+    <tr><td>CPU</td><td>2 vCPU</td><td>4 vCPU</td></tr>
+    <tr><td>RAM</td><td>4 GB</td><td>6–8 GB (ClamAV uses 1–2 GB alone)</td></tr>
+    <tr><td>Disk</td><td>20 GB SSD</td><td>50+ GB (for email storage)</td></tr>
+    <tr><td>OS</td><td>Ubuntu 22.04 LTS</td><td>Ubuntu 22.04 LTS</td></tr>
+    <tr><td>Port 25 open</td><td>Required</td><td>Confirm with VPS provider before ordering</td></tr>
+  </table>
+
+  <div class="warn">
+    <strong>Check port 25 before ordering a VPS.</strong> Many providers (AWS, GCP, DigitalOcean) block outbound port 25 by default to prevent spam. Hetzner and Contabo open it on request. When ordering, choose a provider that allows port 25 or explicitly request it.
+  </div>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

@@ -491,7 +491,7 @@ VALUES (
         "infoItems": [
             { "icon": "MapPin", "titleEn": "Address", "contentEn": "Damascus, Syria" },
             { "icon": "Phone", "titleEn": "Phone", "contentEn": "+963 11 234 5678" },
-            { "icon": "Mail", "titleEn": "Email", "contentEn": "info@ssssy.org.sy" },
+            { "icon": "Mail", "titleEn": "Email", "contentEn": "info@ssssyria.org" },
             { "icon": "Clock", "titleEn": "Working Hours", "contentEn": "Sunday - Thursday, 9:00 AM - 5:00 PM" }
         ],
         "mapPlaceholderText": "Google Maps Placeholder"

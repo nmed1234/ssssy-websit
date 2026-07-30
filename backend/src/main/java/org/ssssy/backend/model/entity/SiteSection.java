@@ -58,6 +58,26 @@ public class SiteSection {
   @Column(name = "version")
   private Integer version;
 
+  // ── Draft / Publish workflow fields (added V62) ─────────────────────────
+  @Column(name = "status", length = 20, nullable = false)
+  private String status;
+
+  @Column(name = "published_data", columnDefinition = "jsonb")
+  @JdbcTypeCode(SqlTypes.JSON)
+  private String publishedData;
+
+  @Column(name = "published_config", columnDefinition = "jsonb")
+  @JdbcTypeCode(SqlTypes.JSON)
+  private String publishedConfig;
+
+  @Column(name = "published_styling", columnDefinition = "jsonb")
+  @JdbcTypeCode(SqlTypes.JSON)
+  private String publishedStyling;
+
+  @Column(name = "published_at")
+  private LocalDateTime publishedAt;
+  // ────────────────────────────────────────────────────────────────────────
+
   @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
 
@@ -77,6 +97,7 @@ public class SiteSection {
     if (eventsJson == null) eventsJson = "{}";
     if (conditionsJson == null) conditionsJson = "{}";
     if (version == null) version = 1;
+    if (status == null) status = "DRAFT";
   }
 
   @PreUpdate

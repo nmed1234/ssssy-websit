@@ -53,13 +53,12 @@ export function ImageFieldWidget({ value, onChange }: ImageFieldWidgetProps) {
     setUploading(true);
     setProgress(0);
 
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-
     const formData = new FormData();
     formData.append("file", file);
 
     const xhr = new XMLHttpRequest();
+    // Credentials (httpOnly accessToken cookie) are sent automatically.
+    xhr.withCredentials = true;
 
     xhr.upload.onprogress = (evt) => {
       if (evt.lengthComputable) {
@@ -104,9 +103,6 @@ export function ImageFieldWidget({ value, onChange }: ImageFieldWidgetProps) {
     };
 
     xhr.open("POST", `${API_BASE}/media/upload`);
-    if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    }
     xhr.send(formData);
   };
 

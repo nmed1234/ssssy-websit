@@ -447,10 +447,11 @@ function UploadZone({ onUploaded }: UploadZoneProps) {
     if (!ACCEPTED_TYPES.includes(item.file.type)) { finishItem(item.id, "error", 0, undefined, "Invalid file type"); activeRef.current--; drainQueue(); return; }
     if (item.file.size > MAX_FILE_SIZE) { finishItem(item.id, "error", 0, undefined, "File too large (max 10MB)"); activeRef.current--; drainQueue(); return; }
     setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, status: "uploading" } : i)));
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     const formData = new FormData();
     formData.append("file", item.file);
     const xhr = new XMLHttpRequest();
+    // Credentials (httpOnly accessToken cookie) are sent automatically.
+    xhr.withCredentials = true;
     xhr.upload.onprogress = (evt) => {
       if (evt.lengthComputable) {
         const pct = Math.round((evt.loaded / evt.total) * 100);
@@ -474,7 +475,6 @@ function UploadZone({ onUploaded }: UploadZoneProps) {
     };
     xhr.onerror = () => { activeRef.current--; finishItem(item.id, "error", 0, undefined, "Network error"); drainQueue(); };
     xhr.open("POST", `${API_BASE}/admin/media`);
-    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
     xhr.send(formData);
   }
 

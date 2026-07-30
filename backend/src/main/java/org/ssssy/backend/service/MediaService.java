@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.ssssy.backend.audit.SecurityAudit;
+import org.ssssy.backend.event.CmsEventBus;
+import org.ssssy.backend.event.MediaUploadedEvent;
 import org.ssssy.backend.exception.BadRequestException;
 import org.ssssy.backend.exception.ResourceNotFoundException;
 import org.ssssy.backend.model.dto.MediaFileRequest;
@@ -22,13 +25,13 @@ import org.ssssy.backend.model.entity.User;
 import org.ssssy.backend.repository.MediaFileRepository;
 import org.ssssy.backend.repository.MediaFolderRepository;
 import org.ssssy.backend.repository.UserRepository;
+import org.ssssy.backend.security.FileValidationService;
 import org.ssssy.backend.storage.StorageService;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,14 +41,13 @@ import java.util.stream.Collectors;
 public class MediaService {
 
   private static final long MAX_FILE_SIZE = 10_485_760L; // 10 MB
-  private static final Set<String> IMAGE_MIME_TYPES = Set.of(
-      "image/jpeg", "image/png", "image/gif", "image/webp"
-  );
 
   private final MediaFileRepository mediaFileRepository;
   private final MediaFolderRepository mediaFolderRepository;
   private final UserRepository userRepository;
   private final StorageService storageService;
+  private final CmsEventBus cmsEventBus;
+  private final FileValidationService fileValidationService;
 
   // ─────────────────────────────────────────────────────────────────────────
   // File queries
@@ -117,47 +119,42 @@ public class MediaService {
   // ─────────────────────────────────────────────────────────────────────────
 
   @Transactional
+  @SecurityAudit(action = "MEDIA_UPLOAD", entityType = "MEDIA")
   public MediaFileResponse uploadFile(MultipartFile multipartFile, MediaFileRequest request, UUID userId) {
-    if (multipartFile.isEmpty()) {
-      throw new BadRequestException("File is empty");
-    }
-
-    // 1. Validate MIME type
-    String contentType = multipartFile.getContentType();
-    if (contentType == null || !IMAGE_MIME_TYPES.contains(contentType)) {
-      throw new BadRequestException("invalid_file_type");
-    }
-
-    // 2. Validate file size
+    // 1. Validate file size (fast check before reading bytes)
     if (multipartFile.getSize() > MAX_FILE_SIZE) {
       throw new BadRequestException("file_size_exceeded");
     }
 
-    // 3. Load user
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-    // 4. Build UUID-prefixed filename
-    String originalFilename = multipartFile.getOriginalFilename();
-    if (originalFilename == null || originalFilename.isBlank()) {
-      originalFilename = "upload";
-    }
-    String uuidPrefix = UUID.randomUUID().toString();
-    String uuidFilename = uuidPrefix + "-" + originalFilename;
-
-    // 5. Compute extension (without dot for thumbnail format)
-    String ext = "";
-    int dotIdx = originalFilename.lastIndexOf('.');
-    if (dotIdx >= 0) {
-      ext = originalFilename.substring(dotIdx + 1).toLowerCase();
-    }
-
-    // 6. Read bytes for thumbnail
+    // 2. Read bytes
     byte[] fileBytes;
     try {
       fileBytes = multipartFile.getInputStream().readAllBytes();
     } catch (Exception e) {
       throw new RuntimeException("Failed to read uploaded file", e);
+    }
+
+    // 3. Sanitize filename, then validate via magic-byte detection + virus scan
+    String originalFilename = fileValidationService.sanitizeFilename(
+        multipartFile.getOriginalFilename()
+    );
+    String contentType = multipartFile.getContentType();
+    fileValidationService.validateFile(fileBytes, contentType, originalFilename);
+    fileValidationService.scanWithClamAv(fileBytes, originalFilename);
+
+    // 4. Load user
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+    // 5. Build UUID-prefixed filename
+    String uuidPrefix = UUID.randomUUID().toString();
+    String uuidFilename = uuidPrefix + "-" + originalFilename;
+
+    // 6. Compute extension (without dot for thumbnail format)
+    String ext = "";
+    int dotIdx = originalFilename.lastIndexOf('.');
+    if (dotIdx >= 0) {
+      ext = originalFilename.substring(dotIdx + 1).toLowerCase();
     }
 
     // 7. MinIO-first: upload original to originals/
@@ -225,6 +222,17 @@ public class MediaService {
     }
 
     mediaFile = mediaFileRepository.save(mediaFile);
+
+    // Phase 1 — fire MediaUploadedEvent so plugins can react to uploads
+    cmsEventBus.publish(new MediaUploadedEvent(
+        mediaFile.getId(),
+        mediaFile.getOriginalFilename(),
+        mediaFile.getMimeType(),
+        mediaFile.getSizeBytes() != null ? mediaFile.getSizeBytes() : 0L,
+        mediaFile.getUrl() != null ? mediaFile.getUrl() : "",
+        userId
+    ));
+
     return toFileResponse(mediaFile);
   }
 
@@ -270,6 +278,7 @@ public class MediaService {
   // ─────────────────────────────────────────────────────────────────────────
 
   @Transactional
+  @SecurityAudit(action = "MEDIA_DELETE", entityType = "MEDIA")
   public void deleteFile(UUID id) {
     MediaFile file = mediaFileRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("File not found: " + id));

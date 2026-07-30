@@ -162,7 +162,7 @@ AND p.name IN ('content:read');
 
 -- Create default super admin user (password: admin123)
 INSERT INTO users (username, email, password_hash, first_name_en, last_name_en, role_id, is_active, is_email_verified)
-SELECT 'admin', 'admin@ssssy.org.sy',
+SELECT 'admin', 'admin@ssssyria.org',
 '$2a$10$yV7UTAfe5DuI/Wu4SL0Lc.R9gdC53X1jT38idZjrvjGzxxnC0H2Bq',
 'Super', 'Admin', id, TRUE, TRUE
 FROM roles WHERE name = 'SUPER_ADMIN';

@@ -10,7 +10,17 @@ export async function provisionAccount() {
   return api.post<ApiResponse<EmailAccount>>("/email/account/provision");
 }
 
-export async function updateAccount(data: { displayName?: string; signature?: string }) {
+export async function updateAccount(data: {
+  displayName?: string;
+  signature?: string;
+  autoReplyEnabled?: boolean;
+  autoReplySubject?: string;
+  autoReplyBody?: string;
+  autoReplyStartsAt?: string;
+  autoReplyEndsAt?: string;
+  forwardTo?: string;
+  forwardKeepCopy?: boolean;
+}) {
   return api.put<ApiResponse<EmailAccount>>("/email/account", data);
 }
 
@@ -188,4 +198,28 @@ export async function addContactToGroup(groupId: string, contactId: string) {
 
 export async function removeContactFromGroup(groupId: string, contactId: string) {
   return api.delete<ApiResponse<void>>(`/email/contact-groups/${groupId}/members/${contactId}`);
+}
+
+export async function toggleContactFavorite(id: string) {
+  return api.put<ApiResponse<EmailContact>>(`/email/contacts/${id}/favorite`);
+}
+
+export async function searchMessages(params: {
+  query: string;
+  folderId?: string;
+  starred?: boolean;
+  unread?: boolean;
+  hasAttachments?: boolean;
+  page?: number;
+  size?: number;
+}) {
+  const qs = new URLSearchParams();
+  if (params.query) qs.set("search", params.query);
+  if (params.folderId) qs.set("folderId", params.folderId);
+  if (params.starred) qs.set("starred", "true");
+  if (params.unread) qs.set("unread", "true");
+  if (params.hasAttachments) qs.set("hasAttachments", "true");
+  qs.set("page", String(params.page ?? 0));
+  qs.set("size", String(params.size ?? 20));
+  return api.get<ApiResponse<import("@/types").PaginatedResponse<EmailMessage>>>(`/email/messages?${qs.toString()}`);
 }

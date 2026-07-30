@@ -28,6 +28,18 @@ public class EventResponse {
   private LocalDateTime registrationDeadline;
   private String status;
   private String contactEmail;
+  // Phase 2 — registration count
+  private Long registrationCount;
+  // Phase 5 — featured & SEO
+  private Boolean isFeatured;
+  private Integer displayOrder;
+  private String ogImage;
+  private String metaTitle;
+  private String metaDescription;
+  private String registrationFormSchema;
+  private LocalDateTime cancelledAt;
+  private String cancellationReason;
+  // Meta
   private String createdByName;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;

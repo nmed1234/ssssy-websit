@@ -7,16 +7,20 @@
  *   titleEn / titleAr       — section heading
  *   viewMoreLabelEn / Ar    — "View All" link text
  *   viewMoreUrl             — defaults to /publications
+ *   dataSource              — "api" (default) | "manual"
  *
- * Fetches live data from /api/public/publications (up to 8 items).
- * Clicking a card opens the PDF in a full-screen flip-book modal powered by
- * react-pdf — no iframe, so X-Frame-Options is not an issue.
- * Returns null when no publications are loaded.
+ * Data keys (when dataSource is "manual" or items array is present):
+ *   items[]                 — array of manual publication entries:
+ *     titleEn / titleAr, description(En|Ar), coverImage, link, authors, year, category
+ *
+ * When dataSource === "manual" (or items are provided), shows manual items.
+ * Otherwise fetches live data from /api/public/publications (up to 8 items).
  */
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Download, Eye, ArrowRight, X } from "lucide-react";
+import Image from "next/image";
+import { BookOpen, Download, Eye, ArrowRight, ExternalLink, X } from "lucide-react";
 import { almarai } from "@/lib/fonts";
 import { StyleCard, StyleCardContent } from "@/components/ui/style-card";
 import { TextReveal } from "@/components/ui/text-reveal";
@@ -26,13 +30,57 @@ import type { Publication } from "@/types";
 import { useLanguage } from "@/lib/language-context";
 
 // ---------------------------------------------------------------------------
+// Manual item shape — comes from the repeater in section data
+// ---------------------------------------------------------------------------
+
+interface ManualItem {
+  titleEn?: string;
+  titleAr?: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
+  coverImage?: string;
+  link?: string;
+  authors?: string;
+  year?: string | number;
+  category?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Normalise a ManualItem → Publication-like shape for the card renderer
+// ---------------------------------------------------------------------------
+
+function manualToPublication(item: ManualItem, idx: number): Publication {
+  return {
+    id: `manual-${idx}`,
+    titleEn: item.titleEn || item.titleAr || `Publication ${idx + 1}`,
+    titleAr: item.titleAr,
+    slug: `manual-${idx}`,
+    abstractEn: item.descriptionEn,
+    abstractAr: item.descriptionAr,
+    authors: item.authors,
+    year: typeof item.year === "number" ? item.year : (item.year ? parseInt(item.year) : undefined),
+    category: item.category,
+    coverImageUrl: item.coverImage,
+    pdfUrl: item.link,
+    isActive: true,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // PDF Modal — uses PdfBookViewer (react-pdf) instead of an iframe so that
 // external URLs blocked by X-Frame-Options still load correctly.
+// For non-PDF links, opens in a new tab.
 // ---------------------------------------------------------------------------
+
+function isPdfUrl(url: string): boolean {
+  const lower = url.toLowerCase().split("?")[0];
+  return lower.endsWith(".pdf");
+}
 
 function PdfModal({ pub, onClose }: { pub: Publication; onClose: () => void }) {
   const { language } = useLanguage();
   const title = language === "ar" ? (pub.titleAr || pub.titleEn) : pub.titleEn;
+  const showPdf = !!pub.pdfUrl && isPdfUrl(pub.pdfUrl);
 
   // Close on Escape
   useEffect(() => {
@@ -77,14 +125,38 @@ function PdfModal({ pub, onClose }: { pub: Publication; onClose: () => void }) {
           </div>
         </div>
 
-        {/* PDF Book Viewer — flex-1 so it takes all remaining height */}
+        {/* Content */}
         <div className="flex-1 min-h-0 flex flex-col">
-          {pub.pdfUrl ? (
+          {showPdf ? (
             <PdfBookViewer
-              file={pub.pdfUrl}
+              file={pub.pdfUrl!}
               title={title ?? undefined}
               className="w-full h-full"
             />
+          ) : pub.pdfUrl ? (
+            /* Non-PDF link — show description + open button */
+            <div className="flex flex-col items-center justify-center h-full gap-5 text-white px-8 text-center">
+              {pub.coverImageUrl && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={pub.coverImageUrl}
+                  alt={pub.titleEn ?? ""}
+                  className="max-h-48 max-w-xs object-contain rounded-lg shadow-lg"
+                />
+              )}
+              <p className="text-sm text-white/70 max-w-md">
+                {(language === "ar" ? pub.abstractAr : pub.abstractEn) ?? ""}
+              </p>
+              <a
+                href={pub.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors font-medium text-sm"
+              >
+                <ExternalLink className="h-4 w-4" />
+                {language === "ar" ? "فتح الرابط" : "Open Link"}
+              </a>
+            </div>
           ) : (
             <div className="flex items-center justify-center h-64 text-white/40 gap-3">
               <BookOpen className="h-8 w-8 opacity-30" />
@@ -103,22 +175,39 @@ function PdfModal({ pub, onClose }: { pub: Publication; onClose: () => void }) {
 
 interface PublicationsCarouselSectionProps {
   config?: Record<string, unknown>;
+  data?: Record<string, unknown>;
 }
 
-export function PublicationsCarouselSection({ config = {} }: PublicationsCarouselSectionProps) {
+export function PublicationsCarouselSection({
+  config = {},
+  data = {},
+}: PublicationsCarouselSectionProps) {
   const { language } = useLanguage();
-  const [publications, setPublications] = useState<Publication[]>([]);
-  const [loading, setLoading]           = useState(true);
-  const [selectedPub, setSelectedPub]   = useState<Publication | null>(null);
+  const [apiPublications, setApiPublications] = useState<Publication[]>([]);
+  const [loading, setLoading]                 = useState(false);
+  const [selectedPub, setSelectedPub]         = useState<Publication | null>(null);
 
+  // Determine data source
+  const manualItems = Array.isArray(data.items) ? (data.items as ManualItem[]) : [];
+  const dataSource = (config.dataSource as string) || "api";
+  const useManual = dataSource === "manual" || manualItems.length > 0;
+
+  // Fetch from API when not using manual items
   useEffect(() => {
+    if (useManual) return;
+    setLoading(true);
     getPublicPublications({ size: 8 })
       .then((res) => {
-        if (res.data.success) setPublications(res.data.data.content ?? []);
+        if (res.data.success) setApiPublications(res.data.data.content ?? []);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [useManual]);
+
+  // Final list of publications to display
+  const publications: Publication[] = useManual
+    ? manualItems.map((item, idx) => manualToPublication(item, idx))
+    : apiPublications;
 
   // Config-driven text
   const sectionTitle = language === "ar"
@@ -182,25 +271,30 @@ export function PublicationsCarouselSection({ config = {} }: PublicationsCarouse
               const title = language === "ar"
                 ? (pub.titleAr || pub.titleEn)
                 : pub.titleEn;
+              const abstract = language === "ar" ? pub.abstractAr : pub.abstractEn;
+              const isExternalLink = !!pub.pdfUrl && !isPdfUrl(pub.pdfUrl);
 
               return (
                 <div key={pub.id} className="w-56 flex-shrink-0 snap-start">
                   <StyleCard className="h-full flex flex-col cursor-pointer group">
                     {/* Cover */}
                     <div
-                      className="h-36 bg-soil-sand/30 flex items-center justify-center rounded-t-lg overflow-hidden flex-shrink-0"
+                      className="relative h-36 bg-soil-sand/30 flex items-center justify-center rounded-t-lg overflow-hidden flex-shrink-0"
                       onClick={() => setSelectedPub(pub)}
                     >
                       {pub.coverImageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={pub.coverImageUrl}
-                          alt=""
+                          alt={pub.titleEn ?? ""}
+                          fill
+                          sizes="224px"
                           loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <BookOpen className="h-12 w-12 text-soil-clay/30 group-hover:text-soil-clay/50 transition-colors" />
+                        <BookOpen
+                          className="h-12 w-12 text-soil-clay/30 group-hover:text-soil-clay/50 transition-colors"
+                        />
                       )}
                     </div>
 
@@ -227,16 +321,33 @@ export function PublicationsCarouselSection({ config = {} }: PublicationsCarouse
                         <p className="text-xs text-earth-gray line-clamp-1">{pub.authors}</p>
                       )}
 
-                      {/* View button */}
+                      {/* Description (manual items) */}
+                      {abstract && (
+                        <p className="text-xs text-earth-gray/80 line-clamp-2 leading-snug">{abstract}</p>
+                      )}
+
+                      {/* Action buttons */}
                       <div className="flex gap-1.5 mt-auto pt-1">
-                        <button
-                          onClick={() => setSelectedPub(pub)}
-                          className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold bg-soil-dark text-white hover:bg-soil-clay transition-colors"
-                        >
-                          <Eye className="h-3 w-3" />
-                          {language === "ar" ? "عرض" : "View"}
-                        </button>
-                        {pub.pdfUrl && (
+                        {isExternalLink ? (
+                          <a
+                            href={pub.pdfUrl!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold bg-soil-dark text-white hover:bg-soil-clay transition-colors"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            {language === "ar" ? "فتح" : "Open"}
+                          </a>
+                        ) : (
+                          <button
+                            onClick={() => setSelectedPub(pub)}
+                            className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold bg-soil-dark text-white hover:bg-soil-clay transition-colors"
+                          >
+                            <Eye className="h-3 w-3" />
+                            {language === "ar" ? "عرض" : "View"}
+                          </button>
+                        )}
+                        {pub.pdfUrl && !isExternalLink && (
                           <a
                             href={pub.pdfUrl}
                             download

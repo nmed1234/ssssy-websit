@@ -30,7 +30,7 @@ public class ContentVersion {
   @Column(columnDefinition = "TEXT")
   private String excerpt;
 
-  @Column(columnDefinition = "jsonb")
+  @Column(columnDefinition = "TEXT")
   private String body;
 
   @Column(length = 30)

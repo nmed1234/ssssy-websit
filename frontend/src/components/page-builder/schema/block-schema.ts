@@ -80,6 +80,7 @@ const BG_FIELDS: FieldDef[] = [
       { value: "solid",    label: "Solid Color" },
       { value: "gradient", label: "Gradient" },
       { value: "image",    label: "Image" },
+      { value: "pattern",  label: "Pattern (SVG)" },
     ]
   },
   { kind: "color",  key: "backgroundColor",    label: "Background Color", group: "style" },
@@ -87,6 +88,20 @@ const BG_FIELDS: FieldDef[] = [
   { kind: "image",  key: "backgroundImageUrl", label: "Background Image", group: "style" },
   { kind: "select", key: "backgroundSize",     label: "BG Size",          group: "style",
     options: [{ value: "cover", label: "Cover" }, { value: "contain", label: "Contain" }, { value: "auto", label: "Auto" }] },
+  /* Pattern background controls */
+  { kind: "select", key: "backgroundPattern", label: "Pattern Style", group: "style",
+    options: [
+      { value: "dots",         label: "Dots" },
+      { value: "grid",         label: "Grid" },
+      { value: "diagonal",     label: "Diagonal Stripes" },
+      { value: "crosshatch",   label: "Crosshatch" },
+      { value: "zigzag",       label: "Zigzag" },
+      { value: "waves",        label: "Waves" },
+    ]
+  },
+  { kind: "color",  key: "patternColor",     label: "Pattern Color",      group: "style" },
+  { kind: "color",  key: "patternBgColor",   label: "Pattern Background", group: "style" },
+  { kind: "number", key: "patternSize",      label: "Pattern Size (px)",  group: "style", min: 4, max: 80, step: 2 },
 ];
 
 const BORDER_FIELDS: FieldDef[] = [
@@ -94,6 +109,12 @@ const BORDER_FIELDS: FieldDef[] = [
   { kind: "text",  key: "borderWidth",  label: "Border Width",   group: "style", placeholder: "1px" },
   { kind: "color", key: "borderColor",  label: "Border Color",   group: "style" },
   { kind: "text",  key: "boxShadow",    label: "Box Shadow",     group: "style", placeholder: "0 2px 8px rgba(0,0,0,.12)" },
+];
+
+const RESPONSIVE_FIELDS: FieldDef[] = [
+  { kind: "number", key: "colsMobile",  label: "Columns (Mobile)",  group: "layout", min: 1, max: 4,  step: 1 },
+  { kind: "number", key: "colsTablet",  label: "Columns (Tablet)",  group: "layout", min: 1, max: 8,  step: 1 },
+  { kind: "number", key: "colsDesktop", label: "Columns (Desktop)", group: "layout", min: 1, max: 12, step: 1 },
 ];
 
 const ADVANCED_FIELDS: FieldDef[] = [
@@ -260,6 +281,7 @@ export const BLOCK_SCHEMA: Record<string, BlockSchema> = {
       { kind: "number", key: "columns",       label: "Columns",          group: "layout", min: 1, max: 12 },
       { kind: "number", key: "columnsMobile", label: "Columns (mobile)", group: "layout", min: 1, max: 4 },
       { kind: "text",   key: "gap",           label: "Gap",              group: "layout", placeholder: "1.5rem" },
+      ...RESPONSIVE_FIELDS,
       MAX_WIDTH_FIELD,
       ...SPACING_FIELDS,
       ...BG_FIELDS,
@@ -923,6 +945,135 @@ export const BLOCK_SCHEMA: Record<string, BlockSchema> = {
       },
       { kind: "number", key: "columns",       label: "Columns (desktop)", group: "layout", min: 1, max: 6 },
       { kind: "number", key: "columnsMobile", label: "Columns (mobile)",  group: "layout", min: 1, max: 3 },
+      ...BG_FIELDS,
+      ...SPACING_FIELDS,
+      ...ADVANCED_FIELDS,
+    ],
+  },
+
+  // ── About: Founding Decree ─────────────────────────────────────────────────
+  "about-decree-section": {
+    label: "Founding Decree", icon: "📜", category: "content", isContainer: false,
+    fields: [
+      ...bilingual("heading", "Heading (EN)", "headingAr", "العنوان (AR)"),
+      { kind: "image",    key: "imageUrl",   label: "Decree Image URL",  group: "content" },
+      { kind: "text",     key: "imageAlt",   label: "Image Alt Text",    group: "content" },
+      ...bilingual("caption", "Caption (EN)", "captionAr", "التسمية التوضيحية (AR)", "textarea"),
+      ...BG_FIELDS,
+      ...SPACING_FIELDS,
+      ...ADVANCED_FIELDS,
+    ],
+  },
+
+  // ── About: Objectives ─────────────────────────────────────────────────────
+  "about-objectives-section": {
+    label: "Society Objectives", icon: "🎯", category: "content", isContainer: false,
+    fields: [
+      ...bilingual("heading",    "Heading (EN)",    "headingAr",    "العنوان (AR)"),
+      ...bilingual("subheading", "Subheading (EN)", "subheadingAr", "العنوان الفرعي (AR)", "textarea"),
+      {
+        kind: "items", key: "objectives", label: "Objectives", group: "content",
+        itemSchema: [
+          { kind: "text",     key: "numberEn", label: "Number (EN)",   group: "content" },
+          { kind: "text",     key: "numberAr", label: "Number (AR)",   group: "content", dir: "rtl" },
+          { kind: "text",     key: "icon",     label: "Icon Emoji",    group: "content" },
+          { kind: "text",     key: "titleEn",  label: "Title (EN)",    group: "content" },
+          { kind: "text",     key: "titleAr",  label: "Title (AR)",    group: "content", dir: "rtl" },
+          { kind: "textarea", key: "bodyEn",   label: "Body (EN)",     group: "content", rows: 3 },
+          { kind: "textarea", key: "bodyAr",   label: "Body (AR)",     group: "content", rows: 3, dir: "rtl" },
+        ] as FieldDef[],
+      },
+      ...BG_FIELDS,
+      ...SPACING_FIELDS,
+      ...ADVANCED_FIELDS,
+    ],
+  },
+
+  // ── About: Membership ─────────────────────────────────────────────────────
+  "about-membership-section": {
+    label: "Membership Types", icon: "👥", category: "content", isContainer: false,
+    fields: [
+      ...bilingual("heading",            "Heading (EN)",             "headingAr",            "العنوان (AR)"),
+      ...bilingual("subheading",         "Subheading (EN)",          "subheadingAr",         "العنوان الفرعي (AR)", "textarea"),
+      ...bilingual("conditionsHeading",  "Conditions Heading (EN)",  "conditionsHeadingAr",  "عنوان الشروط (AR)"),
+      ...bilingual("fees",               "Fees Text (EN)",           "feesAr",               "نص الرسوم (AR)", "textarea"),
+      {
+        kind: "items", key: "membershipTypes", label: "Membership Types", group: "content",
+        itemSchema: [
+          { kind: "text",     key: "icon",    label: "Icon Emoji",  group: "content" },
+          { kind: "text",     key: "titleEn", label: "Title (EN)",  group: "content" },
+          { kind: "text",     key: "titleAr", label: "Title (AR)",  group: "content", dir: "rtl" },
+          { kind: "textarea", key: "descEn",  label: "Desc (EN)",   group: "content", rows: 3 },
+          { kind: "textarea", key: "descAr",  label: "Desc (AR)",   group: "content", rows: 3, dir: "rtl" },
+        ] as FieldDef[],
+      },
+      {
+        kind: "items", key: "conditionsEn", label: "Conditions (EN)", group: "content",
+        itemSchema: [
+          { kind: "text", key: "value", label: "Condition (EN)", group: "content" },
+        ] as FieldDef[],
+      },
+      {
+        kind: "items", key: "conditionsAr", label: "Conditions (AR)", group: "content",
+        itemSchema: [
+          { kind: "text", key: "value", label: "الشرط (AR)", group: "content", dir: "rtl" },
+        ] as FieldDef[],
+      },
+      ...BG_FIELDS,
+      ...SPACING_FIELDS,
+      ...ADVANCED_FIELDS,
+    ],
+  },
+
+  // ── About: Governance ─────────────────────────────────────────────────────
+  "about-governance-section": {
+    label: "Governance Structure", icon: "🏛", category: "content", isContainer: false,
+    fields: [
+      ...bilingual("heading",   "Heading (EN)",   "headingAr",  "العنوان (AR)"),
+      ...bilingual("intro",     "Intro (EN)",     "introAr",    "المقدمة (AR)", "textarea"),
+      ...bilingual("boardSize", "Board Size (EN)", "boardSizeAr", "حجم المجلس (AR)"),
+      ...bilingual("term",      "Term (EN)",      "termAr",     "مدة الولاية (AR)"),
+      ...bilingual("elections", "Elections (EN)", "electionsAr", "الانتخابات (AR)"),
+      {
+        kind: "items", key: "roles", label: "Board Roles", group: "content",
+        itemSchema: [
+          { kind: "text",     key: "icon",    label: "Icon Emoji",  group: "content" },
+          { kind: "text",     key: "titleEn", label: "Title (EN)",  group: "content" },
+          { kind: "text",     key: "titleAr", label: "Title (AR)",  group: "content", dir: "rtl" },
+          { kind: "textarea", key: "descEn",  label: "Desc (EN)",   group: "content", rows: 3 },
+          { kind: "textarea", key: "descAr",  label: "Desc (AR)",   group: "content", rows: 3, dir: "rtl" },
+        ] as FieldDef[],
+      },
+      ...BG_FIELDS,
+      ...SPACING_FIELDS,
+      ...ADVANCED_FIELDS,
+    ],
+  },
+
+  // ── About: Founding Members ───────────────────────────────────────────────
+  "about-founders-section": {
+    label: "Founding Members", icon: "🌟", category: "content", isContainer: false,
+    fields: [
+      ...bilingual("heading",    "Heading (EN)",    "headingAr",    "العنوان (AR)"),
+      ...bilingual("subheading", "Subheading (EN)", "subheadingAr", "العنوان الفرعي (AR)"),
+      ...bilingual("intro",      "Intro (EN)",      "introAr",      "المقدمة (AR)", "textarea"),
+      {
+        kind: "items", key: "founders", label: "Founders", group: "content",
+        itemSchema: [
+          { kind: "text",     key: "nameEn",          label: "Name (EN)",          group: "content" },
+          { kind: "text",     key: "nameAr",          label: "الاسم (AR)",         group: "content", dir: "rtl" },
+          { kind: "text",     key: "roleEn",          label: "Role (EN)",          group: "content" },
+          { kind: "text",     key: "roleAr",          label: "الصفة (AR)",         group: "content", dir: "rtl" },
+          { kind: "text",     key: "qualificationEn", label: "Qualification (EN)", group: "content" },
+          { kind: "text",     key: "qualificationAr", label: "المؤهل (AR)",        group: "content", dir: "rtl" },
+          { kind: "text",     key: "birthplaceEn",    label: "Birthplace (EN)",    group: "content" },
+          { kind: "text",     key: "birthplaceAr",    label: "مكان الولادة (AR)",  group: "content", dir: "rtl" },
+          { kind: "text",     key: "birthdate",       label: "Birthdate",          group: "content" },
+          { kind: "text",     key: "residenceEn",     label: "Residence (EN)",     group: "content" },
+          { kind: "text",     key: "residenceAr",     label: "مكان الإقامة (AR)",  group: "content", dir: "rtl" },
+          { kind: "text",     key: "phone",           label: "Phone",              group: "content" },
+        ] as FieldDef[],
+      },
       ...BG_FIELDS,
       ...SPACING_FIELDS,
       ...ADVANCED_FIELDS,

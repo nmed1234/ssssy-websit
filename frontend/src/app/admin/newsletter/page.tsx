@@ -12,7 +12,7 @@ export default function AdminNewsletterPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-newsletter"],
     queryFn: async () => {
-      const res = await api.get<ApiResponse<PaginatedResponse<NewsletterSubscriber>>>("/newsletter/subscribers");
+      const res = await api.get<ApiResponse<PaginatedResponse<NewsletterSubscriber>>>("/admin/newsletter/subscribers");
       return res.data.data;
     },
   });

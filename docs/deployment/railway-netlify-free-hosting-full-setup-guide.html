@@ -1,0 +1,399 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Railway + Netlify — Free Hosting Guide for SSSSY</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.65;
+    background: #ffffff; color: #1f2328;
+    padding: 32px 16px 64px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 32px; }
+  h2 { font-size: 16px; font-weight: 700; margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
+  h3 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 12px; background: #f7f8fa;
+    border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 5px;
+  }
+  pre {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 14px 16px; overflow-x: auto; margin-bottom: 14px;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: 12px; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 12px; margin-right: 6px; vertical-align: middle;
+  }
+  .badge-step  { background: #dbeafe; color: #1d4ed8; }
+  .badge-free  { background: #d1fae5; color: #065f46; }
+  .badge-paid  { background: #fef3c7; color: #92400e; }
+  .badge-warn  { background: #fee2e2; color: #991b1b; }
+  .step-box {
+    border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 16px 18px; margin-bottom: 16px; background: #f7f8fa;
+  }
+  .step-box h3 { margin-top: 0; }
+  .note  { border-left: 3px solid #3b82d4; padding: 8px 12px; background: #eff6ff; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 13px; color: #1e40af; }
+  .warn  { border-left: 3px solid #f59e0b; padding: 8px 12px; background: #fffbeb; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 13px; color: #92400e; }
+  .danger{ border-left: 3px solid #ef4444; padding: 8px 12px; background: #fef2f2; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 13px; color: #991b1b; }
+  .ok    { border-left: 3px solid #22c55e; padding: 8px 12px; background: #f0fdf4; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 13px; color: #166534; }
+  table  { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+  th { background: #f7f8fa; text-align: left; padding: 8px 10px; border: 1px solid #e5e7eb; font-weight: 600; }
+  td { padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .toc { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+  .toc h3 { margin-top: 0; font-size: 13px; color: #57606a; text-transform: uppercase; letter-spacing: .05em; }
+  .toc ol { margin: 0; }
+  .toc li { margin-bottom: 3px; font-size: 13px; }
+  a { color: #3b82d4; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .col-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; background: #f7f8fa; }
+  .col-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  footer { text-align: center; font-size: 12px; color: #57606a; border-top: 1px solid #e5e7eb; padding-top: 18px; margin-top: 48px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Railway + Netlify — Free Hosting Guide for SSSSY</h1>
+  <p class="subtitle">Your codebase already supports this setup. Here is what works, what the limits are, and every step to configure it.</p>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li>Short Answer — Yes, You Can Stay on Free Hosting</li>
+      <li>What Each Platform Hosts</li>
+      <li>Free Tier Limits You Must Know</li>
+      <li>Architecture Overview</li>
+      <li>Part A — Configure the Backend on Railway</li>
+      <li>Part B — Configure the Frontend on Netlify</li>
+      <li>Part C — Connect Your Custom Domain</li>
+      <li>Part D — Fix CORS &amp; Cookies for Cross-Origin Setup</li>
+      <li>Things That Won't Work on Free Tiers</li>
+      <li>When to Upgrade / Move to a VPS</li>
+    </ol>
+  </div>
+
+  
+  <h2>1 — Short Answer</h2>
+  <div class="ok">
+    <strong>Yes, you can absolutely continue with Railway + Netlify.</strong> Your codebase already has Railway and Netlify configuration in place — <code>netlify.toml</code>, the <code>@netlify/plugin-nextjs</code>, and <code>ssssy-websit-production.up.railway.app</code> is already whitelisted in <code>next.config.mjs</code>. No fundamental rewrites needed.
+  </div>
+  <p>The only things you need to do are: set the right environment variables on each platform, point your custom domain, and make CORS work across the two origins.</p>
+
+  
+  <h2>2 — What Each Platform Hosts</h2>
+  <div class="two-col">
+    <div class="col-card">
+      <h4>Railway — Backend Services</h4>
+      <ul>
+        <li>Spring Boot API (<code>:8080</code>)</li>
+        <li>PostgreSQL database</li>
+        <li>Redis cache</li>
+        <li>MinIO object storage <em>(or swap for Railway Volumes)</em></li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h4>Netlify — Frontend</h4>
+      <ul>
+        <li>Next.js (via <code>@netlify/plugin-nextjs</code>)</li>
+        <li>SSR / ISR / API routes run as Netlify Functions</li>
+        <li>Static assets on Netlify CDN</li>
+      </ul>
+    </div>
+  </div>
+
+  
+  <h2>3 — Free Tier Limits You Must Know</h2>
+  <table>
+    <tr><th>Platform</th><th>Free Allowance</th><th>What Happens When You Exceed</th></tr>
+    <tr>
+      <td><strong>Railway Hobby</strong> (free trial)</td>
+      <td>$5 credit/month, services sleep after inactivity</td>
+      <td>Services go to sleep; first request after sleep takes 5–15 s to wake up (cold start)</td>
+    </tr>
+    <tr>
+      <td><strong>Railway Starter</strong> ($5/mo)</td>
+      <td>$5/mo usage credits, no sleep, custom domains</td>
+      <td>Charged after $5 — ~enough for a light backend + PostgreSQL</td>
+    </tr>
+    <tr>
+      <td><strong>Netlify Free</strong></td>
+      <td>100 GB bandwidth/mo, 300 build minutes/mo, 125k function invocations/mo</td>
+      <td>Site stays up but deploys blocked until next month</td>
+    </tr>
+    <tr>
+      <td><strong>Netlify Free — custom domain</strong></td>
+      <td>Free HTTPS custom domain included</td>
+      <td>No limit — free SSL via Let's Encrypt</td>
+    </tr>
+  </table>
+  <div class="warn">
+    <strong>Cold starts:</strong> On Railway free tier, if nobody visits for ~15 minutes, the Spring Boot container sleeps. The next visitor waits 10–20 seconds for it to wake. Upgrade to Railway Starter ($5/mo) to disable sleep.
+  </div>
+
+  
+  <h2>4 — Architecture Overview</h2>
+  <pre><code>User browser
+    │
+    ├─► Netlify CDN  (www.ssssy.org.sy)
+    │       └─► Next.js SSR / API routes → Netlify Functions
+    │
+    └─► Railway      (api.ssssy.org.sy  OR  ssssy-websit-production.up.railway.app)
+            ├─► Spring Boot  :8080
+            ├─► PostgreSQL
+            ├─► Redis
+            └─► MinIO (object storage)</code></pre>
+  <p>Netlify calls Railway's backend for all <code>/api/*</code> requests. Static images/media are served from Railway MinIO or proxied through Netlify rewrites.</p>
+
+  
+  <h2>Part A — Configure the Backend on Railway</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 1</span> Create a Railway Project</h3>
+    <ol>
+      <li>Go to <a href="https://railway.com">railway.com</a> → <strong>New Project</strong>.</li>
+      <li>Choose <strong>Deploy from GitHub repo</strong> → select your repository.</li>
+      <li>Railway will detect the <code>backend/Dockerfile</code> automatically.</li>
+      <li>Set the <strong>Root Directory</strong> to <code>backend</code> in service settings.</li>
+    </ol>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 2</span> Add PostgreSQL &amp; Redis</h3>
+    <ol>
+      <li>In your Railway project → <strong>+ New Service → Database → PostgreSQL</strong>.</li>
+      <li>In your Railway project → <strong>+ New Service → Database → Redis</strong>.</li>
+      <li>Railway automatically injects <code>DATABASE_URL</code> and <code>REDIS_URL</code> — but your Spring Boot app reads them differently, so map them below.</li>
+    </ol>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 3</span> Set Backend Environment Variables on Railway</h3>
+    <p>In your backend service → <strong>Variables</strong> tab, add:</p>
+    <pre><code>SPRING_PROFILES_ACTIVE=prod
+
+# PostgreSQL — use the Railway internal URL
+SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
+SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}
+SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}
+
+# Redis — use the Railway internal URL
+REDIS_HOST=${{Redis.REDISHOST}}
+REDIS_PORT=${{Redis.REDISPORT}}
+REDIS_PASSWORD=${{Redis.REDISPASSWORD}}
+
+# JWT — generate: openssl rand -hex 32
+JWT_SECRET=paste_your_64_char_hex_here
+
+# Your domain (Netlify frontend URL)
+APP_BASE_URL=https://www.ssssy.org.sy
+APP_CORS_ALLOWED_ORIGINS=https://www.ssssy.org.sy,https://ssssy.org.sy,https://ssssy-websit.netlify.app
+
+# Cookies must be Secure over HTTPS
+APP_COOKIE_SECURE=true
+
+# SMTP (your email provider)
+SMTP_HOST=smtp.yourprovider.com
+SMTP_PORT=587
+SMTP_USERNAME=noreply@ssssy.org.sy
+SMTP_PASSWORD=your_smtp_password
+
+# MinIO — you can use Railway Volumes or an external S3 bucket
+STORAGE_TYPE=minio
+MINIO_ACCESS_KEY=your_minio_key
+MINIO_SECRET_KEY=your_minio_secret
+MINIO_BUCKET=ssssy-media
+
+# Logging
+LOG_LEVEL=INFO</code></pre>
+    <div class="note">Railway variables using <code>${{ServiceName.VAR}}</code> syntax are automatically resolved — no copy-pasting of connection strings needed.</div>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 4</span> Configure the Railway Port</h3>
+    <p>Railway auto-detects the <code>EXPOSE 8080</code> in your <code>backend/Dockerfile</code>. In service settings, confirm:</p>
+    <ul>
+      <li><strong>Port:</strong> <code>8080</code></li>
+      <li><strong>Health Check Path:</strong> <code>/actuator/health</code></li>
+    </ul>
+    <p>Railway will give your backend a public URL like <code>https://ssssy-websit-production.up.railway.app</code>.</p>
+  </div>
+
+  
+  <h2>Part B — Configure the Frontend on Netlify</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 5</span> Check netlify.toml (Already Correct)</h3>
+    <p>Your <code>netlify.toml</code> is already set up correctly:</p>
+    <pre><code>[build]
+  base    = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"</code></pre>
+    <p>No changes needed here.</p>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 6</span> Set Frontend Environment Variables on Netlify</h3>
+    <p>Go to Netlify → your site → <strong>Site Configuration → Environment Variables</strong> → Add:</p>
+    <pre><code># Replace with your actual Railway backend URL
+NEXT_PUBLIC_API_URL=https://ssssy-websit-production.up.railway.app/api
+
+# Your Netlify site URL (or custom domain after you connect it)
+NEXT_PUBLIC_APP_URL=https://www.ssssy.org.sy
+NEXT_PUBLIC_APP_NAME=SSSSY
+
+# MinIO storage URL (Railway backend proxies it, or use direct MinIO URL)
+NEXT_PUBLIC_STORAGE_URL=https://ssssy-websit-production.up.railway.app/storage</code></pre>
+    <div class="warn">
+      <strong>Important:</strong> <code>NEXT_PUBLIC_*</code> variables are baked into the JavaScript bundle at build time. After changing them you <strong>must trigger a new Netlify deploy</strong> (push a commit or click "Trigger deploy").
+    </div>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 7</span> Add a Netlify Rewrite for API Calls (Recommended)</h3>
+    <p>Instead of calling Railway directly from the browser (which exposes your Railway URL and causes CORS complexity), add a Netlify rewrite so <code>/api/*</code> proxies to Railway:</p>
+    <p>Add this to your <code>netlify.toml</code>:</p>
+    <pre><code>[[redirects]]
+  from   = "/api/*"
+  to     = "https://ssssy-websit-production.up.railway.app/api/:splat"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/storage/*"
+  to     = "https://ssssy-websit-production.up.railway.app/storage/:splat"
+  status = 200
+  force  = true</code></pre>
+    <p>Then change <code>NEXT_PUBLIC_API_URL</code> to your own Netlify domain:</p>
+    <pre><code>NEXT_PUBLIC_API_URL=https://www.ssssy.org.sy/api</code></pre>
+    <p>Now the frontend calls <code>/api/*</code> on Netlify, which proxies to Railway — no CORS issues at all.</p>
+  </div>
+
+  
+  <h2>Part C — Connect Your Custom Domain</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 8</span> Add Domain to Netlify (Frontend)</h3>
+    <ol>
+      <li>Netlify site → <strong>Domain Management → Add custom domain</strong>.</li>
+      <li>Enter <code>www.ssssy.org.sy</code> and <code>ssssy.org.sy</code>.</li>
+      <li>Netlify gives you DNS records to add at your registrar:</li>
+    </ol>
+    <table>
+      <tr><th>Type</th><th>Name</th><th>Value</th></tr>
+      <tr><td>CNAME</td><td><code>www</code></td><td><code>your-site.netlify.app</code></td></tr>
+      <tr><td>A</td><td><code>@</code> (root)</td><td><code>75.2.60.5</code> (Netlify's IP)</td></tr>
+    </table>
+    <p>Netlify provisions HTTPS (Let's Encrypt) automatically — no manual cert needed.</p>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 9</span> Add Custom Domain to Railway (Backend — Optional)</h3>
+    <p>If you want a clean API URL like <code>api.ssssy.org.sy</code>:</p>
+    <ol>
+      <li>Railway service → <strong>Settings → Domains → Custom Domain</strong>.</li>
+      <li>Enter <code>api.ssssy.org.sy</code>.</li>
+      <li>Add the CNAME record at your registrar: <code>api → your-service.up.railway.app</code></li>
+      <li>Update <code>NEXT_PUBLIC_API_URL</code> on Netlify to <code>https://api.ssssy.org.sy/api</code>.</li>
+    </ol>
+    <div class="note">Custom domains on Railway require the <strong>Starter plan ($5/mo)</strong>. On the free hobby plan you use the <code>.up.railway.app</code> URL directly.</div>
+  </div>
+
+  
+  <h2>Part D — Fix CORS &amp; Cookies for Cross-Origin Setup</h2>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 10</span> Update CORS on the Backend</h3>
+    <p>Your Spring Boot app reads <code>APP_CORS_ALLOWED_ORIGINS</code>. Make sure it includes all frontend origins on Railway:</p>
+    <pre><code># In Railway backend environment variables:
+APP_CORS_ALLOWED_ORIGINS=https://www.ssssy.org.sy,https://ssssy.org.sy,https://your-site.netlify.app</code></pre>
+  </div>
+
+  <div class="step-box">
+    <h3><span class="badge badge-step">Step 11</span> Cookie SameSite for Cross-Origin</h3>
+    <p>Since Netlify (frontend) and Railway (backend) are on different domains, JWT cookies set by the backend need <code>SameSite=None; Secure</code>. Check your backend cookie configuration in <code>application.yml</code> and make sure:</p>
+    <pre><code># In Railway backend environment variables:
+APP_COOKIE_SECURE=true</code></pre>
+    <p>And verify your <code>SecurityConfig.java</code> sets <code>SameSite=None</code> when running cross-origin. If using the Netlify proxy rewrite from Step 7, this problem disappears — same origin, no cookie issues.</p>
+  </div>
+
+  
+  <h2>9 — Things That Won't Work on Free Tiers</h2>
+  <table>
+    <tr><th>Feature</th><th>Problem</th><th>Solution</th></tr>
+    <tr>
+      <td>MinIO file storage</td>
+      <td>Railway free tier has no persistent disk — MinIO data is lost on redeploy</td>
+      <td>Use Railway Volumes ($0.25/GB/mo) or swap to Cloudflare R2 (free 10GB) / Backblaze B2 (free 10GB)</td>
+    </tr>
+    <tr>
+      <td>Cold starts</td>
+      <td>Spring Boot sleeps after inactivity on free tier — slow first request</td>
+      <td>Upgrade to Railway Starter ($5/mo) — no sleep</td>
+    </tr>
+    <tr>
+      <td>WebSockets (real-time)</td>
+      <td>Netlify Functions do not support persistent WebSocket connections</td>
+      <td>WebSocket connects directly to Railway backend URL (bypass Netlify proxy for <code>/ws</code> path)</td>
+    </tr>
+    <tr>
+      <td>Email (IMAP sync)</td>
+      <td>Requires persistent background process — fine on Railway, just set SMTP/IMAP env vars</td>
+      <td>Configure <code>SMTP_*</code> and <code>IMAP_*</code> variables in Railway</td>
+    </tr>
+    <tr>
+      <td>Netlify build minutes</td>
+      <td>300 min/mo free — each Next.js build takes ~3–5 min</td>
+      <td>~60 deploys/month free; plenty for a small team</td>
+    </tr>
+  </table>
+
+  
+  <h2>10 — When to Upgrade / Move to a VPS</h2>
+  <table>
+    <tr><th>Signal</th><th>Action</th></tr>
+    <tr><td>Backend cold starts annoy real users</td><td>Upgrade to Railway Starter ($5/mo)</td></tr>
+    <tr><td>Monthly Railway bill exceeds $15–20</td><td>Move backend to Hetzner VPS (~$4/mo) using the Docker guide</td></tr>
+    <tr><td>You need MinIO with large media files</td><td>Add Railway Volume or use Cloudflare R2 (free 10 GB)</td></tr>
+    <tr><td>You need WebSocket on same domain</td><td>Move to VPS with Nginx reverse proxy (already configured in <code>nginx/nginx.conf</code>)</td></tr>
+    <tr><td>Netlify build minutes run out</td><td>Move frontend to Vercel (free, 6000 build minutes/mo) or self-host</td></tr>
+  </table>
+
+  <div class="ok">
+    <strong>Bottom line:</strong> Railway + Netlify is a perfectly valid production setup for a low-to-medium traffic site. Your codebase is already wired for it. Start free, upgrade only when you need to.
+  </div>
+
+  <h2>Quick Checklist</h2>
+  <ul>
+    <li>Railway: backend service with <code>backend/</code> root dir and Dockerfile detected</li>
+    <li>Railway: PostgreSQL + Redis databases added to the project</li>
+    <li>Railway: all environment variables set (DB, Redis, JWT, CORS, SMTP)</li>
+    <li>Netlify: <code>NEXT_PUBLIC_API_URL</code> pointing to Railway URL</li>
+    <li>Netlify: proxy rewrites added to <code>netlify.toml</code> for <code>/api/*</code></li>
+    <li>Netlify: custom domain added + DNS records added at registrar</li>
+    <li>Railway: <code>APP_CORS_ALLOWED_ORIGINS</code> includes Netlify domain</li>
+    <li>Test: <code>https://yourdomain.org/actuator/health</code> returns <code>{"status":"UP"}</code></li>
+    <li>Test: login flow works end-to-end (cookie is set correctly)</li>
+  </ul>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

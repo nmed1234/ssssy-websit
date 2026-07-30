@@ -14,6 +14,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
   List<Event> findByIsPublishedTrueAndEventDateBetweenOrderByEventDateAsc(LocalDateTime start, LocalDateTime end);
   Page<Event> findByEventTypeAndIsPublishedTrue(String eventType, Pageable pageable);
   long countByIsPublishedTrue();
+  long countByStatus(String status);
+  long countByEventDateAfter(LocalDateTime from);
   boolean existsBySlug(String slug);
   boolean existsBySlugAndIdNot(String slug, UUID id);
   java.util.Optional<Event> findBySlug(String slug);

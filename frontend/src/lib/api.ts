@@ -5,17 +5,13 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // Send the httpOnly token cookies on every cross-origin request to the backend.
+  withCredentials: true,
 });
 
-api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
-  return config;
-});
+// No request interceptor needed: the httpOnly accessToken cookie is attached
+// automatically by the browser via withCredentials. We no longer read
+// localStorage for tokens.
 
 api.interceptors.response.use(
   (response) => response,
@@ -26,22 +22,19 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
-        if (!refreshToken) throw new Error("No refresh token");
-
-        const { data } = await axios.post(
+        // The httpOnly refreshToken cookie is sent automatically with withCredentials.
+        // POST to /auth/refresh with an empty body — no token needed in the body.
+        await axios.post(
           `${api.defaults.baseURL}/auth/refresh`,
-          { refreshToken }
+          {},
+          { withCredentials: true }
         );
 
-        localStorage.setItem("accessToken", data.data.accessToken);
-        localStorage.setItem("refreshToken", data.data.refreshToken);
-
-        originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
+        // New cookies have been set by the backend. Retry the original request;
+        // withCredentials will send the updated accessToken cookie automatically.
         return api(originalRequest);
       } catch {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        // Refresh failed — clear the user profile and redirect to login.
         localStorage.removeItem("user");
         window.location.href = "/auth/login";
         return Promise.reject(error);

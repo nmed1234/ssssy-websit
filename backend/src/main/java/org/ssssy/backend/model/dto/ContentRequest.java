@@ -19,7 +19,10 @@ public class ContentRequest {
   private String slug;
 
   private String excerpt;
+  private String excerptAr;
   private String body;
+  private String bodyAr;
+  private String bodyEn;
   private String contentType;
   private UUID categoryId;
   private Set<UUID> tagIds;

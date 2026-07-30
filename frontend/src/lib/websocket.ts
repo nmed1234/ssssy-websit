@@ -10,18 +10,13 @@ function getWebSocketUrl(): string {
   return baseUrl.replace(/^http/, "ws") + "/ws";
 }
 
-function getAuthToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("accessToken");
-}
-
 export function connect(): Client {
   if (client?.active) return client;
 
-  const token = getAuthToken();
+  // The httpOnly accessToken cookie is sent automatically on the WebSocket
+  // HTTP Upgrade handshake, so no Authorization header is needed here.
   client = new Client({
     brokerURL: getWebSocketUrl(),
-    connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
     debug: () => {},
     reconnectDelay: 5000,
     onConnect: () => {

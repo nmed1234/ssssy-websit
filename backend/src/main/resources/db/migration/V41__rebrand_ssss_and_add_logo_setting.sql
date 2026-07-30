@@ -81,7 +81,7 @@ ON CONFLICT (config_key) DO UPDATE SET
 
 INSERT INTO system_config (id, config_key, config_value, config_group, description, created_at, updated_at)
 VALUES
-  (gen_random_uuid(), 'contact.email',  'info@ssss.org', 'contact', 'Organisation contact email', NOW(), NOW()),
+  (gen_random_uuid(), 'contact.email',  'info@ssssyria.org', 'contact', 'Organisation contact email', NOW(), NOW()),
   (gen_random_uuid(), 'contact.phone',  '+963 11 234 5678', 'contact', 'Organisation contact phone', NOW(), NOW()),
   (gen_random_uuid(), 'contact.address','Damascus, Syria', 'contact', 'Organisation contact address', NOW(), NOW()),
   (gen_random_uuid(), 'footer.copyright','Syrian Soil Science Society (SSSS). All rights reserved.', 'footer', 'Footer copyright text', NOW(), NOW())

@@ -26,4 +26,12 @@ public class EventRequest {
   private LocalDateTime registrationDeadline;
   private String status;
   private String contactEmail;
+  // Phase 5 fields
+  private Boolean isFeatured;
+  private Integer displayOrder;
+  private String ogImage;
+  private String metaTitle;
+  private String metaDescription;
+  private String registrationFormSchema;
+  private String cancellationReason;
 }

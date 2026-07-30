@@ -194,6 +194,54 @@ export const ITEMS_EDITOR_REGISTRY: Record<string, ItemsEditorRegistryEntry> = {
       { key: "textAr", label: "الفقرة (AR)",    multiline: true, dir: "rtl" },
     ],
   },
+  // ── New About page block types ────────────────────────────────────────────
+  "about-objectives-section": {
+    itemsKey: "objectives",
+    itemFields: [
+      { key: "icon",    label: "Icon (emoji)" },
+      { key: "titleEn", label: "Title (EN)" },
+      { key: "titleAr", label: "العنوان (AR)",    dir: "rtl" },
+      { key: "bodyEn",  label: "Body (EN)",       multiline: true },
+      { key: "bodyAr",  label: "الوصف (AR)",      multiline: true, dir: "rtl" },
+    ],
+  },
+  "about-membership-section": {
+    itemsKey: "membershipTypes",
+    itemFields: [
+      { key: "icon",    label: "Icon (emoji)" },
+      { key: "titleEn", label: "Title (EN)" },
+      { key: "titleAr", label: "العنوان (AR)",  dir: "rtl" },
+      { key: "descEn",  label: "Desc (EN)",     multiline: true },
+      { key: "descAr",  label: "الوصف (AR)",    multiline: true, dir: "rtl" },
+    ],
+  },
+  "about-governance-section": {
+    itemsKey: "roles",
+    itemFields: [
+      { key: "icon",    label: "Icon (emoji)" },
+      { key: "titleEn", label: "Title (EN)" },
+      { key: "titleAr", label: "العنوان (AR)",  dir: "rtl" },
+      { key: "descEn",  label: "Desc (EN)",     multiline: true },
+      { key: "descAr",  label: "الوصف (AR)",    multiline: true, dir: "rtl" },
+    ],
+  },
+  "about-founders-section": {
+    itemsKey: "founders",
+    itemFields: [
+      { key: "nameEn",          label: "Name (EN)" },
+      { key: "nameAr",          label: "الاسم (AR)",          dir: "rtl" },
+      { key: "roleEn",          label: "Role (EN)" },
+      { key: "roleAr",          label: "الصفة (AR)",          dir: "rtl" },
+      { key: "qualificationEn", label: "Qualification (EN)" },
+      { key: "qualificationAr", label: "المؤهل (AR)",         dir: "rtl" },
+      { key: "birthplaceEn",    label: "Birthplace (EN)" },
+      { key: "birthplaceAr",    label: "مكان الولادة (AR)",   dir: "rtl" },
+      { key: "birthdate",       label: "Birthdate" },
+      { key: "residenceEn",     label: "Residence (EN)" },
+      { key: "residenceAr",     label: "مكان الإقامة (AR)",   dir: "rtl" },
+      { key: "phone",           label: "Phone" },
+    ],
+  },
 };
 
 // ─── InlineItemsEditor Component ─────────────────────────────────────────────

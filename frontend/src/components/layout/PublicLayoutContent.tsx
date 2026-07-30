@@ -54,6 +54,7 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export default function PublicLayoutContent({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoLightboxOpen, setLogoLightboxOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [scrolled, setScrolled] = useState(false);
@@ -137,10 +138,10 @@ export default function PublicLayoutContent({ children }: { children: React.Reac
   const siteShortName = settings.get("site.short_name") || t("site.short_name", "SSSS");
   const siteDescription = settings.get("site.description") || t("site.description", "Advancing soil science research, education, and sustainable land management in Syria.");
   const footerAddress = settings.get("contact.address") || t("footer.address", "Damascus, Syria");
-  const footerEmail = settings.get("contact.email") || t("contact.email", "info@ssss.org");
+  const footerEmail = settings.get("contact.email") || t("contact.email", "info@ssssyria.org");
   const footerPhone = settings.get("contact.phone") || t("contact.phone", "+963112345678");
   const rawLogoUrl = settings.get("site.logo_url") || "";
-  const siteLogoUrl = (rawLogoUrl && !rawLogoUrl.includes("localhost")) ? rawLogoUrl : `/logo.svg`;
+  const siteLogoUrl = (rawLogoUrl && !rawLogoUrl.includes("localhost")) ? rawLogoUrl : `/logo.png`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -217,20 +218,27 @@ export default function PublicLayoutContent({ children }: { children: React.Reac
           <div className="flex items-center justify-between h-[4.5rem]">
 
             {/* ── Logo ── */}
-            <Link href="/" className="flex items-center gap-3 min-w-0 flex-shrink group">
-              <div className="relative flex-shrink-0 h-11 w-11 rounded-xl overflow-hidden ring-2 ring-soil-sand/60">
+            <div className="flex items-center gap-3 min-w-0 flex-shrink">
+              {/* clickable logo thumbnail */}
+              <button
+                type="button"
+                onClick={() => setLogoLightboxOpen(true)}
+                className="group relative flex-shrink-0 h-11 w-11 rounded-xl overflow-hidden ring-2 ring-soil-sand/60 hover:ring-soil-clay/70 transition-all duration-200 cursor-zoom-in"
+                title="View logo"
+              >
                 <img
                   src={siteLogoUrl}
                   alt={siteShortName}
-                  className="w-full h-full object-contain p-1"
+                  className="w-full h-full object-contain p-1 transition-transform duration-300 group-hover:scale-110"
                 />
-              </div>
-              <div className="flex flex-col leading-snug min-w-0 overflow-hidden">
+                <span className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-200 rounded-xl" />
+              </button>
+              <Link href="/" className="flex flex-col leading-snug min-w-0 overflow-hidden">
                 <span className={`${almarai.className} font-bold text-[0.95rem] leading-tight tracking-tight text-soil-dark truncate`}>
                   {siteName}
                 </span>
-              </div>
-            </Link>
+              </Link>
+            </div>
 
             {/* ── Desktop nav ── */}
             <nav className="hidden lg:flex items-center gap-0.5">
@@ -632,6 +640,68 @@ export default function PublicLayoutContent({ children }: { children: React.Reac
               <ChevronUp className="h-5 w-5" />
             </span>
           </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* ── Logo lightbox ─────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {logoLightboxOpen && (
+          <motion.div
+            key="logo-lightbox"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
+            onClick={() => setLogoLightboxOpen(false)}
+          >
+            {/* blurred backdrop */}
+            <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" />
+
+            {/* panel */}
+            <motion.div
+              initial={{ scale: 0.88, opacity: 0, y: 24 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 16 }}
+              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              className="relative z-10 bg-white rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5 max-w-xs w-full mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* close × */}
+              <button
+                type="button"
+                onClick={() => setLogoLightboxOpen(false)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                {siteName}
+              </p>
+
+              <img
+                src={siteLogoUrl}
+                alt={siteShortName}
+                className="w-52 h-52 object-contain"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/logo.png"; }}
+              />
+
+              <a
+                href={siteLogoUrl}
+                download="logo.png"
+                className="inline-flex items-center gap-2 px-5 py-2 bg-soil-clay text-white rounded-full text-sm font-medium hover:bg-soil-dark transition-colors shadow-sm"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                {t("Download Logo", "تنزيل الشعار")}
+              </a>
+            </motion.div>
+
+            <p className="relative z-10 mt-4 text-xs text-white/40">Click outside to close</p>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

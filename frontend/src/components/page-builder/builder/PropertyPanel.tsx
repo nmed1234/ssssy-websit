@@ -64,6 +64,244 @@ function inputCls(extra = "") {
   return `w-full border border-gray-200 rounded px-2 py-1.5 text-xs bg-white focus:outline-none focus:border-blue-400 ${extra}`;
 }
 
+// ── Colour modes ──────────────────────────────────────────────────────────────
+
+type ColorMode = "hex" | "rgb" | "hsl";
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function hexToHsl(hex: string): [number, number, number] {
+  const [r, g, b] = hexToRgb(hex).map((v) => v / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, Math.round(l * 100)];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  const h =
+    max === r ? ((g - b) / d + (g < b ? 6 : 0)) / 6 :
+    max === g ? ((b - r) / d + 2) / 6 :
+               ((r - g) / d + 4) / 6;
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+}
+
+/** Enhanced colour picker: native swatch + hex/rgb/hsl text input toggle */
+function ColorWidget({ value, onChange }: { value: string; onChange: (v: unknown) => void }) {
+  const [mode, setMode] = React.useState<ColorMode>("hex");
+  const hexVal = value.startsWith("#") ? value : "#ffffff";
+  const [r, g, b] = hexToRgb(hexVal);
+  const [h, s, l] = hexToHsl(hexVal);
+
+  const displayText = mode === "rgb"
+    ? `rgb(${r}, ${g}, ${b})`
+    : mode === "hsl"
+      ? `hsl(${h}, ${s}%, ${l}%)`
+      : hexVal;
+
+  const modes: ColorMode[] = ["hex", "rgb", "hsl"];
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={hexVal}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-7 w-8 cursor-pointer rounded border border-gray-200 p-0.5 shrink-0"
+        />
+        <input
+          type="text"
+          className={inputCls("flex-1")}
+          value={displayText}
+          placeholder="#ffffff or rgba(…)"
+          onChange={(e) => onChange(e.target.value)}
+        />
+      </div>
+      <div className="flex gap-0.5">
+        {modes.map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => setMode(m)}
+            className={`flex-1 text-[9px] uppercase font-semibold py-0.5 rounded transition-colors ${
+              mode === m ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+            }`}
+          >
+            {m}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Gradient stop editor ──────────────────────────────────────────────────────
+
+interface GradientStop {
+  color: string;
+  position: number; // 0–100
+}
+
+function parseGradientStops(css: string): GradientStop[] {
+  // Try to extract colour stops from a linear-gradient(…) string
+  const inner = css.replace(/^(linear|radial|conic)-gradient\(/, "").replace(/\)$/, "");
+  const parts = inner.split(",").map((s) => s.trim());
+  const stops: GradientStop[] = [];
+  parts.forEach((p, i) => {
+    const match = p.match(/^(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)|[a-z]+)\s*(\d+%?)?/);
+    if (match) {
+      const pos = match[2] ? parseInt(match[2]) : Math.round((i / Math.max(parts.length - 1, 1)) * 100);
+      stops.push({ color: match[1], position: pos });
+    }
+  });
+  return stops.length >= 2 ? stops : [{ color: "#3E2723", position: 0 }, { color: "#558B2F", position: 100 }];
+}
+
+function stopsToGradient(stops: GradientStop[], dir = "135deg"): string {
+  const sorted = [...stops].sort((a, b) => a.position - b.position);
+  return `linear-gradient(${dir}, ${sorted.map((s) => `${s.color} ${s.position}%`).join(", ")})`;
+}
+
+/** Interactive gradient stop editor — drag stops on a track, add/remove stops */
+export function GradientStopEditor({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [stops, setStops] = React.useState<GradientStop[]>(() => parseGradientStops(value));
+  const [dir, setDir]     = React.useState("135deg");
+  const trackRef = React.useRef<HTMLDivElement>(null);
+
+  const update = (newStops: GradientStop[]) => {
+    setStops(newStops);
+    onChange(stopsToGradient(newStops, dir));
+  };
+
+  const updateDir = (d: string) => {
+    setDir(d);
+    onChange(stopsToGradient(stops, d));
+  };
+
+  const addStop = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos  = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    const newStop: GradientStop = { color: "#888888", position: pos };
+    update([...stops, newStop]);
+  };
+
+  const updateStopColor = (i: number, color: string) => {
+    update(stops.map((s, idx) => idx === i ? { ...s, color } : s));
+  };
+
+  const updateStopPos = (i: number, pos: number) => {
+    update(stops.map((s, idx) => idx === i ? { ...s, position: Math.max(0, Math.min(100, pos)) } : s));
+  };
+
+  const removeStop = (i: number) => {
+    if (stops.length <= 2) return;
+    update(stops.filter((_, idx) => idx !== i));
+  };
+
+  const gradientStyle = stopsToGradient(stops, dir);
+
+  return (
+    <div className="space-y-2">
+      {/* Direction */}
+      <div className="flex items-center gap-1.5">
+        <label className="text-[10px] text-gray-500 shrink-0">Direction</label>
+        <select
+          className={inputCls("flex-1")}
+          value={dir}
+          onChange={(e) => updateDir(e.target.value)}
+        >
+          {["0deg","45deg","90deg","135deg","180deg","225deg","270deg","315deg"].map((d) => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+      </div>
+      {/* Track */}
+      <div
+        ref={trackRef}
+        className="relative h-6 rounded cursor-crosshair border border-gray-200"
+        style={{ background: gradientStyle }}
+        title="Click to add a stop"
+        onClick={addStop}
+      >
+        {stops.map((stop, i) => (
+          <div
+            key={i}
+            className="absolute top-0 bottom-0 w-3.5 -translate-x-1/2 flex flex-col items-center justify-center"
+            style={{ left: `${stop.position}%` }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="w-3 h-5 rounded border-2 border-white shadow-sm cursor-ew-resize"
+              style={{ background: stop.color }}
+              title={`${stop.color} @ ${stop.position}%`}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                const track = trackRef.current;
+                if (!track) return;
+                const onMove = (mv: MouseEvent) => {
+                  const rect = track.getBoundingClientRect();
+                  const pos  = Math.round(((mv.clientX - rect.left) / rect.width) * 100);
+                  updateStopPos(i, pos);
+                };
+                const onUp = () => {
+                  window.removeEventListener("mousemove", onMove);
+                  window.removeEventListener("mouseup", onUp);
+                };
+                window.addEventListener("mousemove", onMove);
+                window.addEventListener("mouseup", onUp);
+              }}
+            />
+          </div>
+        ))}
+      </div>
+      {/* Stop list */}
+      <div className="space-y-1">
+        {[...stops].sort((a, b) => a.position - b.position).map((stop, i) => (
+          <div key={i} className="flex items-center gap-1.5">
+            <input
+              type="color"
+              value={stop.color.startsWith("#") ? stop.color : "#888888"}
+              onChange={(e) => {
+                const si = stops.indexOf(stop);
+                updateStopColor(si, e.target.value);
+              }}
+              className="h-5 w-6 cursor-pointer rounded p-0 border border-gray-200"
+            />
+            <input
+              type="number"
+              min={0} max={100}
+              value={stop.position}
+              onChange={(e) => {
+                const si = stops.indexOf(stop);
+                updateStopPos(si, Number(e.target.value));
+              }}
+              className={inputCls("w-14")}
+            />
+            <span className="text-[10px] text-gray-400">%</span>
+            {stops.length > 2 && (
+              <button
+                type="button"
+                onClick={() => { const si = stops.indexOf(stop); removeStop(si); }}
+                className="ml-auto text-red-400 hover:text-red-600 text-[10px]"
+              >✕</button>
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="text-[9px] text-gray-400">Click the track to add a stop. Drag handles to reposition.</p>
+    </div>
+  );
+}
+
 function FieldWidget({
   field,
   value,
@@ -77,6 +315,25 @@ function FieldWidget({
 
   switch (field.kind) {
     case "text":
+      // Special case: gradient CSS field gets the interactive stop editor
+      if (field.key === "backgroundGradient") {
+        return (
+          <div className="space-y-2">
+            <GradientStopEditor
+              value={strVal || "linear-gradient(135deg, #3E2723 0%, #558B2F 100%)"}
+              onChange={(v) => onChange(v)}
+            />
+            <p className="text-[9px] text-gray-400 mt-1">Or enter raw CSS:</p>
+            <input
+              type="text"
+              className={inputCls()}
+              placeholder="linear-gradient(135deg,#fff,#eee)"
+              value={strVal}
+              onChange={(e) => onChange(e.target.value)}
+            />
+          </div>
+        );
+      }
       return (
         <input
           type="text"
@@ -151,23 +408,7 @@ function FieldWidget({
       );
 
     case "color":
-      return (
-        <div className="flex items-center gap-2">
-          <input
-            type="color"
-            value={strVal.startsWith("#") ? strVal : "#ffffff"}
-            onChange={(e) => onChange(e.target.value)}
-            className="h-7 w-8 cursor-pointer rounded border border-gray-200 p-0.5"
-          />
-          <input
-            type="text"
-            className={inputCls("flex-1")}
-            value={strVal}
-            placeholder="#ffffff or rgba(…)"
-            onChange={(e) => onChange(e.target.value)}
-          />
-        </div>
-      );
+      return <ColorWidget value={strVal} onChange={onChange} />;
 
     case "url":
       return (

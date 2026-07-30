@@ -1,0 +1,175 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Restore DB to Neon.tech</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #ffffff; color: #1f2328; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px; }
+  h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .sub { color: #57606a; font-size: 13px; margin-bottom: 24px; }
+  h2 { font-size: 15px; font-weight: 700; margin: 24px 0 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 14px; font-weight: 600; margin: 16px 0 6px; color: #3b82d4; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  code { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 3px; padding: 1px 5px; font-size: 12.5px; font-family: "Consolas", "Courier New", monospace; }
+  pre { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 4px; padding: 12px 14px; overflow-x: auto; margin-bottom: 14px; }
+  pre code { background: none; border: none; padding: 0; font-size: 12.5px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; margin-right: 6px; vertical-align: middle; }
+  .badge-warn { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+  .badge-ok { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+  .badge-info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .step-block { border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px 16px; margin-bottom: 14px; background: #f7f8fa; }
+  .step-num { font-size: 18px; font-weight: 800; color: #3b82d4; margin-right: 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 13px; }
+  th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; font-weight: 600; }
+  td { border: 1px solid #e5e7eb; padding: 6px 10px; }
+  td code { font-size: 12px; }
+  .notice { background: #fff8e1; border: 1px solid #ffc107; border-radius: 4px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; }
+  .notice strong { color: #856404; }
+  hr { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }
+  footer { text-align: center; font-size: 11px; color: #57606a; border-top: 1px solid #e5e7eb; padding-top: 12px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Restore Backup to Neon.tech (Railway DB)</h1>
+  <p class="sub">Replace your Neon PostgreSQL database with <strong>db/fullBakupfinal.sql</strong> — 0.33 MB pg_dump from PostgreSQL 17.5</p>
+
+  <div class="notice">
+    <strong>⚠ This will DELETE all current data in Neon and replace it with your backup.</strong>
+    The backup owner is <code>ssssy</code>. Neon's default owner is <code>neondb_owner</code>.
+    The steps below handle the owner mismatch automatically.
+  </div>
+
+  <h2>Connection String (from Goal.md)</h2>
+  <pre><code>postgresql://neondb_owner:npg_CSEwZ1Ag9Gyh@ep-jolly-tooth-asms1hcn.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require</code></pre>
+
+  
+  <h2>Option A — Using psql (Recommended, fastest)</h2>
+  <p><span class="badge badge-info">PREREQ</span> PostgreSQL client tools installed locally (<code>psql</code>, <code>pg_restore</code>). Since you created the dump with pg_dump 17.5 you already have them.</p>
+
+  <div class="step-block">
+    <span class="step-num">1</span><strong>Drop &amp; recreate the public schema</strong> — clears existing data
+    <pre><code>psql "postgresql://neondb_owner:npg_CSEwZ1Ag9Gyh@ep-jolly-tooth-asms1hcn.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require" ^
+  -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"</code></pre>
+    <p style="margin-top:8px;font-size:13px">On Linux/Mac remove the <code>^</code> line continuation — use <code>\</code> instead, or write it on one line.</p>
+  </div>
+
+  <div class="step-block">
+    <span class="step-num">2</span><strong>Restore the backup — replacing owner <code>ssssy</code> → <code>neondb_owner</code></strong>
+    <p>The dump contains <code>OWNER TO ssssy</code> but Neon uses <code>neondb_owner</code>. Fix on the fly with <code>sed</code> (Linux/Mac) or PowerShell (Windows):</p>
+
+    <h3>Windows PowerShell</h3>
+    <pre><code>$sql = Get-Content "db\fullBakupfinal.sql" -Raw
+$sql = $sql -replace 'OWNER TO ssssy', 'OWNER TO neondb_owner'
+$sql = $sql -replace 'Owner: ssssy', 'Owner: neondb_owner'
+$sql | psql "postgresql://neondb_owner:npg_CSEwZ1Ag9Gyh@ep-jolly-tooth-asms1hcn.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require"</code></pre>
+
+    <h3>Linux / Mac (bash)</h3>
+    <pre><code>sed 's/OWNER TO ssssy/OWNER TO neondb_owner/g; s/Owner: ssssy/Owner: neondb_owner/g' \
+  db/fullBakupfinal.sql | \
+  psql "postgresql://neondb_owner:npg_CSEwZ1Ag9Gyh@ep-jolly-tooth-asms1hcn.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require"</code></pre>
+
+    <p style="margin-top:8px;font-size:13px;color:#57606a">Errors like <em>"role ssssy does not exist"</em> or <em>"ERROR: must be owner of extension pgcrypto"</em> are harmless — Neon pre-installs pgcrypto. Continue past them.</p>
+  </div>
+
+  <div class="step-block">
+    <span class="step-num">3</span><strong>Verify the restore</strong>
+    <pre><code>psql "postgresql://neondb_owner:npg_CSEwZ1Ag9Gyh@ep-jolly-tooth-asms1hcn.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require" ^
+  -c "\dt" -c "SELECT count(*) FROM users;"</code></pre>
+    <p style="font-size:13px">You should see your tables listed and a row count &gt; 0.</p>
+  </div>
+
+  
+  <h2>Option B — Neon Web Console (no CLI needed)</h2>
+
+  <div class="step-block">
+    <span class="step-num">1</span><strong>Open Neon Console</strong>
+    <p>Go to <a href="https://console.neon.tech">console.neon.tech</a> → select your project → <strong>SQL Editor</strong> tab.</p>
+  </div>
+
+  <div class="step-block">
+    <span class="step-num">2</span><strong>Drop existing schema</strong>
+    <p>Paste and run:</p>
+    <pre><code>DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;</code></pre>
+  </div>
+
+  <div class="step-block">
+    <span class="step-num">3</span><strong>Prepare the SQL file for Neon</strong>
+    <p>Since the SQL Editor doesn't accept file uploads, first generate a cleaned copy locally:</p>
+
+    <h3>PowerShell</h3>
+    <pre><code>$sql = Get-Content "db\fullBakupfinal.sql" -Raw
+$sql = $sql -replace 'OWNER TO ssssy', 'OWNER TO neondb_owner'
+$sql = $sql -replace 'Owner: ssssy', 'Owner: neondb_owner'
+# Remove CREATE EXTENSION lines (Neon pre-installs them)
+$sql = $sql -replace 'CREATE EXTENSION IF NOT EXISTS pgcrypto.*\n', ''
+Set-Content "db\fullBakupfinal_neon.sql" $sql</code></pre>
+
+    <h3>Linux / Mac</h3>
+    <pre><code>sed 's/OWNER TO ssssy/OWNER TO neondb_owner/g; s/Owner: ssssy/Owner: neondb_owner/g' \
+  db/fullBakupfinal.sql &gt; db/fullBakupfinal_neon.sql</code></pre>
+  </div>
+
+  <div class="step-block">
+    <span class="step-num">4</span><strong>Paste into SQL Editor</strong>
+    <p>Open <code>db/fullBakupfinal_neon.sql</code> in a text editor, select all (<kbd>Ctrl+A</kbd>), copy (<kbd>Ctrl+C</kbd>), paste into the Neon SQL Editor, click <strong>Run</strong>.</p>
+    <p style="font-size:13px;color:#57606a">The file is only ~0.33 MB so it fits in the editor without issues.</p>
+  </div>
+
+  
+  <h2>Option C — Railway DB Plugin (if you switch from Neon)</h2>
+  <div class="notice">
+    <strong>Only if</strong> you want to move the database from Neon to Railway's own PostgreSQL plugin. Skip this if staying on Neon.
+  </div>
+  <ol>
+    <li>Railway Dashboard → your project → <strong>+ New</strong> → <strong>Database</strong> → <strong>PostgreSQL</strong></li>
+    <li>After it provisions, click the plugin → <strong>Connect</strong> tab → copy the <code>DATABASE_URL</code></li>
+    <li>Run Option A's psql commands but replace the connection string with the Railway one</li>
+    <li>Update the Railway service <strong>Variables</strong>: set <code>SPRING_DATASOURCE_URL</code> / <code>DB_URL</code> to the Railway DB URL</li>
+  </ol>
+
+  
+  <h2>After Restore — Reset Flyway</h2>
+  <div class="notice">
+    <strong>Important:</strong> Your backup already contains all the tables in their final state. Flyway will try to run migrations again on next startup and fail because the tables already exist.<br />
+    You must tell Flyway the migrations are already applied.
+  </div>
+
+  <div class="step-block">
+    <strong>Option 1 — Mark all migrations as applied (safest)</strong>
+    <pre><code>psql "postgresql://neondb_owner:npg_CSEwZ1Ag9Gyh@ep-jolly-tooth-asms1hcn.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require" ^
+  -c "SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank;"</code></pre>
+    <p>If the <code>flyway_schema_history</code> table is already in your backup (it should be — pg_dump includes all tables), Flyway will see it and skip already-applied versions. <strong>No action needed</strong> if the table exists in your dump.</p>
+  </div>
+
+  <div class="step-block">
+    <strong>Option 2 — If Flyway table is missing from backup</strong>
+    <p>Add <code>spring.flyway.baseline-on-migrate=true</code> to Railway env vars temporarily, then remove after first successful start.</p>
+    <pre><code># Railway env var to add:
+SPRING_FLYWAY_BASELINE_ON_MIGRATE=true</code></pre>
+  </div>
+
+  
+  <h2>Quick Reference</h2>
+  <table>
+    <tr><th>Detail</th><th>Value</th></tr>
+    <tr><td>Backup file</td><td><code>db/fullBakupfinal.sql</code></td></tr>
+    <tr><td>Backup size</td><td>0.33 MB</td></tr>
+    <tr><td>Source PG version</td><td>17.5</td></tr>
+    <tr><td>Owner in dump</td><td><code>ssssy</code></td></tr>
+    <tr><td>Neon owner</td><td><code>neondb_owner</code></td></tr>
+    <tr><td>Neon host</td><td><code>ep-jolly-tooth-asms1hcn.c-4.eu-central-1.aws.neon.tech</code></td></tr>
+    <tr><td>Neon database</td><td><code>neondb</code></td></tr>
+  </table>
+
+  <hr />
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

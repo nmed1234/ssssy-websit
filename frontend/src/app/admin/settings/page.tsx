@@ -24,6 +24,7 @@ export default function AdminSettingsPage() {
   const [logoUploading, setLogoUploading] = useState(false);
   const [logoUploadError, setLogoUploadError] = useState("");
   const [logoPreviewUrl, setLogoPreviewUrl] = useState("");
+  const [logoLightboxOpen, setLogoLightboxOpen] = useState(false);
   const logoFileInputRef = useRef<HTMLInputElement>(null);
 
   // Bilingual site name inline edit state
@@ -130,7 +131,9 @@ export default function AdminSettingsPage() {
   }
 
   const logoSetting = settings.find(s => s.configKey === "site.logo_url");
-  const currentLogoUrl = logoPreviewUrl || logoSetting?.configValue || "";
+  // Always show a logo — fall back to the static /logo.png that ships with the app
+  const savedLogoUrl = logoSetting?.configValue || "";
+  const currentLogoUrl = logoPreviewUrl || savedLogoUrl || "/logo.png";
 
   const siteNameEnSetting = settings.find(s => s.configKey === "site.name_en");
   const siteNameArSetting = settings.find(s => s.configKey === "site.name_ar");
@@ -405,22 +408,34 @@ export default function AdminSettingsPage() {
           <div className="px-5 py-4 border-b bg-muted/30 flex items-center justify-between">
             <div>
               <h3 className="font-semibold text-sm">{t("Site Logo", "شعار الموقع")}</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">{t("Shown in the public header and footer. Recommended: PNG or SVG, min 200×200px.", "يظهر في الترويسة والتذييل. يُنصح: PNG أو SVG، لا يقل عن 200×200 بكسل.")}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{t("Shown in the public header and login page. Recommended: PNG or SVG, min 200×200px.", "يظهر في الترويسة وصفحة تسجيل الدخول. يُنصح: PNG أو SVG، لا يقل عن 200×200 بكسل.")}</p>
             </div>
             {saved && <span className="text-xs text-green-600 font-medium">✓ {t("Saved", "تم الحفظ")}</span>}
           </div>
 
           <div className="px-5 py-5 flex items-start gap-6">
+            {/* ── Logo preview ── */}
             <div className="flex-shrink-0 flex flex-col items-center gap-2">
-              <div className={`w-24 h-24 rounded-xl border-2 flex items-center justify-center overflow-hidden transition-all ${
-                currentLogoUrl ? "border-border bg-white shadow-sm" : "border-dashed border-border bg-muted"
-              }`}>
-                {currentLogoUrl ? (
-                  <img src={currentLogoUrl} alt={t("Site logo", "شعار الموقع")} className="w-full h-full object-contain p-1" />
-                ) : (
-                  <span className="text-muted-foreground text-xs text-center px-2">{t("No logo", "لا يوجد شعار")}</span>
-                )}
-              </div>
+              <button
+                type="button"
+                onClick={() => setLogoLightboxOpen(true)}
+                className="group w-28 h-28 rounded-xl border-2 border-border bg-white shadow-sm flex items-center justify-center overflow-hidden relative hover:border-primary transition-colors cursor-zoom-in"
+                title={t("Click to view full size", "انقر لعرض الحجم الكامل")}
+              >
+                <img
+                  key={currentLogoUrl}
+                  src={currentLogoUrl}
+                  alt={t("Site logo", "شعار الموقع")}
+                  className="w-full h-full object-contain p-1.5"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/logo.png"; }}
+                />
+                {/* zoom hint overlay */}
+                <span className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-xl flex items-end justify-center pb-1.5 opacity-0 group-hover:opacity-100">
+                  <span className="text-[10px] text-white bg-black/50 rounded px-1.5 py-0.5 leading-none">
+                    {t("View", "عرض")}
+                  </span>
+                </span>
+              </button>
               {logoUploading && (
                 <div className="flex items-center gap-1 text-xs text-blue-600">
                   <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -432,7 +447,33 @@ export default function AdminSettingsPage() {
               )}
             </div>
 
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-4">
+              {/* ── Current URL (read-only) ── */}
+              <div>
+                <label className="block text-xs font-medium mb-1.5 text-muted-foreground uppercase tracking-wide">
+                  {t("Current logo URL", "رابط الشعار الحالي")}
+                </label>
+                <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-md border bg-muted/30">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  <span className="flex-1 text-xs font-mono text-foreground truncate" title={currentLogoUrl}>
+                    {savedLogoUrl || "/logo.png (default)"}
+                  </span>
+                  {savedLogoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => { saveLogo(""); setLogoPreviewUrl(""); }}
+                      className="flex-shrink-0 text-xs text-red-500 hover:text-red-700 hover:underline"
+                      title={t("Reset to default /logo.png", "إعادة تعيين إلى /logo.png الافتراضي")}
+                    >
+                      {t("Reset", "إعادة تعيين")}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* ── Upload new file ── */}
               <div>
                 <label className="block text-xs font-medium mb-1.5">{t("Upload new logo", "رفع شعار جديد")}</label>
                 <div className="flex items-center gap-2">
@@ -455,45 +496,44 @@ export default function AdminSettingsPage() {
                     </svg>
                     {logoUploading ? t("Uploading…", "جارٍ الرفع…") : t("Choose file", "اختر ملفاً")}
                   </button>
-                  <span className="text-xs text-muted-foreground">{t("PNG, SVG, JPG, WebP supported", "يدعم PNG وSVG وJPG وWebP")}</span>
+                  <span className="text-xs text-muted-foreground">{t("PNG, SVG, JPG, WebP", "PNG وSVG وJPG وWebP")}</span>
                 </div>
                 {logoUploadError && (
                   <p className="text-xs text-red-500 mt-1">{logoUploadError}</p>
                 )}
               </div>
 
+              {/* ── Or paste URL ── */}
               <div>
-                <label className="block text-xs font-medium mb-1.5">{t("Or paste image URL", "أو الصق رابط الصورة")}</label>
+                <label className="block text-xs font-medium mb-1.5">{t("Or use a different URL", "أو استخدم رابطاً مختلفاً")}</label>
                 {logoSetting ? (
                   editingId === logoSetting.id ? (
                     <div className="flex items-center gap-2">
                       <input
                         type="text"
                         value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className="flex-1 border rounded-md px-2.5 py-1.5 text-xs bg-background"
+                        onChange={(e) => { setEditValue(e.target.value); setLogoPreviewUrl(e.target.value); }}
+                        className="flex-1 border rounded-md px-2.5 py-1.5 text-xs bg-background font-mono"
                         placeholder="https://example.com/logo.png"
                         autoFocus
                       />
-                      <button onClick={() => saveEdit(logoSetting)} disabled={saving}
+                      <button onClick={() => { saveEdit(logoSetting); setLogoPreviewUrl(""); }} disabled={saving}
                         className="px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs hover:opacity-90 disabled:opacity-50">
                         {t("Save", "حفظ")}
                       </button>
-                      <button onClick={() => setEditingId(null)}
+                      <button onClick={() => { setEditingId(null); setLogoPreviewUrl(""); }}
                         className="px-2.5 py-1.5 bg-muted text-muted-foreground rounded-md text-xs hover:bg-muted/80">
                         {t("Cancel", "إلغاء")}
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2">
-                      <span className="flex-1 text-xs text-muted-foreground border rounded-md px-2.5 py-1.5 bg-muted/30 truncate">
-                        {logoSetting.configValue || t("Not set — using default /logo.svg", "غير مُعيّن — يستخدم /logo.svg الافتراضي")}
-                      </span>
-                      <button onClick={() => startEdit(logoSetting)}
-                        className="px-3 py-1.5 border rounded-md text-xs hover:bg-muted/50 transition-colors">
-                        {t("Edit URL", "تعديل الرابط")}
-                      </button>
-                    </div>
+                    <button onClick={() => startEdit(logoSetting)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 border rounded-md text-xs hover:bg-muted/50 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                      {t("Paste URL…", "الصق رابطاً…")}
+                    </button>
                   )
                 ) : (
                   <p className="text-xs text-amber-600 border border-amber-200 rounded-md px-2.5 py-1.5 bg-amber-50">
@@ -545,6 +585,49 @@ export default function AdminSettingsPage() {
             </TabsContent>
           ))}
         </Tabs>
+      )}
+
+      {/* ── Logo lightbox ─────────────────────────────────────────────────── */}
+      {logoLightboxOpen && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80"
+          onClick={() => setLogoLightboxOpen(false)}
+        >
+          {/* image — stop propagation so clicking the image itself doesn't close */}
+          <div
+            className="relative max-w-[90vw] max-h-[80vh] bg-white rounded-2xl shadow-2xl p-4 flex flex-col items-center gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={currentLogoUrl}
+              alt={t("Site logo full size", "شعار الموقع بالحجم الكامل")}
+              className="max-w-[80vw] max-h-[65vh] object-contain"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/logo.png"; }}
+            />
+            <div className="flex items-center gap-3">
+              <a
+                href={currentLogoUrl}
+                download="logo.png"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                {t("Download", "تنزيل")}
+              </a>
+              <button
+                type="button"
+                onClick={() => setLogoLightboxOpen(false)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 border rounded-md text-sm hover:bg-muted/50 transition-colors"
+              >
+                {t("Close", "إغلاق")}
+              </button>
+            </div>
+          </div>
+          {/* ESC hint */}
+          <p className="mt-4 text-xs text-white/50">{t("Click outside to close", "انقر خارج الصورة للإغلاق")}</p>
+        </div>
       )}
     </div>
   );

@@ -1,10 +1,12 @@
 package org.ssssy.backend.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,6 +16,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.ssssy.backend.model.dto.ApiResponse;
 
 import java.util.HashMap;
@@ -136,13 +139,28 @@ public class GlobalExceptionHandler {
         .body(ApiResponse.error("Method not allowed: " + ex.getMethod()));
   }
 
+  /**
+   * Client disconnected mid-transfer (e.g. browser cancelled a file download).
+   * This is not a server error — log at WARN and return nothing (response is already unusable).
+   */
+  @ExceptionHandler(AsyncRequestNotUsableException.class)
+  public ResponseEntity<Void> handleClientAbort(AsyncRequestNotUsableException ex) {
+    log.warn("Client disconnected before response was fully written: {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex) {
-    // Log the full stack trace so we can diagnose in the Spring Boot console
-    log.error("Unhandled exception: {}", ex.getMessage(), ex);
-    // Return the real cause message so the browser also shows it
-    String detail = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+  public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex, HttpServletResponse response) {
+    // Log the full details server-side only — NEVER include them in the response body.
+    log.error("Unhandled exception [correlationId={}]: {}",
+        org.slf4j.MDC.get("correlationId"), ex.getMessage(), ex);
+    // If the response already has a non-JSON content-type set (e.g. application/pdf from a
+    // file-download endpoint), reset it to JSON so the message converter can write the error.
+    String contentType = response.getContentType();
+    if (contentType != null && !contentType.startsWith(MediaType.APPLICATION_JSON_VALUE)) {
+      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    }
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(ApiResponse.error("Internal error: " + detail));
+        .body(ApiResponse.error("An unexpected error occurred. Please try again."));
   }
 }

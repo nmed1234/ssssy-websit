@@ -1,0 +1,670 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SSSSY CMS — Enterprise SDK &amp; Plugin Architecture Plan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.65; color: #1f2328; background: #ffffff; padding: 32px 16px 48px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; color: #1f2328; border-bottom: 2px solid #3b82d4; padding-bottom: 10px; margin-bottom: 6px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 28px; }
+  h2 { font-size: 17px; font-weight: 700; color: #1f2328; margin: 32px 0 10px; padding: 8px 12px; background: #f7f8fa; border-left: 4px solid #3b82d4; }
+  h3 { font-size: 14px; font-weight: 700; color: #1f2328; margin: 18px 0 6px; }
+  h4 { font-size: 13px; font-weight: 700; color: #3b82d4; margin: 14px 0 4px; }
+  p { margin-bottom: 10px; color: #1f2328; }
+  .muted { color: #57606a; font-size: 13px; }
+  ul, ol { margin: 6px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; }
+  .card-title { font-weight: 700; font-size: 13px; color: #1f2328; margin-bottom: 6px; }
+  .card-body { font-size: 13px; color: #57606a; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-right: 4px; margin-bottom: 4px; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-purple { background: #ede9fe; color: #6b21a8; }
+  .badge-orange { background: #ffedd5; color: #9a3412; }
+  .badge-gray { background: #f3f4f6; color: #374151; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0 16px; }
+  th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-weight: 700; color: #1f2328; }
+  td { border: 1px solid #e5e7eb; padding: 8px 10px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  code { background: #f0f1f3; color: #0e5a8a; font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; padding: 1px 5px; border-radius: 3px; }
+  pre { background: #1f2328; color: #e6edf3; font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; padding: 14px 16px; border-radius: 6px; overflow-x: auto; margin: 10px 0 16px; line-height: 1.5; white-space: pre; }
+  .phase { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+  .phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .phase-num { width: 28px; height: 28px; border-radius: 50%; background: #3b82d4; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .phase-title { font-size: 15px; font-weight: 700; }
+  .phase-weeks { font-size: 12px; color: #57606a; margin-left: auto; }
+  .arch-box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin: 8px 0; background: #fefefe; }
+  .arch-layer { font-weight: 700; font-size: 12px; color: #3b82d4; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  .compare-table th:first-child { width: 22%; }
+  .callout { border-left: 3px solid #7c5cd8; background: #faf5ff; padding: 10px 14px; margin: 12px 0; border-radius: 0 6px 6px 0; }
+  .callout p { margin: 0; font-size: 13px; }
+  .warn { border-left: 3px solid #f59e0b; background: #fffbeb; }
+  .info { border-left: 3px solid #3b82d4; background: #eff6ff; }
+  hr { border: none; border-top: 1px solid #e5e7eb; margin: 28px 0; }
+  footer { margin-top: 48px; padding-top: 14px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 12px; color: #57606a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>SSSSY CMS — Enterprise SDK &amp; Plugin Architecture</h1>
+<p class="subtitle">Deep-thinking blueprint for evolving the current Spring Boot + Next.js system into a WordPress/Drupal/DNN-grade extensible platform — with developer SDK, plugin system, dynamic form engine, and universal API gateway</p>
+
+
+<h2>Part 1 — How Standard CMS Platforms Actually Work</h2>
+
+<p>Before designing the architecture, understand what makes Drupal, WordPress, DNN, and Joomla powerful. Every one of them is built around four core pillars:</p>
+
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">1. Hook / Event System</div>
+    <div class="card-body">Every core action fires an event (hook). Plugins listen and modify behaviour without touching core code. WordPress <code>add_filter</code>, Drupal <code>hook_node_save</code>, DNN <code>IPortalModule</code>.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">2. Dynamic Content Types</div>
+    <div class="card-body">Admin defines fields at runtime. No code deployment needed. Drupal "Content Type" with CCK fields, WordPress Custom Post Types + ACF, Joomla "Articles" with custom attributes.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">3. Dynamic Form Engine</div>
+    <div class="card-body">Field definitions stored in DB. Frontend renders forms from JSON schema. Submission validated against schema. Stored in a generic "submissions" table — no migration per form.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">4. Plugin / Module System</div>
+    <div class="card-body">Self-contained packages (PHP files, JAR, DLL) that register routes, forms, menus, and DB tables on install. Platform provides a registry — plugin just implements an interface.</div>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>Key insight:</strong> Your CMS already has 297 Java files and 60+ frontend pages. The missing layer is <em>extensibility infrastructure</em> — the hooks, the form engine, the plugin registry, and the developer SDK. Everything else is already built. The plan below adds exactly those layers without rewriting the core.</p>
+</div>
+
+
+<h2>Part 2 — Current State vs. Target State Gap Analysis</h2>
+
+<table class="compare-table">
+  <thead>
+    <tr><th>Capability</th><th>WordPress</th><th>Drupal</th><th>Your CMS Now</th><th>Target</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Content Types</td>
+      <td>CPT (runtime)</td>
+      <td>Node bundles (runtime)</td>
+      <td>Hardcoded: Article, Event, Page, Publication</td>
+      <td>Admin creates types in UI, fields auto-generate form + API</td>
+    </tr>
+    <tr>
+      <td>Form Engine</td>
+      <td>Contact Form 7 / Gravity</td>
+      <td>Webform module</td>
+      <td>Hardcoded forms per use case</td>
+      <td>JSON-schema forms, stored in DB, rendered dynamically</td>
+    </tr>
+    <tr>
+      <td>Hook System</td>
+      <td>add_action / add_filter</td>
+      <td>hook_* system</td>
+      <td>None — hard Spring events only</td>
+      <td>CmsEventBus — any code can publish/subscribe to CMS events</td>
+    </tr>
+    <tr>
+      <td>Plugin/Module Install</td>
+      <td>ZIP upload → activation</td>
+      <td>Composer + drush</td>
+      <td>None</td>
+      <td>JAR drop + DB migration via SPI, or JS bundle for frontend</td>
+    </tr>
+    <tr>
+      <td>API Builder</td>
+      <td>REST API + WP-JSON auto-generated</td>
+      <td>JSON:API auto-generated</td>
+      <td>Hand-coded per controller</td>
+      <td>Content Type → auto-generated REST + GraphQL endpoint</td>
+    </tr>
+    <tr>
+      <td>Workflow</td>
+      <td>Post statuses + roles</td>
+      <td>Content Moderation module</td>
+      <td>Fixed states DRAFT→PUBLISHED only</td>
+      <td>Admin-configurable multi-step workflows per content type</td>
+    </tr>
+    <tr>
+      <td>Member Submission</td>
+      <td>Pending Review + role control</td>
+      <td>Node access + workflow</td>
+      <td>No member submit flow</td>
+      <td>Member submits article → workflow → admin publishes</td>
+    </tr>
+    <tr>
+      <td>Frontend Rendering</td>
+      <td>PHP template + theme hooks</td>
+      <td>Twig + display modes</td>
+      <td>Hardcoded Next.js pages</td>
+      <td>SDK block components + renderer resolves type → component</td>
+    </tr>
+    <tr>
+      <td>Developer SDK</td>
+      <td>plugins_api() + REST</td>
+      <td>Drupal core services</td>
+      <td>None</td>
+      <td>TypeScript SDK package + Java @CmsPlugin SPI</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h2>Part 3 — Target Architecture (5 Layers)</h2>
+
+<div class="arch-box">
+  <div class="arch-layer">Layer 5 — Developer SDK &amp; Plugin Runtime</div>
+  <p class="muted" style="margin:0">TypeScript <code>@ssssy/cms-sdk</code> npm package + Java <code>cms-plugin-api</code> JAR. Developer writes a plugin, calls SDK hooks, deploys.</p>
+</div>
+<div class="arch-box">
+  <div class="arch-layer">Layer 4 — Dynamic Form &amp; Content Type Engine</div>
+  <p class="muted" style="margin:0">CMS stores field definitions as JSON schema in DB. API endpoint auto-generated. Frontend form rendered from schema. Submissions stored in generic table.</p>
+</div>
+<div class="arch-box">
+  <div class="arch-layer">Layer 3 — CMS Event Bus (Hook System)</div>
+  <p class="muted" style="margin:0">Spring <code>ApplicationEventPublisher</code> wrapped in <code>CmsEventBus</code>. Every save, publish, delete fires typed event. Plugins subscribe via <code>@CmsEventListener</code> annotation.</p>
+</div>
+<div class="arch-box">
+  <div class="arch-layer">Layer 2 — API Gateway with Auto-Generated Endpoints</div>
+  <p class="muted" style="margin:0">Dynamic controller resolves <code>/api/v2/content-types/{typeName}</code> at runtime using the field registry. No new Java controller needed per content type.</p>
+</div>
+<div class="arch-box">
+  <div class="arch-layer">Layer 1 — Existing Core (unchanged)</div>
+  <p class="muted" style="margin:0">Current 297 Java source files, Spring Boot, PostgreSQL, MinIO, Redis, 60+ Next.js pages remain as-is. New layers sit on top.</p>
+</div>
+
+
+<h2>Part 4 — The 7 Major Features to Build</h2>
+
+
+<h3>Feature 1 — Dynamic Content Type Engine (like Drupal's Content Types)</h3>
+<p>Admin creates a "Research Paper" type with fields: title, abstract, author, PDF, DOI. The CMS stores this as a JSON schema. Immediately:</p>
+<ul>
+  <li>A CRUD REST endpoint <code>GET/POST/PUT/DELETE /api/v2/dt/research-paper</code> is auto-generated</li>
+  <li>An admin form to create/edit entries is auto-rendered from the schema</li>
+  <li>A public page <code>/research-papers/{slug}</code> is auto-rendered using the SDK renderer</li>
+  <li>The workflow engine attaches the default or custom workflow</li>
+  <li>Sitemap and SEO metadata automatically include the new type</li>
+</ul>
+
+<h4>DB Schema (new tables)</h4>
+<pre>-- stores the type definition
+content_type_definitions (
+  id UUID PK,
+  name VARCHAR(100) UNIQUE,      -- "research-paper"
+  label_en VARCHAR(255),
+  label_ar VARCHAR(255),
+  description TEXT,
+  icon VARCHAR(100),
+  workflow_id UUID FK workflows,
+  allow_comments BOOLEAN,
+  allow_member_submit BOOLEAN,   -- KEY: members can submit
+  requires_approval BOOLEAN,
+  is_active BOOLEAN,
+  sort_order INT,
+  created_at TIMESTAMPTZ
+);
+
+-- stores every field of every type
+content_type_fields (
+  id UUID PK,
+  content_type_id UUID FK,
+  field_name VARCHAR(100),       -- "abstract"
+  field_label_en VARCHAR(255),
+  field_label_ar VARCHAR(255),
+  field_type VARCHAR(50),        -- text|richtext|number|date|media|relation|select|checkbox
+  is_required BOOLEAN,
+  is_searchable BOOLEAN,
+  is_listed BOOLEAN,             -- show in list view?
+  options JSONB,                 -- for select: [{value,label}]
+  validation_rules JSONB,        -- {min,max,pattern,message}
+  sort_order INT
+);
+
+-- stores actual data for all dynamic content types
+dynamic_content_entries (
+  id UUID PK,
+  content_type_name VARCHAR(100),
+  slug VARCHAR(550) UNIQUE,
+  status VARCHAR(30),
+  author_id UUID FK users,
+  workflow_state VARCHAR(50),
+  field_data JSONB,              -- {"abstract":"...","doi":"..."}
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ
+);</pre>
+
+
+<h3>Feature 2 — Dynamic Form Engine (like Drupal Webform / Gravity Forms)</h3>
+<p>Admin builds any form visually (drag-drop fields). Form JSON saved to DB. Frontend renders it. On submit, validation happens server-side against schema. Data stored in a universal submissions table. Admin sees all submissions. Can trigger workflow or email notification on submit.</p>
+
+<h4>Key fields</h4>
+<pre>forms (id, title_en, title_ar, slug, schema JSONB, success_message, redirect_url,
+        email_notification_to, workflow_trigger, is_active)
+
+form_submissions (id, form_id FK, user_id FK nullable,
+                  data JSONB,        -- the submitted values
+                  ip_address, user_agent, status, created_at)</pre>
+
+<h4>Form schema example (JSON stored in DB)</h4>
+<pre>{
+  "fields": [
+    { "name": "full_name", "type": "text",     "label_en": "Full Name", "required": true },
+    { "name": "institution","type": "text",    "label_en": "Institution" },
+    { "name": "abstract",   "type": "richtext","label_en": "Abstract", "maxLength": 5000 },
+    { "name": "pdf_file",   "type": "file",    "label_en": "Full Paper", "accept": ".pdf" },
+    { "name": "agree",      "type": "checkbox","label_en": "I agree to T&amp;C", "required": true }
+  ],
+  "submitLabel_en": "Submit Paper",
+  "submitLabel_ar": "إرسال الورقة"
+}</pre>
+
+<div class="callout info">
+  <p><strong>Frontend rendering:</strong> One universal <code>&lt;DynamicForm slug="paper-submission" /&gt;</code> component reads the schema and renders the correct inputs. Zero code change to add a new form — admin does it all in UI.</p>
+</div>
+
+
+<h3>Feature 3 — CMS Event Bus (Hook System)</h3>
+<p>This is the most critical extensibility feature. Every meaningful action in the CMS fires a typed event. Plugins and internal services listen. No coupling between emitter and listeners.</p>
+
+<h4>Core event types</h4>
+<table>
+  <tr><th>Event Class</th><th>When Fired</th><th>Payload</th></tr>
+  <tr><td><code>ContentCreatedEvent</code></td><td>Any content saved for the first time</td><td>contentId, type, author</td></tr>
+  <tr><td><code>ContentPublishedEvent</code></td><td>Status → PUBLISHED</td><td>contentId, type, slug</td></tr>
+  <tr><td><code>ContentWorkflowTransitionEvent</code></td><td>Any workflow state change</td><td>contentId, fromState, toState, actor</td></tr>
+  <tr><td><code>CommentPostedEvent</code></td><td>Approved comment created</td><td>commentId, contentId, authorId</td></tr>
+  <tr><td><code>FormSubmittedEvent</code></td><td>Any dynamic form submitted</td><td>formId, submissionId, data</td></tr>
+  <tr><td><code>UserRegisteredEvent</code></td><td>New user account created</td><td>userId, email, role</td></tr>
+  <tr><td><code>MediaUploadedEvent</code></td><td>File uploaded to MinIO</td><td>mediaId, mimeType, size</td></tr>
+  <tr><td><code>PluginInstalledEvent</code></td><td>Plugin JAR/bundle activated</td><td>pluginId, version</td></tr>
+</table>
+
+<h4>Java SPI pattern</h4>
+<pre>// Plugin developer writes this:
+@Component
+public class MyResearchNotifier implements CmsEventListener&lt;ContentPublishedEvent&gt; {
+    @Override
+    public void onEvent(ContentPublishedEvent event) {
+        if ("research-paper".equals(event.getContentType())) {
+            // send email to all subscribers
+        }
+    }
+}
+// Registered automatically via Spring @Component — no core code change</pre>
+
+
+<h3>Feature 4 — Plugin / Module System (like WordPress Plugins)</h3>
+<p>Developers package their code as a self-contained unit. The CMS provides a plugin registry.</p>
+
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">Backend Plugin (JAR)</div>
+    <div class="card-body">
+      <ul style="margin-left:14px;font-size:12px">
+        <li>Implements <code>CmsPlugin</code> interface</li>
+        <li>Declares metadata via <code>@CmsPluginMeta</code> annotation</li>
+        <li>Can register: REST endpoints, event listeners, scheduled jobs, DB migrations</li>
+        <li>Dropped into <code>/plugins/</code> folder → hot-loaded via Spring child context or @Import</li>
+        <li>DB: <code>plugins</code> table tracks install state, version, config</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Frontend Plugin (JS bundle)</div>
+    <div class="card-body">
+      <ul style="margin-left:14px;font-size:12px">
+        <li>A Next.js dynamic import bundle or an npm package</li>
+        <li>Registers page-builder blocks via <code>CmsSDK.registerBlock()</code></li>
+        <li>Registers admin menu items via <code>CmsSDK.registerAdminRoute()</code></li>
+        <li>Registers public page renderers via <code>CmsSDK.registerContentRenderer()</code></li>
+        <li>Listed in admin → Plugins → Frontend Extensions</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<h4>Plugin manifest (plugin.json)</h4>
+<pre>{
+  "id": "sssy-research-portal",
+  "name": "Research Portal Plugin",
+  "version": "1.0.0",
+  "author": "SSSSY Dev Team",
+  "entryClass": "org.ssssy.plugins.research.ResearchPlugin",
+  "frontendBundle": "research-portal-ui.js",
+  "dbMigrations": ["V100__research_portal.sql"],
+  "permissions": ["CONTENT_READ", "CONTENT_WRITE", "EMAIL_SEND"],
+  "configSchema": {
+    "doi_resolver_url": { "type": "string", "default": "https://doi.org/" }
+  }
+}</pre>
+
+
+<h3>Feature 5 — Member Article Submission with Workflow (the full loop)</h3>
+<p>This is the most requested feature and it uses ALL the above systems together. Here is the exact flow:</p>
+
+<ol>
+  <li><strong>Member logs in</strong> → sees "Submit Article" in their dashboard</li>
+  <li><strong>Fills dynamic form</strong> — title, body (rich editor), category, tags, cover image, optional co-authors</li>
+  <li><strong>Clicks Submit</strong> → <code>POST /api/v2/member/articles</code> → status = <code>PENDING_REVIEW</code></li>
+  <li><strong>Event fired:</strong> <code>ContentCreatedEvent</code> → notifies all EDITORs via real-time notification + email</li>
+  <li><strong>Editor opens</strong> approval queue → reviews full content with diff view</li>
+  <li><strong>Editor actions:</strong>
+    <ul>
+      <li><strong>Approve</strong> → status = <code>APPROVED</code> → event → PUBLISHER notified</li>
+      <li><strong>Request Revision</strong> → status = <code>REVISION_REQUESTED</code> → member gets email with comments</li>
+      <li><strong>Reject</strong> → status = <code>REJECTED</code> → member notified with reason</li>
+    </ul>
+  </li>
+  <li><strong>Publisher</strong> sets publish date (immediate or scheduled) → status = <code>PUBLISHED</code></li>
+  <li><strong>ContentPublishedEvent</strong> fires → SEO metadata auto-created, sitemap updated, newsletter optional</li>
+  <li><strong>Member sees</strong> their article live on the public site with their author profile</li>
+</ol>
+
+<div class="callout">
+  <p><strong>The workflow is fully configurable</strong> — admin can define a simpler 2-step (member submits → admin publishes directly) or a 4-step editorial workflow using the workflow UI that already exists in the CMS.</p>
+</div>
+
+
+<h3>Feature 6 — TypeScript SDK Package (<code>@ssssy/cms-sdk</code>)</h3>
+<p>Developers install this npm package and can call any CMS capability from a button, component, or page without hand-crafting fetch calls.</p>
+
+<h4>SDK surface API</h4>
+<pre>import { CmsClient, useContent, useForms, useWorkflow } from '@ssssy/cms-sdk';
+
+// Initialize once
+const cms = new CmsClient({ baseUrl: process.env.NEXT_PUBLIC_API_URL });
+
+// React hooks provided by SDK
+const { data, loading } = useContent('research-paper', { status: 'PUBLISHED' });
+const { submit, status }  = useForms('paper-submission');
+
+// Button wired to API with zero boilerplate
+&lt;CmsFormButton
+  formSlug="paper-submission"
+  label="Submit Your Paper"
+  onSuccess={(submission) =&gt; router.push('/thank-you')}
+/&gt;
+
+// Workflow action from a button
+&lt;CmsWorkflowButton
+  contentId={article.id}
+  action="APPROVE"
+  label="Approve Article"
+  requiredRole="EDITOR"
+/&gt;
+
+// Register a custom page-builder block
+CmsSDK.registerBlock({
+  type: 'research-citation',
+  label: 'Research Citation',
+  icon: 'BookOpen',
+  schema: { doi: { type: 'text', label: 'DOI' } },
+  render: ({ doi }) =&gt; &lt;CitationBlock doi={doi} /&gt;
+});</pre>
+
+
+<h3>Feature 7 — Admin Plugin Manager (like WordPress plugin screen)</h3>
+<p>A dedicated admin panel at <code>/admin/plugins</code>:</p>
+<ul>
+  <li>Lists all installed plugins with status (active/inactive), version, permissions used</li>
+  <li>Upload a plugin ZIP → server unpacks → validates manifest → runs DB migrations → activates</li>
+  <li>Activate / Deactivate / Uninstall with one click</li>
+  <li>Plugin settings page — rendered from plugin's <code>configSchema</code></li>
+  <li>Plugin marketplace (future) — browse community plugins from a registry URL</li>
+  <li>Security: permissions sandbox — plugin only gets what it declares</li>
+</ul>
+
+
+<h2>Part 5 — Implementation Plan (8 Phases)</h2>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">1</div>
+    <div class="phase-title">CMS Event Bus + Hook Infrastructure</div>
+    <div class="phase-weeks">Weeks 1–2</div>
+  </div>
+  <p class="muted">Foundation for everything else. Zero risk to existing code.</p>
+  <ul>
+    <li>Create <code>CmsEvent</code> base class + typed event subclasses (8 events)</li>
+    <li>Create <code>CmsEventBus</code> wrapping Spring <code>ApplicationEventPublisher</code></li>
+    <li>Create <code>@CmsEventListener</code> annotation + auto-discovery processor</li>
+    <li>Wire existing services (ContentService, WorkflowService, CommentService) to fire events at key points</li>
+    <li>Add <code>cms_event_log</code> table to record all fired events for audit</li>
+    <li>Write unit tests for event bus</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-green">Low Risk</span><span class="badge badge-blue">Core Infrastructure</span></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">2</div>
+    <div class="phase-title">Dynamic Form Engine</div>
+    <div class="phase-weeks">Weeks 3–5</div>
+  </div>
+  <p class="muted">Most immediately valuable feature for the society — forms for membership, paper submission, event registration.</p>
+  <ul>
+    <li>DB migration: <code>forms</code> + <code>form_fields</code> + <code>form_submissions</code> tables</li>
+    <li>Backend: <code>FormDefinitionController</code> (admin CRUD), <code>FormSubmissionController</code> (public submit + list)</li>
+    <li>Backend: <code>FormValidationService</code> — validates submission against JSON schema at runtime</li>
+    <li>Frontend: <code>DynamicForm</code> component — reads schema, renders inputs, handles submit</li>
+    <li>Frontend: Admin form builder page at <code>/admin/forms</code> (drag-drop fields)</li>
+    <li>Admin: submissions inbox at <code>/admin/forms/[id]/submissions</code></li>
+    <li>Integration: <code>FormSubmittedEvent</code> fires → can trigger notification, workflow, or email</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-green">High Value</span><span class="badge badge-blue">Standalone</span></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">3</div>
+    <div class="phase-title">Dynamic Content Type Engine</div>
+    <div class="phase-weeks">Weeks 6–9</div>
+  </div>
+  <p class="muted">Drupal-style "create content types at runtime". The most complex feature.</p>
+  <ul>
+    <li>DB migration: <code>content_type_definitions</code> + <code>content_type_fields</code> + <code>dynamic_content_entries</code></li>
+    <li>Backend: <code>ContentTypeDefinitionController</code> (admin CRUD for type definitions)</li>
+    <li>Backend: <code>DynamicContentController</code> — generic controller that resolves type from URL, validates against field schema, stores to JSONB</li>
+    <li>Backend: <code>DynamicContentSearchService</code> — full-text search using PostgreSQL JSONB operators</li>
+    <li>Frontend: Admin UI at <code>/admin/content-types</code> — create types, add/reorder fields</li>
+    <li>Frontend: Dynamic admin list + edit pages using field schema</li>
+    <li>Frontend: Public renderer — <code>/[contentTypeName]/[slug]</code> resolves type → renders fields</li>
+    <li>Existing hardcoded types (Article, Event, Publication) migrate to this engine in Phase 8</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-orange">Medium Complexity</span><span class="badge badge-blue">Core CMS</span></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">4</div>
+    <div class="phase-title">Member Submission Workflow</div>
+    <div class="phase-weeks">Weeks 8–10</div>
+  </div>
+  <p class="muted">Can start in parallel with Phase 3. Uses existing workflow engine + new form engine.</p>
+  <ul>
+    <li>Backend: <code>MemberContentController</code> — members POST articles with status=PENDING_REVIEW</li>
+    <li>Backend: Extend workflow transitions to include PENDING_REVIEW state and member-level permission</li>
+    <li>Backend: <code>ContentSubmissionNotificationListener</code> — subscribes to ContentCreatedEvent, emails all EDITORs</li>
+    <li>Frontend: Member dashboard <code>/dashboard/my-articles</code> — list, status badges, revision history</li>
+    <li>Frontend: <code>/dashboard/submit-article</code> — rich editor form (uses DynamicForm if type is configured)</li>
+    <li>Frontend: Revision request UI — member sees comments from editor, re-submits</li>
+    <li>Admin: Editor queue at <code>/admin/content-approval</code> enhanced with diff viewer + comment thread</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-green">High Value</span><span class="badge badge-purple">User-facing</span></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">5</div>
+    <div class="phase-title">Backend Plugin SPI (Java Plugin API)</div>
+    <div class="phase-weeks">Weeks 11–14</div>
+  </div>
+  <ul>
+    <li>Create <code>cms-plugin-api</code> Maven module (interfaces only, no Spring dependency)</li>
+    <li>Interfaces: <code>CmsPlugin</code>, <code>CmsEventListener&lt;T&gt;</code>, <code>CmsApiExtension</code>, <code>CmsMigrationProvider</code></li>
+    <li>Backend: <code>PluginRegistry</code> service — discovers plugins from classpath / <code>/plugins/</code> folder via Java ServiceLoader</li>
+    <li>Backend: <code>PluginManager</code> — install, activate, deactivate, uninstall lifecycle</li>
+    <li>Backend: Plugin isolation using Spring child ApplicationContext per plugin</li>
+    <li>DB: <code>plugins</code> table — id, manifest JSON, status, config JSON, installed_at</li>
+    <li>Admin API: <code>PluginController</code> — list, upload ZIP, activate/deactivate/configure</li>
+    <li>Security: Plugin permission sandbox — a declared <code>EMAIL_SEND</code> permission grants Spring bean access</li>
+    <li>Build example plugin: <code>sssy-doi-resolver</code> as reference implementation</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-red">Complex</span><span class="badge badge-blue">Developer Experience</span></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">6</div>
+    <div class="phase-title">Frontend SDK + Plugin Runtime (<code>@ssssy/cms-sdk</code>)</div>
+    <div class="phase-weeks">Weeks 14–17</div>
+  </div>
+  <ul>
+    <li>Create <code>frontend/packages/cms-sdk/</code> — TypeScript npm package</li>
+    <li>SDK modules: <code>CmsClient</code> (HTTP), <code>useContent()</code>, <code>useForms()</code>, <code>useWorkflow()</code>, <code>useAuth()</code></li>
+    <li>SDK components: <code>&lt;DynamicForm/&gt;</code>, <code>&lt;CmsWorkflowButton/&gt;</code>, <code>&lt;ContentRenderer/&gt;</code>, <code>&lt;MediaPicker/&gt;</code></li>
+    <li>Plugin registry: <code>CmsSDK.registerBlock()</code>, <code>CmsSDK.registerAdminRoute()</code>, <code>CmsSDK.registerContentRenderer()</code></li>
+    <li>Admin plugin loader: reads plugin manifests from backend, dynamically imports JS bundles</li>
+    <li>Build reference frontend plugin: <code>research-portal-blocks</code> (adds 3 page-builder blocks)</li>
+    <li>Publish SDK to local npm registry or GitHub Packages</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-orange">Medium</span><span class="badge badge-blue">Developer Experience</span></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">7</div>
+    <div class="phase-title">Admin Plugin Manager UI</div>
+    <div class="phase-weeks">Weeks 17–18</div>
+  </div>
+  <ul>
+    <li>Page <code>/admin/plugins</code> — installed plugins list (name, version, status, permissions)</li>
+    <li>Upload ZIP → progress indicator → activation result with error details</li>
+    <li>Plugin settings page — auto-rendered from configSchema</li>
+    <li>Frontend extensions tab — lists registered JS blocks and admin routes from plugins</li>
+    <li>Dependency resolution: if plugin A requires plugin B, warn on activation</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-green">Low Risk</span><span class="badge badge-purple">Admin UX</span></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">8</div>
+    <div class="phase-title">Migration + Hardening</div>
+    <div class="phase-weeks">Weeks 19–22</div>
+  </div>
+  <ul>
+    <li>Migrate hardcoded Article, Event, Publication content types to the new dynamic engine (data migration + backward-compatible API aliases)</li>
+    <li>Migrate hardcoded Contact form, Event Registration form, Job Application form to the dynamic form engine</li>
+    <li>Replace hardcoded workflow states in WorkflowService with the configurable workflow engine</li>
+    <li>Performance: add Redis cache for content type definitions + form schemas</li>
+    <li>Security audit: plugin sandbox, SSRF protection, input validation on dynamic field types</li>
+    <li>Documentation: SDK reference, plugin authoring guide, content type admin guide</li>
+    <li>Write integration tests: form engine, workflow transitions, plugin lifecycle</li>
+  </ul>
+  <div style="margin-top:8px"><span class="badge badge-orange">Medium Risk</span><span class="badge badge-gray">Cleanup</span></div>
+</div>
+
+
+<h2>Part 6 — Feature Parity vs. Major CMS Platforms After All Phases</h2>
+
+<table>
+  <thead>
+    <tr><th>Feature</th><th>WP</th><th>Drupal</th><th>Joomla</th><th>DNN</th><th>SSSSY After Plan</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Dynamic content types (admin UI)</td><td>✓ CPT</td><td>✓✓</td><td>✓</td><td>✓</td><td>✓ Phase 3</td></tr>
+    <tr><td>Dynamic form builder</td><td>Plugin</td><td>✓✓ Webform</td><td>Plugin</td><td>Module</td><td>✓ Phase 2 (built-in)</td></tr>
+    <tr><td>Multi-step editorial workflow</td><td>Plugin</td><td>✓✓</td><td>Basic</td><td>✓</td><td>✓ Phase 4 (configurable)</td></tr>
+    <tr><td>Member content submission</td><td>✓</td><td>✓✓</td><td>✓</td><td>✓</td><td>✓ Phase 4</td></tr>
+    <tr><td>Plugin/module install via UI</td><td>✓✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓ Phase 5+7</td></tr>
+    <tr><td>Developer SDK (typed, documented)</td><td>PHP API</td><td>Services API</td><td>Framework</td><td>.NET API</td><td>✓ TypeScript + Java Phase 5+6</td></tr>
+    <tr><td>Hook/event system</td><td>✓✓</td><td>✓✓</td><td>✓</td><td>Events</td><td>✓ Phase 1</td></tr>
+    <tr><td>REST API auto-generated per type</td><td>✓</td><td>✓✓ JSON:API</td><td>Partial</td><td>✓</td><td>✓ Phase 3</td></tr>
+    <tr><td>Page builder with custom blocks</td><td>Gutenberg</td><td>Layout Builder</td><td>✓</td><td>✓</td><td>✓ Exists + SDK extensible Phase 6</td></tr>
+    <tr><td>Full-text search</td><td>Plugin</td><td>Search API</td><td>✓</td><td>✓</td><td>✓ Exists + Phase 3 dynamic types</td></tr>
+    <tr><td>Multi-language (AR/EN)</td><td>WPML plugin</td><td>✓✓ built-in</td><td>✓</td><td>✓</td><td>✓ Already built-in</td></tr>
+    <tr><td>Email/newsletter</td><td>Plugin</td><td>Module</td><td>Plugin</td><td>Module</td><td>✓✓ Full system already built</td></tr>
+    <tr><td>Role/permission matrix</td><td>Basic</td><td>✓✓</td><td>✓</td><td>✓✓</td><td>✓ Exists + plugin permissions Phase 5</td></tr>
+    <tr><td>Audit trail</td><td>Plugin</td><td>Module</td><td>Partial</td><td>✓</td><td>✓✓ Already built-in</td></tr>
+  </tbody>
+</table>
+
+
+<h2>Part 7 — Critical Design Decisions &amp; Tradeoffs</h2>
+
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">JSONB vs. EAV vs. Separate Tables for Dynamic Content</div>
+    <div class="card-body">
+      <strong>Decision: JSONB</strong><br />
+      PostgreSQL JSONB with GIN index gives full-text + operator queries. Drupal uses EAV (slow). WordPress uses postmeta (slow). JSONB is the modern standard (Contentful, Sanity, Strapi all use it).
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Plugin Isolation Strategy</div>
+    <div class="card-body">
+      <strong>Decision: Spring child ApplicationContext</strong><br />
+      Each plugin runs in its own child context. Beans from plugin can access parent services. Parent cannot see plugin beans by default. Prevents plugin conflicts. Safer than OSGi for Spring Boot.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">API Versioning</div>
+    <div class="card-body">
+      <strong>Decision: /api/v2/ for new engine</strong><br />
+      Keep /api/v1/ hardcoded controllers unchanged (no breaking change). Dynamic content types live under /api/v2/dt/{typeName}. SDK targets v2. Gradual migration of v1 types to v2 in Phase 8.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Frontend Plugin Loading</div>
+    <div class="card-body">
+      <strong>Decision: Dynamic import + CmsSDK registry</strong><br />
+      Next.js dynamic() + a CmsSDK global registry. Plugin JS bundle calls CmsSDK.registerBlock() on load. No webpack rebuild needed per plugin — loaded at browser runtime from CDN/MinIO URL.
+    </div>
+  </div>
+</div>
+
+<div class="callout warn">
+  <p><strong>Do NOT rewrite the core now.</strong> The 297 Java files and 60+ pages work. Extensibility layers sit ON TOP. Existing APIs remain stable. Phase 8 migration is optional and low-risk because it's additive (new DB tables, new routes, data migration only).</p>
+</div>
+
+
+<h2>Part 8 — Where to Start Right Now</h2>
+
+<p>Start with <strong>Phase 1 (Event Bus)</strong> and <strong>Phase 2 (Dynamic Form Engine)</strong> in parallel. Here are the first 10 concrete files to create:</p>
+
+<table>
+  <tr><th>#</th><th>File</th><th>What it does</th></tr>
+  <tr><td>1</td><td><code>model/event/CmsEvent.java</code></td><td>Base class for all CMS events</td></tr>
+  <tr><td>2</td><td><code>model/event/ContentPublishedEvent.java</code></td><td>Fired when content status → PUBLISHED</td></tr>
+  <tr><td>3</td><td><code>model/event/FormSubmittedEvent.java</code></td><td>Fired on any form submission</td></tr>
+  <tr><td>4</td><td><code>service/CmsEventBus.java</code></td><td>Wrapper around ApplicationEventPublisher with logging</td></tr>
+  <tr><td>5</td><td><code>model/entity/FormDefinition.java</code></td><td>JPA entity for the forms table</td></tr>
+  <tr><td>6</td><td><code>model/entity/FormSubmission.java</code></td><td>JPA entity for form_submissions table</td></tr>
+  <tr><td>7</td><td><code>service/FormDefinitionService.java</code></td><td>CRUD for form definitions + schema validation</td></tr>
+  <tr><td>8</td><td><code>service/FormSubmissionService.java</code></td><td>Validate against schema + persist + fire event</td></tr>
+  <tr><td>9</td><td><code>controller/FormController.java</code></td><td>Public submit + admin CRUD endpoints</td></tr>
+  <tr><td>10</td><td><code>frontend/components/DynamicForm.tsx</code></td><td>Universal form renderer from JSON schema</td></tr>
+</table>
+
+<hr />
+
+<h2>Summary — The 3 Sentences That Capture Everything</h2>
+<p>Your CMS already has the <strong>content</strong> — it needs the <strong>plumbing</strong>. Add an event bus (the hook system), a form engine (the dynamic submission system), a content type engine (runtime field definitions), and a plugin SPI (the developer SDK). This turns a custom-coded website into a <strong>platform</strong> — one where developers add features by writing plugins, not by modifying core code.</p>
+
+<footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

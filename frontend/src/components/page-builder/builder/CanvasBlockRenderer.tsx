@@ -573,6 +573,70 @@ function LegacyContainerWithInlineEdit({
     );
   }
 
+  // about-decree-section — shows image preview + heading
+  if (type === "about-decree-section") {
+    const imgUrl = str(props.imageUrl);
+    const caption = str(props.captionAr ?? props.caption);
+    return (
+      <section className={`group/inline py-14 bg-gray-50 ${cssClass}`} style={style} onClick={onSelectSelf}>
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <InlineTextField
+            blockId={block.id}
+            propKey="heading"
+            propKeyAr="headingAr"
+            value={str(props.heading)}
+            valueAr={str(props.headingAr)}
+            tag="h2"
+            className="font-heading text-2xl md:text-3xl font-bold text-green-900 mb-8"
+            placeholder="Decree section heading…"
+          />
+          <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-200 bg-white inline-block w-full">
+            {imgUrl ? (
+              <img src={imgUrl} alt={str(props.imageAlt)} className="w-full h-auto object-contain" />
+            ) : (
+              <div className="w-full aspect-[3/4] flex flex-col items-center justify-center bg-gray-100 text-gray-400 p-8 gap-3">
+                <svg className="w-16 h-16 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="text-sm">Upload decree image via PropertyPanel → Decree Image URL</span>
+              </div>
+            )}
+          </div>
+          {caption && <p className="mt-4 text-sm text-gray-500 italic">{caption}</p>}
+        </div>
+      </section>
+    );
+  }
+
+  // about-objectives-section, about-membership-section, about-governance-section, about-founders-section
+  // — render the real BlockRenderer output for accurate canvas preview
+  if (
+    type === "about-objectives-section" ||
+    type === "about-membership-section" ||
+    type === "about-governance-section" ||
+    type === "about-founders-section"
+  ) {
+    return (
+      <section className={`group/inline ${cssClass}`} style={style} onClick={onSelectSelf}>
+        <InlineTextField
+          blockId={block.id}
+          propKey="heading"
+          propKeyAr="headingAr"
+          value={str(props.heading)}
+          valueAr={str(props.headingAr)}
+          tag="h2"
+          className="font-heading text-2xl md:text-3xl font-bold text-green-900 text-center pt-8 px-4"
+          placeholder="Section heading…"
+        />
+        {ItemsEditorSection}
+        <div className="pointer-events-none select-none">
+          <BlockRenderer blocks={[block]} ignoreVisibility />
+        </div>
+        {hasChildren && <div className="relative z-20">{renderChildren()}</div>}
+      </section>
+    );
+  }
+
   // board-members-intro-grid / board-members-grid
   if (type === "board-members-intro-grid" || type === "board-members-grid") {
     return (
@@ -610,39 +674,59 @@ function LegacyContainerWithInlineEdit({
 
   // president-message-content-section
   if (type === "president-message-content-section") {
+    const photo_ = str(props.photo);
     return (
-      <section className={`group/inline py-16 md:py-20 bg-white ${cssClass}`} style={style} onClick={onSelectSelf}>
-        <div className="container mx-auto px-4 max-w-4xl">
-          <InlineTextField
-            blockId={block.id}
-            propKey="heading"
-            propKeyAr="headingAr"
-            value={str(props.heading)}
-            valueAr={str(props.headingAr)}
-            tag="h2"
-            className="font-heading text-3xl font-bold text-soil-dark mb-8"
-            placeholder="Section heading…"
-          />
-          <InlineTextField
-            blockId={block.id}
-            propKey="presidentName"
-            propKeyAr="presidentNameAr"
-            value={str(props.presidentName)}
-            valueAr={str(props.presidentNameAr)}
-            tag="h3"
-            className="font-heading text-2xl font-bold text-soil-dark"
-            placeholder="President name…"
-          />
-          <InlineTextField
-            blockId={block.id}
-            propKey="presidentTitle"
-            propKeyAr="presidentTitleAr"
-            value={str(props.presidentTitle)}
-            valueAr={str(props.presidentTitleAr)}
-            tag="p"
-            className="text-earth-gray"
-            placeholder="President title…"
-          />
+      <section className={`group/inline overflow-hidden ${cssClass}`} style={style} onClick={onSelectSelf}>
+        {/* Inline editors row */}
+        <div className="bg-white border-b border-soil-sand/40 px-6 py-4 flex flex-wrap gap-4 items-start">
+          <div className="flex-1 min-w-[160px]">
+            <p className="text-xs text-soil-clay font-semibold mb-1 uppercase tracking-wide">Heading</p>
+            <InlineTextField
+              blockId={block.id}
+              propKey="heading"
+              propKeyAr="headingAr"
+              value={str(props.heading)}
+              valueAr={str(props.headingAr)}
+              tag="h2"
+              className="font-heading text-xl font-bold text-soil-dark"
+              placeholder="Section heading…"
+            />
+          </div>
+          <div className="flex-1 min-w-[160px]">
+            <p className="text-xs text-soil-clay font-semibold mb-1 uppercase tracking-wide">President Name</p>
+            <InlineTextField
+              blockId={block.id}
+              propKey="presidentName"
+              propKeyAr="presidentNameAr"
+              value={str(props.presidentName)}
+              valueAr={str(props.presidentNameAr)}
+              tag="h3"
+              className="font-heading text-base font-bold text-soil-dark"
+              placeholder="President name…"
+            />
+            <InlineTextField
+              blockId={block.id}
+              propKey="presidentTitle"
+              propKeyAr="presidentTitleAr"
+              value={str(props.presidentTitle)}
+              valueAr={str(props.presidentTitleAr)}
+              tag="p"
+              className="text-sm text-earth-gray mt-0.5"
+              placeholder="President title…"
+            />
+          </div>
+          {/* Photo preview pill */}
+          <div className="flex items-center gap-2">
+            {photo_ ? (
+              <div className="w-12 h-16 rounded-lg overflow-hidden border-2 border-soil-sand shadow-sm flex-shrink-0">
+                <img src={photo_} alt="" className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-12 h-16 rounded-lg bg-soil-sand/30 flex items-center justify-center flex-shrink-0 border-2 border-dashed border-soil-sand">
+                <span className="text-xs text-soil-clay text-center leading-tight">Photo<br/>URL</span>
+              </div>
+            )}
+          </div>
         </div>
         {ItemsEditorSection}
         <div className="pointer-events-none select-none">

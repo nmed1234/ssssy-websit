@@ -83,11 +83,12 @@ function VerticalTimeline({ items, className, maxWidth = "max-w-3xl" }: Omit<Sty
 
             {/* Content card */}
             <div
-              className="rounded-[var(--style-radius-card)] p-4 transition-shadow duration-[var(--style-anim-hover)]"
+              className="rounded-[var(--style-radius-card)] p-4 transition-shadow"
               style={{
                 background: "var(--style-color-surface)",
                 border:     "1px solid var(--style-color-border)",
                 boxShadow:  "var(--style-shadow-card)",
+                transitionDuration: "var(--style-anim-hover)",
               }}
             >
               <div className="flex items-center gap-3 mb-1">
@@ -161,11 +162,12 @@ function HorizontalTimeline({ items, className }: Omit<StyleTimelineProps, "orie
 
             {/* Card */}
             <div
-              className="rounded-[var(--style-radius-card)] p-4 transition-all duration-[var(--style-anim-hover)] hover:translate-y-[-2px]"
+              className="rounded-[var(--style-radius-card)] p-4 transition-all hover:translate-y-[-2px]"
               style={{
                 background: "var(--style-color-surface)",
                 border:     "1px solid var(--style-color-border)",
                 boxShadow:  "var(--style-shadow-card)",
+                transitionDuration: "var(--style-anim-hover)",
               }}
             >
               {item.date && (

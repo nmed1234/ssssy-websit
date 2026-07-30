@@ -13,4 +13,8 @@ export const almarai = Almarai({
   weight: ["300", "400", "700", "800"],
   variable: "--font-almarai",
   display: "swap",
+  // Preloading is now safe: the Google Fonts origins are listed in the CSP
+  // connect-src and font-src directives in next.config.mjs.
+  preload: true,
+  fallback: ["Segoe UI", "Tahoma", "Arial", "sans-serif"],
 });

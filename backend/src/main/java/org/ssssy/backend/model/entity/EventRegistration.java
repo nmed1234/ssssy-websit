@@ -48,6 +48,15 @@ public class EventRegistration {
   @Column(name = "checked_in")
   private Boolean checkedIn;
 
+  @Column(name = "checked_in_at")
+  private LocalDateTime checkedInAt;
+
+  @Column(name = "check_in_notes", columnDefinition = "TEXT")
+  private String checkInNotes;
+
+  @Column(name = "waitlist_position")
+  private Integer waitlistPosition;
+
   @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
 

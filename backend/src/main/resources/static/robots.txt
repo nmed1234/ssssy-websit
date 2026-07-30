@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ssssy.org.sy/api/public/sitemap.xml
+Sitemap: https://ssssyria.org/api/public/sitemap.xml
 
 Disallow: /admin/
 Disallow: /api/admin/

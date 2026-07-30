@@ -1,0 +1,12 @@
+{
+  "name": "research-portal-blocks",
+  "version": "1.0.0",
+  "description": "Reference frontend plugin for SSSSY CMS — registers 3 page-builder blocks via CmsSDK.",
+  "private": true,
+  "main": "src/index.tsx",
+  "keywords": ["ssssy", "cms-plugin", "frontend-plugin"],
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "@ssssy/cms-sdk": "*"
+  }
+}

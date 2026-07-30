@@ -21,6 +21,15 @@ public class SiteSectionResponse {
   private Boolean isActive;
   private String location;
   private Integer sortOrder;
+
+  // Draft/Publish workflow fields (V62)
+  private String status;
+  private String publishedData;
+  private String publishedConfig;
+  private String publishedStyling;
+  private LocalDateTime publishedAt;
+  private Long versionCount;
+
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

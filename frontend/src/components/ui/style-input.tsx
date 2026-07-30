@@ -28,7 +28,7 @@ export const StyleInput = forwardRef<HTMLInputElement, StyleInputProps>(
             "outline-none",                          // kill browser native outline always
             "border bg-[var(--style-color-surface)]",
             "text-[var(--style-color-fg)] placeholder-transparent",
-            "transition-[border-color,box-shadow] duration-[250ms] ease-out",
+            "transition-[border-color,box-shadow] [transition-duration:250ms] ease-out",
             error
               ? "border-red-400 [box-shadow:0_0_0_3px_rgba(248,113,113,0.15)]"
               : [
@@ -46,7 +46,7 @@ export const StyleInput = forwardRef<HTMLInputElement, StyleInputProps>(
             className={cn(
               "absolute left-3 top-[0.8rem] text-[var(--style-color-muted)] text-sm pointer-events-none",
               // Label float: 250ms ease-out matches the input transition
-              "transition-[transform,font-size,color,background-color,padding] duration-[250ms] ease-out",
+              "transition-[transform,font-size,color,background-color,padding] [transition-duration:250ms] ease-out",
               // Floated state (focused)
               "peer-focus:-translate-y-[1.35rem] peer-focus:text-[0.7rem] peer-focus:text-[var(--style-color-primary)]",
               "peer-focus:bg-[var(--style-color-surface)] peer-focus:px-1",

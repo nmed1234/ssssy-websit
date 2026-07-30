@@ -1,3 +1,6 @@
+import type React from "react";
+
+
 export interface User {
   id: string;
   username: string;
@@ -91,7 +94,10 @@ export interface ContentItem {
   titleEn?: string;
   slug: string;
   excerpt?: string;
+  excerptAr?: string;
   body?: string;
+  bodyAr?: string;
+  bodyEn?: string;
   contentType: string;
   status: string;
   authorId: string;
@@ -211,9 +217,50 @@ export interface Event {
   registrationDeadline?: string;
   status?: string;
   contactEmail?: string;
+  // Phase 2
+  registrationCount?: number;
+  // Phase 5
+  isFeatured?: boolean;
+  displayOrder?: number;
+  ogImage?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  registrationFormSchema?: string;
+  cancelledAt?: string;
+  cancellationReason?: string;
   createdByName?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface EventReminderRule {
+  id: string;
+  eventId: string;
+  ruleType: string;  // BEFORE_EVENT | AFTER_EVENT | CUSTOM_DATE
+  offsetHours: number;
+  fireAt: string;
+  subjectTemplate: string;
+  bodyTemplate: string;
+  sendEmail: boolean;
+  sendInApp: boolean;
+  isFired: boolean;
+  firedAt?: string;
+  recipientsCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface EventStats {
+  totalEvents: number;
+  publishedEvents: number;
+  draftEvents: number;
+  archivedEvents: number;
+  cancelledEvents: number;
+  upcomingEvents: number;
+  totalRegistrations: number;
+  totalRegistrationsThisMonth: number;
+  mostRegisteredEventTitle?: string;
+  mostRegisteredEventCount?: number;
 }
 
 export interface JobVacancy {
@@ -361,11 +408,31 @@ export interface MemberProfile {
   id: string;
   userId: string;
   userName?: string;
+  firstName?: string;
+  lastName?: string;
+  nameAr?: string;
+  nameEn?: string;
+  titleAr?: string;
+  email?: string;
+  phone?: string;
+  photo?: string;
+  photoUrl?: string;
+  institution?: string;
+  department?: string;
+  position?: string;
   membershipType?: string;
   membershipNumber?: string;
   specialization?: string;
+  specializationDetail?: string;
   researchInterests?: string;
   education?: string;
+  careerSummary?: string;
+  memberships?: string;
+  languages?: string;
+  nationality?: string;
+  birthYear?: number;
+  birthCity?: string;
+  maritalStatus?: string;
   publicationsCount?: number;
   isPublic: boolean;
   joinedAt?: string;
@@ -373,6 +440,7 @@ export interface MemberProfile {
   orcidId?: string;
   googleScholarUrl?: string;
   linkedinUrl?: string;
+  slug?: string;
 }
 
 export interface SystemConfig {
@@ -434,8 +502,48 @@ export interface SiteSection {
   version?: number;
   isActive: boolean;
   sortOrder?: number;
+  // Draft/Publish workflow (V62)
+  status?: 'DRAFT' | 'PUBLISHED';
+  publishedData?: Record<string, unknown>;
+  publishedConfig?: Record<string, unknown>;
+  publishedStyling?: Record<string, unknown>;
+  publishedAt?: string;
+  versionCount?: number;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface SiteSectionVersion {
+  id: string;
+  sectionId: string;
+  versionNumber: number;
+  data: Record<string, unknown>;
+  config: Record<string, unknown>;
+  styling: Record<string, unknown>;
+  publishedBy?: string;
+  changeSummary?: string;
+  createdAt?: string;
+}
+
+// ── Custom Section Block Types ────────────────────────────────────────────────
+
+export type BlockType =
+  // Core
+  | 'heading' | 'paragraph' | 'image' | 'button' | 'divider' | 'spacer'
+  | 'columns' | 'video' | 'icon' | 'card'
+  // Advanced
+  | 'accordion' | 'timeline' | 'team-grid' | 'map' | 'form-embed'
+  | 'alert' | 'quote' | 'code' | 'html'
+  // Dynamic
+  | 'latest-news' | 'upcoming-events' | 'publications-carousel'
+  | 'board-members' | 'statistics-counter';
+
+export interface Block {
+  id: string;
+  type: BlockType;
+  props: Record<string, unknown>;
+  /** For 'columns' type: array of column block lists */
+  columns?: Block[][];
 }
 
 export interface ThemeSetting {
@@ -489,6 +597,9 @@ export interface EventRegistration {
   status?: string;
   registeredAt?: string;
   checkedIn?: boolean;
+  checkedInAt?: string;
+  checkInNotes?: string;
+  waitlistPosition?: number;
   createdAt?: string;
 }
 
@@ -504,6 +615,8 @@ export interface EventRegistrationResponse {
   id: string;
   eventId: string;
   userId?: string;
+  userName?: string;
+  userEmail?: string;
   name: string;
   email: string;
   phone?: string;
@@ -512,6 +625,10 @@ export interface EventRegistrationResponse {
   status?: string;
   registeredAt?: string;
   checkedIn?: boolean;
+  checkedInAt?: string;
+  checkInNotes?: string;
+  waitlistPosition?: number;
+  createdAt?: string;
 }
 
 export interface ContactSubmission {
@@ -582,4 +699,201 @@ export interface CrmContactRequest {
   nextFollowupAt?: string;
   tags?: string[];
   preferences?: string;
+}
+
+// ─── Dynamic Form Engine (Phase 2) ─────────────────────────────────────────────
+
+export type FormFieldType =
+  | "text" | "email" | "textarea" | "richtext" | "number" | "date" | "datetime"
+  | "select" | "multiselect" | "checkbox" | "radio" | "file" | "hidden";
+
+export interface FormFieldOption {
+  value: string;
+  label: string;
+  labelAr?: string;
+}
+
+export interface FormFieldValidation {
+  min?: number;
+  max?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  message?: string;
+}
+
+export interface FormFieldDefinition {
+  name: string;
+  type: FormFieldType;
+  labelEn: string;
+  labelAr?: string;
+  placeholder?: string;
+  placeholderAr?: string;
+  required?: boolean;
+  options?: FormFieldOption[];
+  validation?: FormFieldValidation;
+  helpText?: string;
+  helpTextAr?: string;
+  defaultValue?: string;
+  width?: "full" | "half";
+}
+
+export interface FormDefinition {
+  id: string;
+  title: string;
+  titleAr?: string;
+  slug: string;
+  description?: string;
+  schemaJson: string;         // JSON array string of FormFieldDefinition[]
+  submitLabelEn?: string;
+  submitLabelAr?: string;
+  successMessageEn?: string;
+  successMessageAr?: string;
+  redirectUrl?: string;
+  notificationEmails?: string;
+  requiresAuth?: boolean;
+  isActive?: boolean;
+  createdByUsername?: string;
+  submissionCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface FormSubmission {
+  id: string;
+  formId: string;
+  formTitle: string;
+  userId?: string;
+  submitterName?: string;
+  submitterEmail?: string;
+  data: string;               // JSON object string
+  ipAddress?: string;
+  status: string;
+  adminNotes?: string;
+  createdAt: string;
+}
+
+
+// ─── Dynamic Content Type Engine (Phase 3) ─────────────────────────────────────
+
+export interface ContentTypeField {
+  id?: string;
+  fieldName: string;
+  fieldLabelEn: string;
+  fieldLabelAr?: string;
+  /** text|richtext|number|date|datetime|url|email|select|multiselect|checkbox|radio|media|file */
+  fieldType: string;
+  isRequired?: boolean;
+  isSearchable?: boolean;
+  isListed?: boolean;
+  placeholderEn?: string;
+  placeholderAr?: string;
+  helpTextEn?: string;
+  helpTextAr?: string;
+  optionsJson?: string;   // JSON: [{value,label,labelAr}]
+  validationJson?: string; // JSON: {min,max,pattern,message}
+  sortOrder?: number;
+  createdAt?: string;
+}
+
+export interface ContentTypeDefinition {
+  id: string;
+  name: string;                // URL-safe: "research-paper"
+  labelEn: string;
+  labelAr?: string;
+  description?: string;
+  icon?: string;
+  workflowId?: string;
+  workflowName?: string;
+  allowComments?: boolean;
+  allowMemberSubmit?: boolean;
+  requiresApproval?: boolean;
+  isActive?: boolean;
+  sortOrder?: number;
+  createdByUsername?: string;
+  entryCount?: number;
+  fields: ContentTypeField[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DynamicContentEntry {
+  id: string;
+  contentTypeName: string;
+  contentTypeLabelEn?: string;
+  contentTypeLabelAr?: string;
+  slug: string;
+  status: string;
+  authorId?: string;
+  authorUsername?: string;
+  authorDisplayName?: string;
+  workflowState?: string;
+  fieldData: string;           // JSON object string
+  featuredImageUrl?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  publishedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
+// ─── Workflow State (used by CmsWorkflowButton / useWorkflow) ─────────────────
+
+export interface WorkflowTransition {
+  fromState: string;
+  toState: string;
+  action: string;
+  label: string;
+  allowedRoles: string[];
+}
+
+export interface WorkflowState {
+  currentState: string;
+  availableTransitions: WorkflowTransition[];
+}
+
+// ─── CMS SDK Plugin Registry Types (Phase 6) ──────────────────────────────────
+
+export interface PluginBlockDefinition {
+  /** Unique type identifier, e.g. "research-citation" */
+  type: string;
+  /** Human-readable label shown in page-builder palette */
+  label: string;
+  /** Optional icon name from lucide-react */
+  icon?: string;
+  /** JSON schema of configurable props */
+  schema?: Record<string, { type: string; label: string; defaultValue?: unknown }>;
+  /** The React component that renders this block */
+  render: (props: Record<string, unknown>) => React.ReactElement | null;
+}
+
+export interface PluginAdminRoute {
+  /** Path appended to /admin, e.g. "research-portal" → /admin/research-portal */
+  path: string;
+  /** Label shown in sidebar */
+  label: string;
+  labelAr?: string;
+  /** Icon name from lucide-react */
+  icon?: string;
+}
+
+export interface PluginContentRenderer {
+  /** Matches contentTypeName from DynamicContentEntry */
+  contentType: string;
+  /** Full-page renderer component */
+  render: (entry: DynamicContentEntry) => React.ReactElement | null;
+}
+
+export interface PluginManifest {
+  id: string;
+  name: string;
+  version: string;
+  author?: string;
+  description?: string;
+  /** URL to the JS bundle to dynamically load (served from MinIO/CDN) */
+  frontendBundleUrl?: string;
+  registeredBlocks?: string[];
+  registeredRoutes?: string[];
+  registeredRenderers?: string[];
 }

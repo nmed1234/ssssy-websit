@@ -36,7 +36,7 @@ export function DynamicFooter({}: DynamicFooterProps) {
       "جمعية علوم التربة السورية (SSSS) مكرسة لتطوير أبحاث علوم التربة والتعليم وإدارة الأراضي المستدامة في سوريا."
     );
   const contactAddress = settings.get("contact.address") || t("Damascus, Syria", "دمشق، سوريا");
-  const contactEmail = settings.get("contact.email") || "info@ssss.org";
+  const contactEmail = settings.get("contact.email") || "info@ssssyria.org";
   const contactPhone = settings.get("contact.phone") || "+963 11 234 5678";
 
   return (

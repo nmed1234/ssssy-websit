@@ -6,10 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.ssssy.backend.common.HtmlSanitizer;
+import org.ssssy.backend.event.CmsEventBus;
+import org.ssssy.backend.event.CommentPostedEvent;
 import org.ssssy.backend.exception.BadRequestException;
 import org.ssssy.backend.exception.ResourceNotFoundException;
 import org.ssssy.backend.exception.UnauthorizedException;
-import org.ssssy.backend.service.CommentWebSocketService;
 import org.ssssy.backend.model.dto.CommentRequest;
 import org.ssssy.backend.model.dto.CommentResponse;
 import org.ssssy.backend.model.entity.Comment;
@@ -18,7 +19,6 @@ import org.ssssy.backend.model.entity.User;
 import org.ssssy.backend.repository.CommentRepository;
 import org.ssssy.backend.repository.ContentItemRepository;
 import org.ssssy.backend.repository.UserRepository;
-import org.ssssy.backend.service.SystemConfigService;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +33,7 @@ public class CommentService {
   private final UserRepository userRepository;
   private final CommentWebSocketService commentWebSocketService;
   private final SystemConfigService systemConfigService;
+  private final CmsEventBus cmsEventBus;
 
   public List<CommentResponse> getApprovedComments(UUID contentId) {
     return commentRepository.findByContentItemIdAndIsApprovedTrueOrderByCreatedAtAsc(contentId)
@@ -77,6 +78,10 @@ public class CommentService {
     if (parent != null) {
       commentWebSocketService.handleCommentReply(comment, userId.toString());
     }
+    cmsEventBus.publish(new CommentPostedEvent(
+        comment.getId(), contentItem.getId(), contentItem.getContentType(),
+        comment.getBody(), !comment.getIsApproved(),
+        parent != null ? parent.getId() : null, userId));
     return toResponse(comment);
   }
 

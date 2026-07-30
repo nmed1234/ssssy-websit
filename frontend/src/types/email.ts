@@ -11,6 +11,8 @@ export interface EmailAccount {
   autoReplyEnabled?: boolean;
   autoReplySubject?: string;
   autoReplyBody?: string;
+  autoReplyStartsAt?: string;
+  autoReplyEndsAt?: string;
   forwardTo?: string;
   forwardKeepCopy?: boolean;
   signature?: string;
@@ -95,6 +97,7 @@ export interface EmailContact {
   mobile?: string;
   notes?: string;
   isFavorite?: boolean;
+  groupIds?: string[];
   createdAt: string;
 }
 
