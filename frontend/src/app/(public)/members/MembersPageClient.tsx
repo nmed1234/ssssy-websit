@@ -66,6 +66,7 @@ const GRADIENTS = [
 function getMembershipLabel(type?: string): { label: string; cls: string } {
   switch (type) {
     case "FOUNDER":  return { label: "عضو مؤسس", cls: "bg-amber-100 text-amber-800 border-amber-300" };
+    case "MEMBER":   return { label: "عضو", cls: "bg-emerald-100 text-emerald-800 border-emerald-300" };
     case "Regular":  return { label: "عضو عادي", cls: "bg-emerald-100 text-emerald-800 border-emerald-300" };
     case "Honorary": return { label: "عضو فخري", cls: "bg-purple-100 text-purple-800 border-purple-300" };
     case "Board":    return { label: "مجلس إدارة", cls: "bg-blue-100 text-blue-800 border-blue-300" };

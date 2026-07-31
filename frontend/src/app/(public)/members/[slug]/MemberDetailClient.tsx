@@ -168,7 +168,7 @@ export default function MemberDetailClient({ initialMember }: Props) {
               {m.membershipType && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-3"
                   style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}>
-                  {m.membershipType === "FOUNDER" ? "عضو مؤسس" : m.membershipType}
+                  {m.membershipType === "FOUNDER" ? "عضو مؤسس" : m.membershipType === "MEMBER" ? "عضو" : m.membershipType}
                 </span>
               )}
               <h1 className={`${almarai.className} text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight`}>
@@ -305,7 +305,7 @@ export default function MemberDetailClient({ initialMember }: Props) {
                   <h3 className={`${almarai.className} font-bold text-gray-900 mb-3 flex items-center gap-2`} dir="rtl">
                     <Award className="h-4 w-4 text-[#5c3d1e]" /> العضوية
                   </h3>
-                  <InfoRow label="النوع" value={m.membershipType === "FOUNDER" ? "عضو مؤسس" : m.membershipType} />
+                  <InfoRow label="النوع" value={m.membershipType === "FOUNDER" ? "عضو مؤسس" : m.membershipType === "MEMBER" ? "عضو" : m.membershipType} />
                   <InfoRow label="رقم العضوية" value={m.membershipNumber} />
                   {m.joinedAt && <InfoRow label="تاريخ الانضمام" value={new Date(m.joinedAt).getFullYear().toString()} />}
                 </CardContent>
