@@ -223,13 +223,31 @@ function styleFromProps(p: BlockProps): React.CSSProperties {
 function useBilingual(props: BlockProps) {
   const { language } = useLanguage();
 
-  /** Read `${key}Ar` when in Arabic (with English fallback), else `key` */
+  /**
+   * Language-aware field resolver.
+   *
+   * For a key like "title":
+   *   Arabic  → props.titleAr  → props.titleEn → props.title
+   *   English → props.titleEn  → props.title   → props.titleAr (last resort)
+   *
+   * This handles both naming conventions:
+   *   - titleEn / titleAr  (new bilingual props from DB sections)
+   *   - title / titleAr    (older convention where `title` = English)
+   */
   function bil(key: string): string {
     if (language === "ar") {
       const ar = str(props[`${key}Ar`]);
       if (ar) return ar;
+      // fallback: En variant then base key
+      const en = str(props[`${key}En`]);
+      if (en) return en;
+      return str(props[key]);
+    } else {
+      // English mode: prefer explicit En variant, then base key, avoid Ar
+      const en = str(props[`${key}En`]);
+      if (en) return en;
+      return str(props[key]);
     }
-    return str(props[key]);
   }
 
   return bil;
@@ -1272,9 +1290,6 @@ function BlockSwitch({ block, ignoreVisibility }: { block: Block; ignoreVisibili
             </div>
           )}
           <div className="container mx-auto px-4 py-20 md:py-28 relative z-10 text-center">
-            {bil("titleAr") && (
-              <p className="text-soil-sand fluid-lg font-medium mb-2">{bil("titleAr")}</p>
-            )}
             {bil("title") && (
               <h1 className={`font-heading fluid-4xl md:fluid-5xl font-bold leading-tight mb-4 ${textAlignClass}`}>
                 {bil("title")}
@@ -2142,12 +2157,6 @@ function BlockSwitch({ block, ignoreVisibility }: { block: Block; ignoreVisibili
                     </h3>
                   )}
 
-                  {/* Bilingual name line — show other-language name small */}
-                  {(str(props.presidentName) && str(props.presidentNameAr)) && (
-                    <p className="text-xs text-soil-rich mt-0.5 opacity-70">
-                      {isRtl ? str(props.presidentName) : str(props.presidentNameAr)}
-                    </p>
-                  )}
 
                   {/* Divider */}
                   <div className="president-signature-line mx-auto mt-3 mb-3" style={{ width: "64px" }} />
@@ -2641,7 +2650,7 @@ function NewsListSectionBlock({ block, style, cssClass }: { block: Block; style:
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {items.map(item => (
           <Link key={item.id} href={`/news/${item.slug}`} className="border border-soil-sand/50 rounded-xl p-6 hover:shadow-md transition-shadow bg-white block">
-            <h3 className="font-heading text-lg font-semibold text-soil-dark">{item.titleEn || item.titleAr}</h3>
+            <h3 className="font-heading text-lg font-semibold text-soil-dark">{language === "ar" ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr)}</h3>
             {item.excerpt && <p className="mt-2 text-sm text-earth-gray line-clamp-3">{item.excerpt}</p>}
             {item.publishedAt && <p className="mt-3 text-xs text-soil-clay">{new Date(item.publishedAt).toLocaleDateString()}</p>}
           </Link>
@@ -2674,7 +2683,7 @@ function EventsListSectionBlock({ block, style, cssClass }: { block: Block; styl
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {items.map(item => (
           <Link key={item.id} href={`/events/${item.slug ?? item.id}`} className="border border-soil-sand/50 rounded-xl p-6 hover:shadow-md transition-shadow bg-white block">
-            <h3 className="font-heading text-lg font-semibold text-soil-dark">{item.titleEn || item.titleAr}</h3>
+            <h3 className="font-heading text-lg font-semibold text-soil-dark">{language === "ar" ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr)}</h3>
             {item.description && <p className="mt-2 text-sm text-earth-gray line-clamp-2">{item.description}</p>}
             <p className="mt-3 text-xs text-soil-clay">{new Date(item.eventDate).toLocaleDateString()}</p>
           </Link>
@@ -2707,7 +2716,7 @@ function JobsListSectionBlock({ block, style, cssClass }: { block: Block; style:
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {items.map(item => (
           <Link key={item.id} href={`/jobs/${item.slug ?? item.id}`} className="border border-soil-sand/50 rounded-xl p-6 hover:shadow-md transition-shadow bg-white block">
-            <h3 className="font-heading text-lg font-semibold text-soil-dark">{item.titleEn || item.titleAr}</h3>
+            <h3 className="font-heading text-lg font-semibold text-soil-dark">{language === "ar" ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr)}</h3>
             {item.description && <p className="mt-2 text-sm text-earth-gray line-clamp-2">{item.description}</p>}
             {item.location && <p className="mt-3 text-xs text-soil-clay">{item.location}</p>}
           </Link>
@@ -2740,7 +2749,7 @@ function PublicationsListSectionBlock({ block, style, cssClass }: { block: Block
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {items.map(item => (
           <div key={item.id} className="border border-soil-sand/50 rounded-xl p-6 bg-white">
-            <h3 className="font-heading text-lg font-semibold text-soil-dark">{item.titleEn || item.titleAr}</h3>
+            <h3 className="font-heading text-lg font-semibold text-soil-dark">{language === "ar" ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr)}</h3>
             {item.excerpt && <p className="mt-2 text-sm text-earth-gray line-clamp-3">{item.excerpt}</p>}
             {item.publishedAt && <p className="mt-3 text-xs text-soil-clay">{new Date(item.publishedAt).toLocaleDateString()}</p>}
           </div>
