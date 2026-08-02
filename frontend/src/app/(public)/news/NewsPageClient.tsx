@@ -123,8 +123,8 @@ export default function NewsPageClient({ initialItems, initialTotalPages }: Prop
     <div>
       <PageHero
         slug="news"
-        defaultTitle={t("News & Announcements", "الأخبار والإعلانات")}
-        defaultSubtitleAr="الأخبار والإعلانات"
+        defaultTitleEn="News & Announcements"
+        defaultTitleAr="الأخبار والإعلانات"
       />
 
       <section className="py-10" style={{ background: "var(--style-color-bg, #ffffff)" }}>

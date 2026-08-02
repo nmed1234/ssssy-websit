@@ -156,13 +156,10 @@ export default function EventsPageClient({ initialEvents, initialTotalPages }: P
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <PageHero
         slug="events"
-        defaultTitle={isAr ? "الفعاليات" : "Events"}
-        defaultSubtitleAr="الفعاليات"
-        defaultDescription={
-          isAr
-            ? "اكتشف المؤتمرات وورش العمل والندوات والبرامج التدريبية التي تنظمها جمعية علوم التربة السورية"
-            : "Discover conferences, workshops, seminars, and training programs organized by SSSS."
-        }
+        defaultTitleEn="Events"
+        defaultTitleAr="الفعاليات"
+        defaultDescription="Discover conferences, workshops, seminars, and training programs organized by SSSS."
+        defaultDescriptionAr="اكتشف المؤتمرات وورش العمل والندوات والبرامج التدريبية التي تنظمها جمعية علوم التربة السورية"
       >
         <ParticleField count={15} color="215, 204, 200" speed={0.2} />
         <div className="absolute inset-0 bg-noise opacity-30" />

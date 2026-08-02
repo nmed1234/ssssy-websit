@@ -290,7 +290,7 @@ export default function MembersPageClient({ initialMembers, initialTotalPages }:
 
   return (
     <div>
-      <PageHero slug="members" defaultTitle="أعضاء الجمعية" defaultSubtitleAr="الأعضاء" />
+      <PageHero slug="members" defaultTitleEn="Society Members" defaultTitleAr="أعضاء الجمعية" />
 
       <section className="py-12 md:py-16" style={{ background: "var(--style-color-bg, #ffffff)" }}>
         <div className="container mx-auto px-4">

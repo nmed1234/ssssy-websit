@@ -18,18 +18,21 @@ interface HeroData {
   titleEn?: string;
   titleAr?: string;
   metaDescription?: string;
+  metaDescriptionAr?: string;
   ogImageUrl?: string;
 }
 
 interface PageHeroProps {
   /** The DB page slug to fetch hero text from (e.g. "news", "events") */
   slug: string;
-  /** Hard-coded fallback title (language-aware) shown when DB has no record */
-  defaultTitle: string;
-  /** Optional hard-coded fallback Arabic subtitle */
-  defaultSubtitleAr?: string;
-  /** Optional hard-coded fallback description */
+  /** Hard-coded fallback English title shown when DB has no record */
+  defaultTitleEn: string;
+  /** Hard-coded fallback Arabic title shown when DB has no record */
+  defaultTitleAr: string;
+  /** Optional hard-coded fallback English description */
   defaultDescription?: string;
+  /** Optional hard-coded fallback Arabic description */
+  defaultDescriptionAr?: string;
   /** Extra content rendered inside the hero (e.g. particle field, SVG) */
   children?: React.ReactNode;
   className?: string;
@@ -71,9 +74,10 @@ function HeroParticles() {
 
 export function PageHero({
   slug,
-  defaultTitle,
-  defaultSubtitleAr,
+  defaultTitleEn,
+  defaultTitleAr,
   defaultDescription,
+  defaultDescriptionAr,
   children,
   className = "",
 }: PageHeroProps) {
@@ -89,13 +93,16 @@ export function PageHero({
       .catch(() => { /* keep defaults */ });
   }, [slug]);
 
-  // Language-aware text resolution
-  const titleEn   = data?.titleEn   || defaultTitle;
-  const titleAr   = data?.titleAr   || defaultSubtitleAr || defaultTitle;
-  const title     = isAr ? titleAr : titleEn;
-  const subtitle  = isAr ? titleEn : (defaultSubtitleAr ?? "");
-  const desc      = data?.metaDescription || defaultDescription;
-  const bgImage   = data?.ogImageUrl;
+  // Language-aware text resolution — show only the active language
+  const title = isAr
+    ? (data?.titleAr || defaultTitleAr)
+    : (data?.titleEn || defaultTitleEn);
+
+  const desc = isAr
+    ? (data?.metaDescriptionAr || defaultDescriptionAr || data?.metaDescription)
+    : (data?.metaDescription || defaultDescription);
+
+  const bgImage = data?.ogImageUrl;
 
   return (
     <section
@@ -162,7 +169,7 @@ export function PageHero({
       {/* ── Content ──────────────────────────────────────────────── */}
       <div className="container mx-auto px-4 py-16 md:py-20 relative z-10">
 
-        {/* Accent chip */}
+        {/* Accent chip — same language as active UI */}
         <div className="mb-4">
           <span
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase"
@@ -173,7 +180,7 @@ export function PageHero({
               border: "1px solid rgba(255,255,255,0.15)",
             }}
           >
-            {isAr ? titleEn : (defaultSubtitleAr ?? titleEn)}
+            {title}
           </span>
         </div>
 
@@ -183,16 +190,6 @@ export function PageHero({
         >
           {title}
         </h1>
-
-        {/* Subtitle line (opposite-language soft label) */}
-        {subtitle && subtitle !== title && (
-          <p
-            className="mt-2 text-base font-medium"
-            style={{ color: "rgba(255,255,255,0.55)" }}
-          >
-            {subtitle}
-          </p>
-        )}
 
         {/* Description */}
         {desc && (

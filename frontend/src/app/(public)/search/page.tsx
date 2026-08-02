@@ -121,8 +121,8 @@ export default function SearchPage() {
     <div>
       <PageHero
         slug="search"
-        defaultTitle="Search"
-        defaultSubtitleAr="بحث"
+        defaultTitleEn="Search"
+        defaultTitleAr="بحث"
         className="animate-gradient"
       >
         <ParticleField count={12} color="215, 204, 200" speed={0.15} />

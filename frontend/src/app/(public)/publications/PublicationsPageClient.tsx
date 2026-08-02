@@ -46,7 +46,7 @@ export default function PublicationsPageClient({ initialPublications }: Props) {
 
   return (
     <div>
-      <PageHero slug="publications" defaultTitle="Publications" defaultSubtitleAr="المنشورات والأبحاث" />
+      <PageHero slug="publications" defaultTitleEn="Publications" defaultTitleAr="المنشورات والأبحاث" />
 
       <section className="py-10 min-h-screen" style={{ background: "var(--style-color-bg, #ffffff)" }}>
         <div className="container mx-auto px-4">

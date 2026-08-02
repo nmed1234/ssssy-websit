@@ -83,7 +83,7 @@ export default function JobsPageClient({ initialVacancies, initialTotalPages }: 
 
   return (
     <div>
-      <PageHero slug="jobs" defaultTitle="Job Vacancies" defaultSubtitleAr="الوظائف الشاغرة" defaultDescription="Explore career opportunities at SSSS and partner organizations.">
+      <PageHero slug="jobs" defaultTitleEn="Job Vacancies" defaultTitleAr="الوظائف الشاغرة" defaultDescription="Explore career opportunities at SSSS and partner organizations." defaultDescriptionAr="استكشف فرص العمل المتاحة في الجمعية السورية لعلوم التربة والمنظمات الشريكة.">
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" viewBox="0 0 1000 300" preserveAspectRatio="none">
             <path d="M0,150 C200,50 400,250 600,150 C800,50 1000,200 1000,150 L1000,300 L0,300 Z" fill="#D7CCC8" />
