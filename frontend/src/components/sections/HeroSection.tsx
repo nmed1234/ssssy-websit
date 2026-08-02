@@ -84,18 +84,20 @@ const PARTICLES = [
 /* ─── Component ─────────────────────────────────────────────────────────── */
 export function HeroSection({ config = {} }: HeroSectionProps) {
   const { language } = useLanguage();
+  const isAr = language === "ar";
 
-  const subtitleAr = (config.subtitleAr as string) || "";
+  // Eyebrow badge: use language-specific subtitle
+  const eyebrow = isAr
+    ? (config.subtitleAr as string) || (config.eyebrowAr as string) || ""
+    : (config.subtitleEn as string) || (config.eyebrowEn as string) || "";
 
-  const title =
-    language === "ar"
-      ? (config.titleAr as string) || (config.title as string) || ""
-      : (config.titleEn as string) || (config.title as string) || "";
+  const title = isAr
+    ? (config.titleAr as string) || (config.title as string) || ""
+    : (config.titleEn as string) || (config.title as string) || "";
 
-  const description =
-    language === "ar"
-      ? (config.descriptionAr as string) || (config.description as string) || ""
-      : (config.descriptionEn as string) || (config.description as string) || "";
+  const description = isAr
+    ? (config.descriptionAr as string) || (config.description as string) || ""
+    : (config.descriptionEn as string) || (config.description as string) || "";
 
   const primaryLabel =
     language === "ar"
@@ -245,7 +247,7 @@ export function HeroSection({ config = {} }: HeroSectionProps) {
         <div className="max-w-3xl" dir={language === "ar" ? "rtl" : "ltr"}>
 
           {/* Eyebrow badge */}
-          {subtitleAr && (
+          {eyebrow && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -260,7 +262,7 @@ export function HeroSection({ config = {} }: HeroSectionProps) {
                 className="text-xs font-bold tracking-[0.22em] uppercase"
                 style={{ color: "#BCAAA4" }}
               >
-                {subtitleAr}
+                {eyebrow}
               </span>
             </motion.div>
           )}
