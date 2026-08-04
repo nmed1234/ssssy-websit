@@ -1,6 +1,7 @@
 "use client";
 
 import type { Block, BoardMember, SiteSection } from "@/types";
+import type { MemberProfile } from "@/app/(public)/page";
 
 import {
   HeroSection,
@@ -71,6 +72,7 @@ interface Props {
   initialNews: unknown[];    // kept for API compatibility; LatestNewsSection fetches its own data
   initialEvents: unknown[];  // kept for API compatibility; UpcomingEventsSection fetches its own data
   initialBoardMembers: BoardMember[];
+  initialMembers: MemberProfile[];
 }
 
 function parseJson(v: unknown): Record<string, unknown> {
@@ -89,9 +91,10 @@ function sectionData(s: SiteSection): Record<string, unknown> {
   return parseJson(s.publishedData ?? s.data);
 }
 
-export default function HomepageClient({ initialSections, initialBoardMembers }: Props) {
+export default function HomepageClient({ initialSections, initialBoardMembers, initialMembers }: Props) {
   const sections = initialSections;
   const boardMembers = initialBoardMembers;
+  const members = initialMembers;
 
   return (
     <div>
@@ -103,7 +106,7 @@ export default function HomepageClient({ initialSections, initialBoardMembers }:
         if (s.componentType === "latest-news-feed") return <LatestNewsSection key={s.id} config={sectionConfig(s)} data={sectionData(s)} />;
         if (s.componentType === "upcoming-events-feed") return <UpcomingEventsSection key={s.id} config={sectionConfig(s)} data={sectionData(s)} />;
         if (s.componentType === "stats" || s.componentType === "counter") return <StatisticsSection key={s.id} data={sectionData(s)} config={sectionConfig(s)} />;
-        if (s.componentType === "testimonial" || s.componentType === "testimonials") return <TestimonialsSection key={s.id} data={sectionData(s)} config={sectionConfig(s)} boardMembers={boardMembers} />;
+        if (s.componentType === "testimonial" || s.componentType === "testimonials") return <TestimonialsSection key={s.id} data={sectionData(s)} config={sectionConfig(s)} boardMembers={boardMembers} memberProfiles={members} />;
         if (s.componentType === "newsletter") return <NewsletterSection key={s.id} config={sectionConfig(s)} />;
         if (s.componentType === "contact-form") return <ContactFormSection key={s.id} config={sectionConfig(s)} />;
         if (s.componentType === "publications-carousel") return <PublicationsCarouselSection key={s.id} config={sectionConfig(s)} data={sectionData(s)} />;

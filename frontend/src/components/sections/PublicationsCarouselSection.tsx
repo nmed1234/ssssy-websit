@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * PublicationsCarouselSection — horizontal card carousel on the homepage.
+ * PublicationsCarouselSection — animated slider on the homepage.
  *
  * Config keys:
  *   titleEn / titleAr       — section heading
@@ -13,14 +13,17 @@
  *   items[]                 — array of manual publication entries:
  *     titleEn / titleAr, description(En|Ar), coverImage, link, authors, year, category
  *
- * When dataSource === "manual" (or items are provided), shows manual items.
- * Otherwise fetches live data from /api/public/publications (up to 8 items).
+ * Slider behaviour:
+ *   - Shows 1 / 2 / 3 / 4 cards per page on xs / sm / md / lg+
+ *   - Arrow buttons + dot indicators — NO scrollbar
+ *   - Animated with framer-motion
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, Download, Eye, ArrowRight, ExternalLink, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BookOpen, Download, Eye, ArrowRight, ExternalLink, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { almarai } from "@/lib/fonts";
 import { StyleCard, StyleCardContent } from "@/components/ui/style-card";
 import { TextReveal } from "@/components/ui/text-reveal";
@@ -170,6 +173,132 @@ function PdfModal({ pub, onClose }: { pub: Publication; onClose: () => void }) {
 }
 
 // ---------------------------------------------------------------------------
+// Publication Card
+// ---------------------------------------------------------------------------
+
+function PublicationCard({
+  pub,
+  language,
+  onView,
+}: {
+  pub: Publication;
+  language: "ar" | "en";
+  onView: (p: Publication) => void;
+}) {
+  const title = language === "ar" ? (pub.titleAr || pub.titleEn) : pub.titleEn;
+  const abstract = language === "ar" ? pub.abstractAr : pub.abstractEn;
+  const isExternalLink = !!pub.pdfUrl && !isPdfUrl(pub.pdfUrl);
+
+  return (
+    <StyleCard className="h-full flex flex-col cursor-pointer group">
+      {/* Cover */}
+      <div
+        className="relative h-44 bg-soil-sand/30 flex items-center justify-center rounded-t-xl overflow-hidden flex-shrink-0"
+        onClick={() => onView(pub)}
+      >
+        {pub.coverImageUrl ? (
+          <Image
+            src={pub.coverImageUrl}
+            alt={pub.titleEn ?? ""}
+            fill
+            sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,25vw"
+            loading="lazy"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <BookOpen className="h-14 w-14 text-soil-clay/25 group-hover:text-soil-clay/45 transition-colors" />
+        )}
+        {/* Category badge overlay */}
+        {pub.category && (
+          <span className="absolute top-2 start-2 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-400/90 text-amber-900 shadow-sm backdrop-blur-sm">
+            {pub.category}
+          </span>
+        )}
+      </div>
+
+      <StyleCardContent className="flex flex-col flex-1 gap-2 p-4">
+        {/* Year */}
+        {pub.year && (
+          <span className="text-xs text-earth-gray/70 font-medium">{pub.year}</span>
+        )}
+
+        {/* Title */}
+        <h3 className={`${almarai.className} font-bold text-soil-dark text-sm line-clamp-3 leading-snug flex-1`}>
+          {title}
+        </h3>
+
+        {/* Authors */}
+        {pub.authors && (
+          <p className="text-xs text-earth-gray line-clamp-1 opacity-80">{pub.authors}</p>
+        )}
+
+        {/* Abstract preview (manual items) */}
+        {abstract && !pub.authors && (
+          <p className="text-xs text-earth-gray/75 line-clamp-2 leading-snug">{abstract}</p>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex gap-2 mt-auto pt-2 border-t border-soil-sand/40">
+          {isExternalLink ? (
+            <a
+              href={pub.pdfUrl!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold bg-soil-dark text-white hover:bg-soil-clay transition-colors"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              {language === "ar" ? "فتح" : "Open"}
+            </a>
+          ) : (
+            <button
+              onClick={() => onView(pub)}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold bg-soil-dark text-white hover:bg-soil-clay transition-colors"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              {language === "ar" ? "عرض" : "View"}
+            </button>
+          )}
+          {pub.pdfUrl && !isExternalLink && (
+            <a
+              href={pub.pdfUrl}
+              download
+              className="flex items-center justify-center p-2 rounded-lg border border-soil-sand text-soil-dark hover:bg-soil-sand/40 transition-colors"
+              title={language === "ar" ? "تحميل" : "Download"}
+            >
+              <Download className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+      </StyleCardContent>
+    </StyleCard>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// useResponsivePerPage — returns how many cards to show per page
+// based on the current viewport width.
+// ---------------------------------------------------------------------------
+
+function useResponsivePerPage() {
+  const [perPage, setPerPage] = useState(4);
+
+  useEffect(() => {
+    function update() {
+      const w = window.innerWidth;
+      if (w < 640) setPerPage(1);
+      else if (w < 768) setPerPage(2);
+      else if (w < 1024) setPerPage(3);
+      else setPerPage(4);
+    }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return perPage;
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -186,6 +315,10 @@ export function PublicationsCarouselSection({
   const [apiPublications, setApiPublications] = useState<Publication[]>([]);
   const [loading, setLoading]                 = useState(false);
   const [selectedPub, setSelectedPub]         = useState<Publication | null>(null);
+  const [page, setPage]                       = useState(0);
+  const [direction, setDirection]             = useState<1 | -1>(1); // 1 = forward, -1 = backward
+
+  const perPage = useResponsivePerPage();
 
   // Determine data source
   const manualItems = Array.isArray(data.items) ? (data.items as ManualItem[]) : [];
@@ -196,7 +329,7 @@ export function PublicationsCarouselSection({
   useEffect(() => {
     if (useManual) return;
     setLoading(true);
-    getPublicPublications({ size: 8 })
+    getPublicPublications({ size: 12 })
       .then((res) => {
         if (res.data.success) setApiPublications(res.data.data.content ?? []);
       })
@@ -209,6 +342,32 @@ export function PublicationsCarouselSection({
     ? manualItems.map((item, idx) => manualToPublication(item, idx))
     : apiPublications;
 
+  // Pagination
+  const totalPages = Math.ceil(publications.length / perPage);
+  const currentSlice = useMemo(
+    () => publications.slice(page * perPage, page * perPage + perPage),
+    [publications, page, perPage]
+  );
+
+  const goTo = useCallback(
+    (next: number, dir: 1 | -1) => {
+      setDirection(dir);
+      setPage(next);
+    },
+    []
+  );
+
+  const goPrev = useCallback(() => {
+    goTo((page - 1 + totalPages) % totalPages, -1);
+  }, [page, totalPages, goTo]);
+
+  const goNext = useCallback(() => {
+    goTo((page + 1) % totalPages, 1);
+  }, [page, totalPages, goTo]);
+
+  // Reset page when perPage changes to avoid out-of-range index
+  useEffect(() => { setPage(0); }, [perPage]);
+
   // Config-driven text
   const sectionTitle = language === "ar"
     ? ((config.titleAr as string) || "المنشورات")
@@ -218,6 +377,20 @@ export function PublicationsCarouselSection({
     : ((config.viewMoreLabelEn as string) || "View All Publications");
   const viewMoreUrl = (config.viewMoreUrl as string) || "/publications";
 
+  // Slide animation variants — respect RTL direction
+  const isRtl = language === "ar";
+  const variants = {
+    enter: (d: number) => ({
+      x: d * (isRtl ? -1 : 1) * 60,
+      opacity: 0,
+    }),
+    center: { x: 0, opacity: 1 },
+    exit: (d: number) => ({
+      x: d * (isRtl ? -1 : 1) * -60,
+      opacity: 0,
+    }),
+  };
+
   if (loading) {
     return (
       <section className="py-16 md:py-20" style={{ background: "var(--style-color-bg)" }}>
@@ -226,13 +399,14 @@ export function PublicationsCarouselSection({
             <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
             <div className="h-5 w-32 bg-gray-100 rounded animate-pulse" />
           </div>
-          <div className="flex gap-4 overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="w-56 flex-shrink-0 rounded-xl bg-white shadow-sm overflow-hidden animate-pulse">
-                <div className="h-36 bg-gray-200" />
-                <div className="p-3 space-y-2">
-                  <div className="h-3 bg-gray-200 rounded w-2/3" />
+              <div key={i} className="rounded-xl bg-white shadow-sm overflow-hidden animate-pulse">
+                <div className="h-44 bg-gray-200" />
+                <div className="p-4 space-y-2">
+                  <div className="h-3 bg-gray-200 rounded w-1/3" />
                   <div className="h-4 bg-gray-200 rounded w-full" />
+                  <div className="h-4 bg-gray-200 rounded w-4/5" />
                 </div>
               </div>
             ))}
@@ -246,10 +420,14 @@ export function PublicationsCarouselSection({
 
   return (
     <>
-      <section className="py-16 md:py-20" style={{ background: "var(--style-color-bg)" }}>
+      <section
+        className="py-16 md:py-20 overflow-hidden"
+        style={{ background: "var(--style-color-bg)" }}
+        dir={isRtl ? "rtl" : "ltr"}
+      >
         <div className="container mx-auto px-4">
-          {/* Header row */}
-          <div className="flex items-center justify-between mb-8">
+          {/* ── Header row ── */}
+          <div className="flex items-center justify-between mb-8 gap-4">
             <TextReveal
               as="h2"
               className={`${almarai.className} fluid-3xl md:fluid-4xl font-bold text-soil-dark`}
@@ -258,111 +436,81 @@ export function PublicationsCarouselSection({
             </TextReveal>
             <Link
               href={viewMoreUrl}
-              className="flex items-center gap-1 text-soil-clay hover:text-soil-dark font-medium fluid-sm transition-colors"
+              className="flex items-center gap-1.5 text-soil-clay hover:text-soil-dark font-semibold fluid-sm transition-colors whitespace-nowrap shrink-0"
             >
               {viewMoreLabel}
-              <ArrowRight className={`h-4 w-4 ${language === "ar" ? "rotate-180" : ""}`} />
+              <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
             </Link>
           </div>
 
-          {/* Horizontal scroll carousel */}
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-thin scrollbar-thumb-soil-sand scrollbar-track-transparent">
-            {publications.map((pub) => {
-              const title = language === "ar"
-                ? (pub.titleAr || pub.titleEn)
-                : pub.titleEn;
-              const abstract = language === "ar" ? pub.abstractAr : pub.abstractEn;
-              const isExternalLink = !!pub.pdfUrl && !isPdfUrl(pub.pdfUrl);
+          {/* ── Slider area ── */}
+          <div className="relative">
+            {/* Cards — animated */}
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={page}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className="grid gap-5"
+                style={{
+                  gridTemplateColumns: `repeat(${perPage}, minmax(0, 1fr))`,
+                }}
+              >
+                {currentSlice.map((pub) => (
+                  <PublicationCard
+                    key={pub.id}
+                    pub={pub}
+                    language={language}
+                    onView={setSelectedPub}
+                  />
+                ))}
+              </motion.div>
+            </AnimatePresence>
 
-              return (
-                <div key={pub.id} className="w-56 flex-shrink-0 snap-start">
-                  <StyleCard className="h-full flex flex-col cursor-pointer group">
-                    {/* Cover */}
-                    <div
-                      className="relative h-36 bg-soil-sand/30 flex items-center justify-center rounded-t-lg overflow-hidden flex-shrink-0"
-                      onClick={() => setSelectedPub(pub)}
-                    >
-                      {pub.coverImageUrl ? (
-                        <Image
-                          src={pub.coverImageUrl}
-                          alt={pub.titleEn ?? ""}
-                          fill
-                          sizes="224px"
-                          loading="lazy"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <BookOpen
-                          className="h-12 w-12 text-soil-clay/30 group-hover:text-soil-clay/50 transition-colors"
-                        />
-                      )}
-                    </div>
+            {/* Prev arrow */}
+            {totalPages > 1 && (
+              <button
+                onClick={isRtl ? goNext : goPrev}
+                aria-label={language === "ar" ? "السابق" : "Previous"}
+                className="absolute -start-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-soil-sand shadow-md flex items-center justify-center text-soil-dark hover:bg-soil-sand/50 transition-colors disabled:opacity-30"
+              >
+                {isRtl ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+              </button>
+            )}
 
-                    <StyleCardContent className="flex flex-col flex-1 gap-1.5 p-3">
-                      {/* Category + Year */}
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {pub.category && (
-                          <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">
-                            {pub.category}
-                          </span>
-                        )}
-                        {pub.year && (
-                          <span className="text-xs text-muted-foreground">{pub.year}</span>
-                        )}
-                      </div>
-
-                      {/* Title */}
-                      <h3 className={`${almarai.className} font-semibold text-soil-dark text-xs line-clamp-2 leading-snug`}>
-                        {title}
-                      </h3>
-
-                      {/* Authors */}
-                      {pub.authors && (
-                        <p className="text-xs text-earth-gray line-clamp-1">{pub.authors}</p>
-                      )}
-
-                      {/* Description (manual items) */}
-                      {abstract && (
-                        <p className="text-xs text-earth-gray/80 line-clamp-2 leading-snug">{abstract}</p>
-                      )}
-
-                      {/* Action buttons */}
-                      <div className="flex gap-1.5 mt-auto pt-1">
-                        {isExternalLink ? (
-                          <a
-                            href={pub.pdfUrl!}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold bg-soil-dark text-white hover:bg-soil-clay transition-colors"
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                            {language === "ar" ? "فتح" : "Open"}
-                          </a>
-                        ) : (
-                          <button
-                            onClick={() => setSelectedPub(pub)}
-                            className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-xs font-semibold bg-soil-dark text-white hover:bg-soil-clay transition-colors"
-                          >
-                            <Eye className="h-3 w-3" />
-                            {language === "ar" ? "عرض" : "View"}
-                          </button>
-                        )}
-                        {pub.pdfUrl && !isExternalLink && (
-                          <a
-                            href={pub.pdfUrl}
-                            download
-                            className="flex items-center justify-center p-1.5 rounded-lg border border-soil-sand text-soil-dark hover:bg-soil-sand/40 transition-colors"
-                          >
-                            <Download className="h-3 w-3" />
-                          </a>
-                        )}
-                      </div>
-                    </StyleCardContent>
-                  </StyleCard>
-                </div>
-              );
-            })}
+            {/* Next arrow */}
+            {totalPages > 1 && (
+              <button
+                onClick={isRtl ? goPrev : goNext}
+                aria-label={language === "ar" ? "التالي" : "Next"}
+                className="absolute -end-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-soil-sand shadow-md flex items-center justify-center text-soil-dark hover:bg-soil-sand/50 transition-colors disabled:opacity-30"
+              >
+                {isRtl ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+              </button>
+            )}
           </div>
+
+          {/* ── Dot indicators ── */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-7">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i, i > page ? 1 : -1)}
+                  aria-label={`${language === "ar" ? "صفحة" : "Page"} ${i + 1}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === page
+                      ? "w-6 bg-soil-clay"
+                      : "w-2 bg-soil-sand hover:bg-soil-clay/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
